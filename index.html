@@ -3,9 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneKey</title>
+    <title>Mouse Follow Circle</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            border-radius: 50%;
+            pointer-events: none; 
+            z-index: 9999; //makes the cursor stay on top of everything else, not very sigma might change later
+            transition: width 0.1s ease, height 0.1s ease; 
+            transform: translate(-50%, -50%); 
+			opacity: 0.4;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="circle" id="circle"></div>
+
+    <script>
+        const circle = document.getElementById("circle");
+
+        let mouseX = 0, mouseY = 0; // Mouse target position
+        let circleX = 0, circleY = 0; // Circle's current position
+        const delay = 0.2; // Delay speed
+
+        // Track mouse position
+        document.addEventListener("mousemove", (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
+
+        // Animate the circle following the cursor
+        function animate() {
+            circleX += (mouseX - circleX) * delay;
+            circleY += (mouseY - circleY) * delay;
+            
+            circle.style.left = `${circleX}px`;
+            circle.style.top = `${circleY}px`;
+
+            requestAnimationFrame(animate); // Keep animating
+        }
+
+        // Detect lmb down
+        document.addEventListener("mousedown", () => {
+            circle.style.width = "25px";
+            circle.style.height = "25px";
+        });
+
+        // Detect lmb up
+        document.addEventListener("mouseup", () => {
+            circle.style.width = "30px";
+            circle.style.height = "30px";
+        });
+
+		//allows for scrolling
+		document.addEventListener("scroll", () => {
+			let scrollY = window.scrollY;
+			circle.style.top = `${mouseY + scrollY}px`;
+		});
+
+
+        animate(); 
+    </script>
 </body>
 </html>
