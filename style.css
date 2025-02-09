@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+}
+
+/* disables cursor - this is optional */
+* {
+    cursor: none !important; 
+}
+
+
+.circle {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    background-color: blue;
+    border-radius: 50%;
+    pointer-events: none; 
+    z-index: 9999; //makes the cursor stay on top of everything else, not very sigma might change later
+    transition: width 0.1s ease, height 0.1s ease; 
+    transform: translate(-50%, -50%); 
+    opacity: 0.5;
+}
+.newClass {
+    cursor: none;
+}
