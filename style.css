@@ -12,11 +12,37 @@ body {
 header {
     background-color: #333;
     padding: 1rem;
-    position: fixed;
+    position:sticky;
     width: 100%;
     top: 0;
+    /* margin-top: -200px; */
     z-index: 100;
 }
+
+.box1 a {
+    font-size:20px;
+    font-weight:bold;
+    color:rgb(255, 255, 255);
+    text-decoration:underline;
+
+}
+
+.box1 {
+        width: 300px;
+        height:auto;
+        background-color: rgb(0, 0, 0);
+        border:rgb(83, 83, 83);
+        margin:20px;
+        text-align:center;
+        color: white;
+        margin-top: 100px;
+        border-radius:25px;
+        position: relative;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        pointer-events:none;
+        z-index:1;
+}
+
 
 nav ul {
     list-style: none;
@@ -50,14 +76,25 @@ section {
     overflow: hidden;
 }
 
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+/* ONEKEY text. 1 rem = 16px, 2.5 rem = 40px*/
+h1 { 
+    font-size: 80px;
+    position: relative;
+    margin-top:-250px;
+    font-family:"Ubuntu Bold", Ubuntu, Serif; 
+}
+
+
+/* text below ONEKEY*/
+p {
+    margin-top:-30px;
 }
 
 h2 {
     font-size: 2rem;
     margin-bottom: 2rem;
+    margin-top: 1rem;
+    position:fixed;
 }
 
 .project-grid {
