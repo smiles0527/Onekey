@@ -13,7 +13,7 @@ style.innerHTML = `
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background-color: red; !important /* Default color */
+        background-color: blue; !important /* Default color */
         pointer-events: none;
         opacity:0.65;
         z-index: 999999; /* Extremely high to stay on top */
