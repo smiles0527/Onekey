@@ -23,7 +23,8 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 //circle colour, pretty sure you can also use hex codes for this
-circle.style.backgroundColor = "blue";
+circle.style.backgroundColor = "#4A90E2";
+circle.style.mixBlendMode = "multiply";
 
 let mouseX = 0, mouseY = 0; // Mouse target position
 let circleX = 0, circleY = 0; // Circle's current position
@@ -50,6 +51,7 @@ function animate() {
 document.addEventListener("mousedown", () => {
     circle.style.width = "15px";
     circle.style.height = "15px";
+    circle.style.backgroundColor = "#F39C12";
 });
 
 // detects lmb up

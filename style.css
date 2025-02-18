@@ -10,13 +10,14 @@ body {
 }
 
 header {
-    background-color: #333;
+    background: var(--dark-color);
     padding: 1rem;
     position:sticky;
     width: 100%;
     top: 0;
     /* margin-top: -200px; */
     z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .Volunteering-Box h3 {
@@ -39,8 +40,8 @@ header {
 .Volunteering-Box {
         width: 300px;
         height:auto;
-        background-color: rgb(0, 0, 0);
-        border:rgb(83, 83, 83);
+        background: var(--gradient-1);
+        padding: 2rem;
         margin:20px;
         text-align:center;
         color: white;
@@ -51,17 +52,14 @@ header {
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
         pointer-events: auto;
         z-index:1;
-
-        background: linear-gradient(135deg, #1a1a1a, #333);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        
+        transform: scale(1);
+        transition: all 0.3s ease;
 }
 
 /* hover effect */
 .Volunteering-Box:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 
@@ -71,8 +69,8 @@ header {
 .Performances-Box {
     width: 300px;
     height:auto;
-    background-color: rgb(0, 0, 0);
-    border:rgb(83, 83, 83);
+    background: var(--gradient-2);
+    padding: 2rem;
     margin:20px;
     text-align:center;
     color: white;
@@ -83,18 +81,14 @@ header {
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
     pointer-events: auto;
     z-index:1;
-
-    background: linear-gradient(135deg, #1a1a1a, #333);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
-    
+    transform: scale(1);
+    transition: all 0.3s ease;
 }
 
 /* hover effect */
 .Performances-Box:hover {
-transform: translateY(-5px); 
-box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.5);
+transform: scale(1.05);
+box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 
@@ -126,10 +120,23 @@ nav a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    position: relative;
+    padding: 0.5rem 1rem;
 }
 
-nav a:hover {
-    color: #ddd;
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
 }
 
 section {
@@ -141,17 +148,19 @@ section {
 }
 
 .hero {
-    background-color: #f4f4f4;
-    text-align: center;
+    background: linear-gradient(135deg, #f6f9fc, #edf2f7);
+    min-height: 100vh;
+    padding: 4rem 2rem;
     position: relative;
-    overflow: hidden;
-    display:flex;
-    align-items: center;
 }
 
 /* ONEKEY text. 1 rem = 16px, 2.5 rem = 40px*/
-h1 { 
+h1 {
     font-size: 80px;
+    color: var(--dark-color);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
     position: relative;
     margin-top:-50px;
     font-family:"Ubuntu Bold", Ubuntu, Serif; 
@@ -177,10 +186,16 @@ h2 {
 }
 
 .project-card {
-    background-color: #f4f4f4;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 form {
@@ -193,25 +208,30 @@ form {
 
 input, textarea {
     padding: 0.8rem;
-    border: 1px solid #ddd;
+    border: 2px solid transparent;
     border-radius: 4px;
+    background: var(--light-color);
+    transition: all 0.3s ease;
 }
 
-textarea {
-    min-height: 150px;
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
 }
 
 button {
     padding: 0.8rem 1.5rem;
-    background-color: #333;
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: #444;
+    background: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 footer {
@@ -247,4 +267,14 @@ footer {
 
 .Volunteering-Box, .learn-more {
     user-select: none; /* Prevents text highlighting */
+}
+
+/* Add these variables at the top of your CSS file */
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #F39C12;
+    --dark-color: #2C3E50;
+    --light-color: #ECF0F1;
+    --gradient-1: linear-gradient(135deg, #4A90E2, #357ABD);
+    --gradient-2: linear-gradient(135deg, #F39C12, #D35400);
 }
