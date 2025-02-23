@@ -7,6 +7,7 @@ const nav = document.querySelector('nav');
 menuToggle.addEventListener('click', () => {
     navLinks.classList.toggle('active');
     logo.classList.toggle('menu-active');
+    menuToggle.classList.toggle('active');
     nav.classList.toggle('fade');
     
     // Prevent background scrolling when menu is open
