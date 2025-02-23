@@ -1,0 +1,513 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    cursor: none !important;
+}
+
+body {
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+    padding: 1.5rem 2rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: black;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+    position: relative;
+    z-index: 4;
+}
+
+.logo.menu-active {
+    transform: translateX(25px);
+    color: white;
+}
+
+.menu-toggle {
+    font-size: 1.5rem;
+    cursor: none !important;
+    color: black;
+    margin-right: 2rem;
+    transition: transform 0.3s ease, color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 4;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.menu-toggle.active {
+    color: white;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.1);
+}
+
+.menu-toggle i {
+    pointer-events: none;
+    cursor: none !important;
+}
+
+.nav-links {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    height: 100vh;
+    width: 300px;
+    margin-top: 150px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 4rem 2rem;
+    transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.nav-links.active {
+    left: 0;
+    background: rgba(0, 0, 0, 1);
+    transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease 0.1s;
+}
+
+.nav-links li {
+    list-style: none;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    opacity: 0.7;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .nav-links {
+        transition: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .nav-links {
+        background: black;
+    }
+    
+    .nav-links a {
+        color: white;
+    }
+}
+
+/* Larger text option */
+@media (max-width: 768px) {
+    .nav-links a {
+        font-size: 1.4rem;
+        padding: 1rem 0;
+    }
+}
+
+.hero {
+    margin-top: 100px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+}
+
+.video-placeholder {
+    width: 100%;
+    height: 70vh;
+    background: #f5f5f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.placeholder-text {
+    font-size: 1.5rem;
+    color: #86868b;
+}
+
+.hero-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: #86868b;
+    margin-top: 1rem;
+}
+
+.volunteer-section {
+    padding: 6rem 2rem;
+    background: #f5f5f7;
+}
+
+.section-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.Volunteering-Box h3 {
+    font: size 24px;
+    font-weight:bold;
+    color:rgb(255, 255, 255);
+    text-decoration:underline;
+
+}
+.Volunteering-Box h4 {
+    font-size:15px;
+    line-height:30px;
+    color:rgb(255, 255, 255);
+    font-family:"Ubuntu", Ubuntu, Serif; 
+    color: #dcdcdc;
+    font-weight: 500;
+}
+
+
+.Volunteering-Box {
+        width: 300px;
+        height:auto;
+        background: var(--gradient-1);
+        padding: 2rem;
+        margin:20px;
+        text-align:center;
+        color: white;
+        margin-top: 200px;
+        margin-left: -500px;
+        border-radius:25px;
+        position: relative;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        pointer-events: auto;
+        z-index:1;
+        transform: scale(1);
+        transition: all 0.3s ease;
+}
+
+/* hover effect */
+.Volunteering-Box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+
+
+/*------------------------------------------------------------*/
+
+.Performances-Box {
+    width: 300px;
+    height:auto;
+    background: var(--gradient-2);
+    padding: 2rem;
+    margin:20px;
+    text-align:center;
+    color: white;
+    margin-top: -200px;
+    margin-right: -500px;
+    border-radius:25px;
+    position: relative;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    z-index:1;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+/* hover effect */
+.Performances-Box:hover {
+transform: scale(1.05);
+box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+
+
+.learn-more {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 16px;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 0.95rem;
+    border: none;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+section {
+    padding: 4rem 2rem;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ONEKEY text. 1 rem = 16px, 2.5 rem = 40px*/
+h1 {
+    font-size: 80px;
+    color: var(--dark-color);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    position: relative;
+    margin-top:-50px;
+    font-family:"Ubuntu Bold", Ubuntu, Serif; 
+}
+
+
+/* text below ONEKEY*/
+p {
+    margin-top:-30px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    position:relative;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input, textarea {
+    padding: 0.8rem;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: var(--light-color);
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+button {
+    padding: 0.8rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.circle {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(51, 51, 51, 0.5) !important;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    transition: transform 0.1s ease;
+    z-index: 9999;
+}
+
+/* Remove any hover states that might affect the cursor */
+.circle:hover {
+    background-color: rgba(51, 51, 51, 0.5) !important;
+}
+
+.newClass {
+    cursor: none;
+}
+
+.learn-more:hover {
+    background: #e65c00;
+    transform: translateX(5px); 
+}
+
+.Volunteering-Box, .learn-more {
+    user-select: none; /* Prevents text highlighting */
+}
+
+/* Add these variables at the top of your CSS file */
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #F39C12;
+    --dark-color: #2C3E50;
+    --light-color: #ECF0F1;
+    --gradient-1: linear-gradient(135deg, #4A90E2, #357ABD);
+    --gradient-2: linear-gradient(135deg, #F39C12, #D35400);
+}
+
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.video-container video {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+}
+
+.overlay-text {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: gray;
+    z-index: 2;
+    width: 100%;
+}
+
+.overlay-text h1 {
+    font-size: 4.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.overlay-text p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    margin-top: -5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+main {
+    padding-top: 100px; /* Adjust this value based on your header height + top spacing */
+}
+
+nav > *:not(.logo):not(.menu-toggle):not(.nav-links.active) {
+    transition: opacity 0.3s ease;
+}
+
+nav.fade > *:not(.logo):not(.menu-toggle):not(.nav-links.active) {
+    opacity: 0;
+}
+

@@ -10,6 +10,7 @@ nav {
     z-index: 1000;
 }
 
+
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -22,6 +23,7 @@ nav {
     transform: translateX(300px);
     color: white;
 }
+
 
 .menu-toggle {
     font-size: 1.5rem;
@@ -41,4 +43,31 @@ nav {
 
 .menu-toggle i {
     pointer-events: auto;
+}
+
+.nav-links {
+    /* ... existing code ... */
+}
+
+/* For mobile view */
+@media screen and (max-width: 768px) {
+    .nav-links {
+        display: none;
+        position: fixed;
+        top: 60px; /* Adjust based on your header height */
+        left: 0;
+        width: 100%;
+        background: #fff;
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+        cursor: pointer;
+    }
 } 
