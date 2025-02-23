@@ -2,15 +2,16 @@ const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const body = document.body;
 const logo = document.querySelector('.logo');
-const nav = document.querySelector('nav');
+
+// Add console logs to debug
+console.log('Menu Toggle:', menuToggle);
+console.log('Nav Links:', navLinks);
+console.log('Logo:', logo);
 
 menuToggle.addEventListener('click', () => {
     navLinks.classList.toggle('active');
     logo.classList.toggle('menu-active');
     menuToggle.classList.toggle('active');
-    nav.classList.toggle('fade');
-    
-    // Prevent background scrolling when menu is open
     body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
 });
 
@@ -19,7 +20,7 @@ document.addEventListener('click', (e) => {
     if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
         navLinks.classList.remove('active');
         logo.classList.remove('menu-active');
-        nav.classList.remove('fade');
+        menuToggle.classList.remove('active');
         body.style.overflow = 'auto';
     }
 });
@@ -28,6 +29,8 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         navLinks.classList.remove('active');
+        logo.classList.remove('menu-active');
+        menuToggle.classList.remove('active');
         body.style.overflow = 'auto';
     }
 });
