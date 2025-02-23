@@ -16,11 +16,12 @@ nav {
     font-weight: bold;
     color: black;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
-    z-index: 1002;
+    z-index: 1003;
+    position: relative;
 }
 
 .logo.menu-active {
-    transform: translateX(300px);
+    transform: translateX(25px);
     color: white;
 }
 
@@ -31,7 +32,7 @@ nav {
     color: black;
     margin-right: 2rem;
     transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1002;
+    z-index: 1005;
     display: flex;
     align-items: center;
     justify-content: center;
