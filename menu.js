@@ -1,9 +1,13 @@
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 const body = document.body;
+const logo = document.querySelector('.logo');
+const nav = document.querySelector('nav');
 
 menuToggle.addEventListener('click', () => {
     navLinks.classList.toggle('active');
+    logo.classList.toggle('menu-active');
+    nav.classList.toggle('fade');
     
     // Prevent background scrolling when menu is open
     body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
@@ -13,6 +17,8 @@ menuToggle.addEventListener('click', () => {
 document.addEventListener('click', (e) => {
     if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
         navLinks.classList.remove('active');
+        logo.classList.remove('menu-active');
+        nav.classList.remove('fade');
         body.style.overflow = 'auto';
     }
 });
@@ -29,6 +35,16 @@ document.addEventListener('keydown', (e) => {
 menuToggle.setAttribute('aria-label', 'Open navigation menu');
 menuToggle.setAttribute('role', 'button');
 menuToggle.setAttribute('tabindex', '0');
+
+// Add transparent menu styles
+const header = document.querySelector('header');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
 
 // Handle keyboard navigation
 menuToggle.addEventListener('keypress', (e) => {

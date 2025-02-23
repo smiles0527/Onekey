@@ -68,4 +68,12 @@ document.addEventListener("click", () => {
     // Empty function to override any previous click handlers
 });
 
+document.addEventListener("mouseleave", () => {
+    circle.style.opacity = "0";
+});
+
+document.addEventListener("mouseenter", () => {
+    circle.style.opacity = "0.65";
+});
+
 animate();
