@@ -56,13 +56,14 @@ header {
     font-weight: bold;
     margin-top: 254px;
     letter-spacing: 2px;
-    color: black;
+    color: rgb(255, 255, 255);
 }
+
 
 .hero p {
     font-size: 1.5rem;
     opacity: 1;
-    color: black;
+    color: rgb(255, 255, 255);
     margin-top: -5px;
 }
 
@@ -70,6 +71,14 @@ header {
 .section {
     min-height: 50vh;
     padding: 80px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.section .section-container {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,6 +99,7 @@ header {
 /* Specific section styling */
 .about-section {
     background-color: #f8f9fa;
+    text-align: center;
 }
 
 .mission-section {
