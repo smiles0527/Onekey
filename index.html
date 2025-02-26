@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/transition.css">
 </head>
 
 
@@ -27,7 +28,7 @@
         </nav>
     </header>
 
-    <main>
+    <main class="transition-fade">
         <section id="home" class="hero">
             <div class="video-container">
                 <video width="1920" height="1080" autoplay muted loop playsinline>
@@ -42,6 +43,17 @@
             </div>
         </section>
 
+        <section class="about-section">
+            <div class="section-container">
+                <h2>About Us</h2>
+                <div class="content-wrapper">
+                    <p>OneKey is a student-led organization that provides a way for
+                        volunteers to contribute to the community.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <footer class="footer">
         <div class="footer-content">
@@ -52,5 +64,6 @@
 
     <script src="mouse.js"></script>
     <script src="menu.js"></script>
+    <script src="../transition.js"></script>
 </body>
 </html>
