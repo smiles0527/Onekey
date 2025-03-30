@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const logo = document.querySelector('.logo');
     const header = document.querySelector('header');
+    const navItems = document.querySelectorAll('.nav-links li');
 
     // Add console logs to debug
     console.log('Menu Toggle:', menuToggle);
@@ -11,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Logo:', logo);
 
     // Add transition duration variable
-    const TRANSITION_DURATION = 800; // 800ms = 0.8 seconds (matches CSS)
+    const TRANSITION_DURATION = 400; // 400ms = 0.4 seconds (matches CSS)
 
     let isAnimating = false;
 
@@ -36,19 +37,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle menu with proper animations
     menuToggle.addEventListener('click', () => {
+        // Prevent multiple clicks during animation
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        const isOpening = !navLinks.classList.contains('active');
+        
         navLinks.classList.toggle('active');
         logo.classList.toggle('menu-active');
         menuToggle.classList.toggle('active');
-        body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+        
+        // Handle body overflow
+        body.style.overflow = isOpening ? 'hidden' : 'auto';
+        
+        // Reset animation state after transition completes
+        setTimeout(() => {
+            isAnimating = false;
+        }, TRANSITION_DURATION);
     });
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
+            // Prevent multiple clicks during animation
+            if (isAnimating) return;
+            isAnimating = true;
+            
             navLinks.classList.remove('active');
             logo.classList.remove('menu-active');
             menuToggle.classList.remove('active');
             body.style.overflow = 'auto';
+            
+            // Reset animation state after transition completes
+            setTimeout(() => {
+                isAnimating = false;
+            }, TRANSITION_DURATION);
         }
     });
 

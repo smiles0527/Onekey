@@ -25,7 +25,7 @@ nav {
 .menu-toggle {
     cursor: pointer;
     z-index: 1001;
-    margin-left: auto; /* Push to the right */
+    margin-right: auto; /* Push to the right */
 }
 
 .menu-toggle i {
@@ -33,6 +33,9 @@ nav {
     color: white;
     transition: transform 0.4s ease;
 }
+
+
+
 
 .menu-toggle.active i {
     transform: rotate(90deg);
@@ -43,23 +46,25 @@ nav {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 300px; /* Match the width in sidebar.css */
     height: 100vh;
-    background-color: rgba(40, 40, 45, 0.95); /* Greyish and opaque background */
+    background-color: rgba(0, 0, 0, 0.9); /* Match the color in sidebar.css */
     transform: translateX(-100%); /* Start off-screen */
-    transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: transform 0.4s ease, background-color 0.3s ease;
     
     /* Center the navigation items */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 999; /* Below the toggle button */
+    padding: 8rem 2rem 4rem 2rem;
+    z-index: 1000; /* Consistent with sidebar.css */
 }
 
 /* Active state - slide in from left to center */
 .nav-links.active {
     transform: translateX(0);
+    background: black;
 }
 
 /* Style for navigation links */
