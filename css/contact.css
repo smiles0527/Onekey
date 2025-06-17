@@ -270,70 +270,68 @@
     flex-shrink: 0;
 }
 
-
-
 .member-info.ethan h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.ethan .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.jiawei h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.jiawei .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.eliza h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.eliza .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.alex h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.alex .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.gabby h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.gabby .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.jessica h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.jessica .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.shane h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.shane .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .member-info.selena h3{
-    margin-top: -80px;
+    margin-top: -5rem;
 }
 .member-info.selena .member-role{
-    margin-top: -25px;
-    margin-bottom: 30px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
 }
 
 .team-member:hover .member-photo {
