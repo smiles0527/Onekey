@@ -38,7 +38,7 @@
     color: white;
     border: none;
     box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
-    cursor: none !important;
+    cursor: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
@@ -62,7 +62,7 @@
     padding: 12px 24px;
     color: white;
     font-weight: 500;
-    cursor: none !important;
+    cursor: none;
     transition: all 0.3s ease;
 }
 

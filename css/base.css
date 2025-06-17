@@ -3,7 +3,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    cursor: none !important;
+    /* cursor: none !important; */
     scroll-behavior: smooth;
 }
 
@@ -29,7 +29,7 @@ section {
 body {
     line-height: 1.6;
     overflow-x: hidden;
-    cursor: none !important;
+    /* cursor: none !important; */
     font-family: 'Poppins', sans-serif;
 }
 
@@ -150,9 +150,9 @@ header {
 
 html {
     scroll-behavior: smooth;
-    cursor: none !important;
+    /* cursor: none !important; */
 }
 
 *, *:before, *:after {
-    cursor: none !important;
+    /* cursor: none !important; */
 } 

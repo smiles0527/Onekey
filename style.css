@@ -418,8 +418,10 @@ footer {
     background-color: rgba(51, 51, 51, 0.5) !important;
 }
 
+/* cursor: none; */
+
 .newClass {
-    cursor: none;
+    /* cursor: none; */
 }
 
 .learn-more:hover {
@@ -428,7 +430,7 @@ footer {
 }
 
 .Volunteering-Box, .learn-more {
-    user-select: none; /* Prevents text highlighting */
+    /* user-select: none; */ /* Prevents text highlighting */
 }
 
 /* Add these variables at the top of your CSS file */
@@ -621,4 +623,6 @@ html {
 }
 
 /* Remove cursor conflicts - let cursor-fix.css handle this */
+
+/* cursor: none !important; */
 
