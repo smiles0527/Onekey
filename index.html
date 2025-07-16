@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/transition.css">
     <link rel="stylesheet" href="css/slideshow.css">
     <link rel="stylesheet" href="css/home.css">
@@ -36,15 +37,46 @@
             </div>
             <div class="logo"><a href="index.html">ONEKEY</a></div>
             
+            <div class="auth-buttons">
+                <button class="login-btn" id="loginBtn">
+                    <i class="fas fa-user"></i>
+                    Login
+                </button>
+            </div>
+            
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="html/about.html">About</a></li>
                 <li><a href="html/projects.html">Projects</a></li>
+                <li><a href="html/timeline.html">Timeline</a></li>
                 <li><a href="html/get-involved.html">Get Involved</a></li>
                 <li><a href="html/contact.html">Contact</a></li>
             </ul>
         </nav>
     </header>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <button class="close-modal" id="closeLogin">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="auth-submit-btn">Login</button>
+            </form>
+        </div>
+    </div>
 
     <main class="transition-fade">
         <section class="hero-section">
@@ -138,6 +170,7 @@
     <script src="js/transition.js"></script>
     <script src="js/slideshow.js"></script>
     <script src="js/menu.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/home.js"></script>
 </body>
 </html> 

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline - ONEKEY</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/timeline.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/transition.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+    
+<body>
+    <div class="bg-animation">
+        <div class="bg-gradient"></div>
+        <div class="mesh-gradient"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
+
+    <header>
+        <nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo"><a href="../index.html">ONEKEY</a></div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="get-involved.html">Get Involved</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="login-btn" id="loginBtn">
+                    <i class="fas fa-user"></i>
+                    Login
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="transition-fade">
+        <section class="intro">
+            <div class="admin-controls" id="adminControls" style="display: flex;">
+                <button class="add-event-btn" id="addEventBtn">
+                    <i class="fas fa-plus"></i>
+                    Add Event
+                </button>
+            </div>
+            <div class="intro-content">
+                <h1>Performance Timeline</h1>
+                <p>Documenting our weekly senior home performances and community engagement events. Each performance brings music, joy, and connection to our senior community partners.</p>
+                <div class="intro-accent"></div>
+            </div>
+        </section>
+
+        <section class="timeline-controls">
+            <div class="controls-container">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="performances">Performances</button>
+                    <button class="filter-btn" data-filter="homework">Homework Help</button>
+                    <button class="filter-btn" data-filter="charity">Charity Events</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="timeline-section">
+            <div class="timeline-container" id="performances-section">
+                <div class="section-header">
+                    <h2>Performances</h2>
+                    <p>Senior home performances and community concerts</p>
+                </div>
+                <div class="empty-state">
+                    <i class="fas fa-music"></i>
+                    <p>Performance events will be added here soon!</p>
+                </div>
+            </div>
+            
+            <div class="timeline-container" id="homework-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Homework Help</h2>
+                    <p>Tutoring sessions and academic support events</p>
+                </div>
+                <div class="empty-state">
+                    <i class="fas fa-graduation-cap"></i>
+                    <p>Homework help events will be added here soon!</p>
+                </div>
+            </div>
+            
+            <div class="timeline-container" id="charity-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Charity Events</h2>
+                    <p>Fundraising activities and community service projects</p>
+                </div>
+                <div class="empty-state">
+                    <i class="fas fa-heart"></i>
+                    <p>Charity events will be added here soon!</p>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <button class="close-modal" id="closeLogin">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter admin username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="auth-submit-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal-content event-modal">
+            <div class="modal-header">
+                <h2>Add New Event</h2>
+                <button class="close-modal" id="closeAddEvent">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="event-form" id="eventForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventName">Event Name *</label>
+                        <input type="text" id="eventName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventCategory">Category *</label>
+                    <select id="eventCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="performances">Performances</option>
+                        <option value="homework">Homework Help</option>
+                        <option value="charity">Charity Events</option>
+                    </select>
+                </div>
+
+                <!-- Additional fields for Performances and Charity Events -->
+                <div class="conditional-fields" id="conditionalFields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventLocation">Location</label>
+                            <input type="text" id="eventLocation" placeholder="e.g., Sunset Manor">
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Time</label>
+                            <input type="time" id="eventTime">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventAttendees">Number of Attendees</label>
+                            <input type="number" id="eventAttendees" placeholder="e.g., 45">
+                        </div>
+                        <div class="form-group">
+                            <label for="eventPerformers">Number of Performers/Volunteers</label>
+                            <input type="number" id="eventPerformers" placeholder="e.g., 8">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventDuration">Duration</label>
+                        <input type="text" id="eventDuration" placeholder="e.g., 90 minutes">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" rows="4" placeholder="Describe the event details..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventPhoto">Event Photo</label>
+                    <input type="file" id="eventPhoto" accept="image/*">
+                    <div class="file-upload-note">
+                        <i class="fas fa-info-circle"></i>
+                        Upload an image to represent this event (optional)
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelEvent">Cancel</button>
+                    <button type="submit" class="submit-btn">Add Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">ONEKEY</div>
+                <p class="footer-tagline">Student volunteers making a difference</p>
+                <p class="footer-contact">on3keymusic@gmail.com</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Navigate</h4>
+                <a href="../index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="projects.html">Projects</a>
+                <a href="timeline.html">Timeline</a>
+                <a href="get-involved.html">Get Involved</a>
+            </div>
+            
+            <div class="footer-connect">
+                <h4>Connect With Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 ONEKEY Student Volunteers</p>
+            <p class="footer-school">Curtis Wei and Ethan Xie</p>
+        </div>
+    </footer>
+
+    <script src="../js/transition.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/timeline.js"></script>
+</body>
+</html> 
