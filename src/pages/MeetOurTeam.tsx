@@ -89,7 +89,7 @@ const MeetOurTeam: React.FC = () => {
                   <span className="member-school">Collingwood School</span>
                   <span className="member-role">Co-Founder & President</span>
                 </div>
-                <p className="member-bio">I'm Curtis, a grade 10 student at Collingwood Secondary School. I'm grateful to be serving as one of the founders of Onekey as well as the General Manager of Vanstring. I have a natural passion for sciences and I waste much of my time preparing for the international chemistry and coding competitions. In my spare time, I play the piano and conduct research on group theory and quantum computing.</p>
+                <p className="member-bio">I'm Curtis, a grade 10 student at Collingwood Secondary School. I'm grateful to be serving as one of the founders of Onekey as well as the General Manager of Vanstring. I have a passion for sciences and I waste much of my time preparing for the international science olympiads. In my spare time, I play the piano and conduct research on group theory as well as doing my little engineering projects.</p>
                 <a href="https://www.instagram.com/icyz_wx/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
                   <i className="fab fa-instagram"></i>
                 </a>
@@ -236,7 +236,10 @@ const MeetOurTeam: React.FC = () => {
             
             <div className="alumni-card">
               <div className="member-image">
-                <img src="/pics/placeholder.jpg" alt="Grace" />
+                {/* Grace Xu photo not available - using text placeholder */}
+                <div className="member-image-placeholder">
+                  <i className="fas fa-user"></i>
+                </div>
               </div>
               <div className="member-info">
                 <h3>Grace Xu</h3>

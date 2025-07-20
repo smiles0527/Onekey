@@ -117,7 +117,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
 
   const formatRole = (role: User['role']) => {
     switch (role) {
-      case 'super_admin': return 'Super Admin';
+      case 'super_admin': return 'Admin';
       case 'admin': return 'Admin';
       default: return 'User';
     }
@@ -129,7 +129,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
       'Delete any user (except self)',
       'Change user roles',
       'Access all timeline events',
-      'System administration',
+      'Administration',
       'View activity logs',
       'Export data'
     ],
@@ -229,7 +229,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
-                        <option value="super_admin">System Admin</option>
+                        <option value="super_admin">Admin</option>
                       </select>
                     </div>
                     
@@ -333,7 +333,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
-                    <option value="super_admin">System Admin</option>
+                    <option value="super_admin">Admin</option>
                   </select>
                 </div>
                 <div className="form-group">

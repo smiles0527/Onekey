@@ -1,16 +1,67 @@
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
-import Projects from './pages/Projects';
 import Timeline from './pages/Timeline';
-import GetInvolved from './pages/GetInvolved';
 import MeetOurTeam from './pages/MeetOurTeam';
-import Mission from './pages/Mission';
+import AdminDashboard from './pages/AdminDashboard';
+import Dashboard from './pages/Dashboard';
 
 function App() {
-  // Delayed Smooth Scrolling Effect - Constance Hotels Style
+  const location = useLocation();
+
+  // Force scroll to top on route change and initial load
+  useEffect(() => {
+    // Immediate scroll to top
+    window.scrollTo(0, 0);
+    
+    // Also try with a slight delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  // Additional effect to ensure scroll position on mount
+  useEffect(() => {
+    const handleLoad = () => {
+      // Multiple approaches to ensure scroll to top
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      
+      // Force scroll behavior
+      document.body.style.scrollBehavior = 'auto';
+      document.documentElement.style.scrollBehavior = 'auto';
+      
+      // Additional scroll to top after a brief delay
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }, 50);
+    };
+    
+    // Run immediately
+    handleLoad();
+    
+    // Also run when window loads
+    window.addEventListener('load', handleLoad);
+    
+    // Also run when DOM content is loaded
+    document.addEventListener('DOMContentLoaded', handleLoad);
+    
+    return () => {
+      window.removeEventListener('load', handleLoad);
+      document.removeEventListener('DOMContentLoaded', handleLoad);
+    };
+  }, []);
+
+  // Smooth scrolling animations - Constance Hotels Style
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
     
@@ -48,14 +99,6 @@ function App() {
             target.style.opacity = '1';
           });
         }
-      } else if (href && href.startsWith('/') && target.closest('.nav-links')) {
-        // Add delay for navigation transitions
-        e.preventDefault();
-        target.style.opacity = '0.7';
-        
-        setTimeout(() => {
-          window.location.href = href;
-        }, 150);
       }
     };
 
@@ -72,6 +115,9 @@ function App() {
     // Add event listeners
     document.addEventListener('click', handleAnchorClick);
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Ensure page starts at the top
+    window.scrollTo(0, 0);
 
     // Smooth page load animation
     document.body.style.opacity = '0';
@@ -92,11 +138,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
         <Route path="/timeline" element={<Timeline />} />
-        <Route path="/get-involved" element={<GetInvolved />} />
         <Route path="/team" element={<MeetOurTeam />} />
-        <Route path="/mission" element={<Mission />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Layout>
   );

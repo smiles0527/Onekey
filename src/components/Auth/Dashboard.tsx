@@ -134,7 +134,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isOpen, onClose }) => {
               <div className="stat-content">
                 <h4>{roleStats.admin || 0}</h4>
                 <p>Admins</p>
-                <small>System administrators</small>
+                <small>Administrators</small>
               </div>
             </div>
           </div>

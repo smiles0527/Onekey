@@ -31,6 +31,9 @@ const Home: React.FC = () => {
 
   // Smooth scrolling animations - Constance style with parallax
   useEffect(() => {
+    // Ensure page starts at the top
+    window.scrollTo(0, 0);
+    
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
@@ -369,7 +372,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <div className="snapshot-cta">
-                <a href="/projects" className="view-details">View Details</a>
+                <a href="/contact" className="view-details">Contact Us</a>
               </div>
             </div>
             
@@ -393,7 +396,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <div className="snapshot-cta">
-                <a href="/projects" className="view-details">View Details</a>
+                <a href="/contact" className="view-details">Contact Us</a>
               </div>
             </div>
             
@@ -431,7 +434,6 @@ const Home: React.FC = () => {
             <h2>Ready to Make a Difference?</h2>
             <p>Join OneKey and become part of a student-driven organization dedicated to creating positive change through music, education, and community service.</p>
             <div className="cta-buttons">
-              <a href="/get-involved" className="btn-primary">Become a Volunteer</a>
               <a href="/contact" className="btn-secondary">Contact Us</a>
             </div>
           </div>

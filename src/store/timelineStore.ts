@@ -13,6 +13,7 @@ export interface TimelineEvent {
   duration?: string;
   description?: string;
   photo?: string | null;
+  photos?: string[];
   createdAt: string;
   createdBy: string;
 }
@@ -38,22 +39,36 @@ export const useTimelineStore = create<TimelineState>()(
           createdAt: new Date().toISOString(),
         };
         
-        set(state => ({
-          events: [...state.events, newEvent].sort((a, b) => 
+        console.log('Adding new event:', newEvent);
+        
+        set(state => {
+          const updatedEvents = [...state.events, newEvent].sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
-          )
-        }));
+          );
+          console.log('Updated events array:', updatedEvents);
+          console.log('Saving to localStorage...');
+          return { events: updatedEvents };
+        });
+        
+        // Force localStorage update
+        setTimeout(() => {
+          const currentState = get();
+          console.log('Current state after add:', currentState);
+          console.log('localStorage after add:', localStorage.getItem('onekey-timeline'));
+        }, 100);
         
         return newEvent;
       },
 
       removeEvent: (eventId) => {
+        console.log('Removing event:', eventId);
         set(state => ({
           events: state.events.filter(event => event.id !== eventId)
         }));
       },
 
       updateEvent: (eventId, updates) => {
+        console.log('Updating event:', eventId, updates);
         set(state => ({
           events: state.events.map(event => 
             event.id === eventId ? { ...event, ...updates } : event
@@ -78,6 +93,41 @@ export const useTimelineStore = create<TimelineState>()(
       partialize: (state) => ({
         events: state.events,
       }),
+      onRehydrateStorage: () => (state) => {
+        console.log('Timeline store rehydrated from localStorage:', state);
+        if (state) {
+          console.log('Rehydrated events count:', state.events?.length || 0);
+        }
+      },
+      version: 1,
+      storage: {
+        getItem: (name) => {
+          try {
+            const value = localStorage.getItem(name);
+            console.log(`Getting ${name} from localStorage:`, value ? 'EXISTS' : 'NOT FOUND');
+            return value ? JSON.parse(value) : null;
+          } catch (error) {
+            console.error('Error getting from localStorage:', error);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            console.log(`Setting ${name} in localStorage:`, value);
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch (error) {
+            console.error('Error setting localStorage:', error);
+          }
+        },
+        removeItem: (name) => {
+          try {
+            console.log(`Removing ${name} from localStorage`);
+            localStorage.removeItem(name);
+          } catch (error) {
+            console.error('Error removing from localStorage:', error);
+          }
+        },
+      },
     }
   )
 ); 

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { format } from 'date-fns';
+import { testLocalStorage, addTestEvent, clearTimelineData, testPersistenceWithRefresh, syncStoreWithLocalStorage, backupTimelineData, restoreTimelineData, checkForDataLoss, warnAboutHardBuild, createPreBuildBackup } from '../utils/persistenceTest';
 
 const Timeline: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'performances' | 'homework' | 'charity'>('performances');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
   
-  const { isAuthenticated, user } = useAuthStore();
-  const { addEvent, removeEvent, getEventsByCategory } = useTimelineStore();
+  const { isAuthenticated, user, hasPermission } = useAuthStore();
+  const { addEvent, removeEvent, getEventsByCategory, events } = useTimelineStore();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -20,8 +21,46 @@ const Timeline: React.FC = () => {
     attendees: '',
     performers: '',
     duration: '',
-    description: ''
+    description: '',
+    photos: [] as File[]
   });
+
+  // Debug: Check localStorage and events on component mount
+  useEffect(() => {
+    console.log('Timeline component mounted');
+    console.log('Current events from store:', events);
+    console.log('Events in localStorage:', localStorage.getItem('onekey-timeline'));
+    
+    // Check for data loss after hard build
+    checkForDataLoss();
+    
+    // Check if events are being loaded from localStorage
+    const storedData = localStorage.getItem('onekey-timeline');
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        console.log('Parsed localStorage data:', parsed);
+        
+        // If we have events in localStorage but not in store, there might be a hydration issue
+        if (parsed.state?.events?.length > 0 && events.length === 0) {
+          console.log('WARNING: Events found in localStorage but not in store!');
+          console.log('localStorage events:', parsed.state.events.length);
+          console.log('Store events:', events.length);
+        }
+      } catch (error) {
+        console.error('Error parsing localStorage data:', error);
+      }
+    }
+    
+    // Force a store refresh to ensure hydration
+    const checkStore = () => {
+      const currentEvents = getEventsByCategory(activeTab);
+      console.log('Current events after hydration check:', currentEvents.length);
+    };
+    
+    // Check after a short delay to allow hydration
+    setTimeout(checkStore, 500);
+  }, [events, activeTab, getEventsByCategory, checkForDataLoss]);
 
   // Smooth scrolling animations - Constance style
   useEffect(() => {
@@ -66,6 +105,10 @@ const Timeline: React.FC = () => {
 
   const currentEvents = getEventsByCategory(activeTab);
 
+  // Debug: Log current events being displayed
+  console.log('Current events for category', activeTab, ':', currentEvents);
+  console.log('Total events in store:', events.length);
+
   const handleTabChange = (category: typeof activeTab) => {
     setActiveTab(category);
   };
@@ -79,24 +122,72 @@ const Timeline: React.FC = () => {
     e.preventDefault();
     if (!user) return;
 
-    const newEvent = addEvent({
-      ...formData,
-      category: formData.category,
-      createdBy: user.id
-    });
+    const createEvent = async () => {
+      try {
+        let photoUrls: string[] = [];
+        
+        // Convert photo files to base64 if present
+        if (formData.photos.length > 0) {
+          console.log('Converting photos to base64...', formData.photos.length, 'files');
+          for (const photo of formData.photos) {
+            const photoUrl = await convertFileToBase64(photo);
+            photoUrls.push(photoUrl);
+          }
+          console.log('Photos converted successfully:', photoUrls.length, 'photos');
+        }
 
-    setShowAddModal(false);
-    setFormData({
-      name: '',
-      date: '',
-      category: 'performances',
-      location: '',
-      time: '',
-      attendees: '',
-      performers: '',
-      duration: '',
-      description: ''
+        const newEvent = addEvent({
+          ...formData,
+          photo: photoUrls[0] || null, // Keep first photo as main photo for now
+          photos: photoUrls, // Store all photos
+          createdBy: user.id
+        });
+
+        console.log('Event created with photos:', newEvent.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
+
+        // Create backup after adding event
+        backupTimelineData();
+
+        setShowAddModal(false);
+        setFormData({
+          name: '',
+          date: '',
+          category: 'performances',
+          location: '',
+          time: '',
+          attendees: '',
+          performers: '',
+          duration: '',
+          description: '',
+          photos: []
+        });
+      } catch (error) {
+        console.error('Error creating event:', error);
+        alert('Failed to create event');
+      }
+    };
+
+    createEvent();
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
     });
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setFormData(prev => ({
+        ...prev,
+        photos: fileArray
+      }));
+    }
   };
 
   const handleDelete = (eventId: string) => {
@@ -104,7 +195,18 @@ const Timeline: React.FC = () => {
     setShowConfirmDelete(null);
   };
 
-  const canManageEvents = isAuthenticated && user && ['admin', 'super_admin'].includes(user.role);
+  const canManageEvents = isAuthenticated && user && hasPermission('manage_timeline');
+
+  // Debug logging
+  console.log('Timeline Debug:', {
+    isAuthenticated,
+    user: user?.username,
+    userRole: user?.role,
+    hasPermission: hasPermission('manage_timeline'),
+    canManageEvents,
+    showAddModal,
+    formDataPhotos: formData.photos.length
+  });
 
   return (
     <div className="timeline-page">
@@ -140,6 +242,142 @@ const Timeline: React.FC = () => {
                 <i className="fas fa-plus"></i>
                 Add New Event
               </button>
+              
+              {/* Debug buttons - only show for super_admin */}
+              {user?.role === 'super_admin' && (
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#007bff', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={testLocalStorage}
+                  >
+                    Test localStorage
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#28a745', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={addTestEvent}
+                  >
+                    Add Test Event
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#dc3545', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={clearTimelineData}
+                  >
+                    Clear Data
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#ffc107', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={testPersistenceWithRefresh}
+                  >
+                    Refresh Test
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#6c757d', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={syncStoreWithLocalStorage}
+                  >
+                    Sync Store
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#17a2b8', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={backupTimelineData}
+                  >
+                    Backup Data
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#fd7e14', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={restoreTimelineData}
+                  >
+                    Restore Data
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#e83e8c', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={checkForDataLoss}
+                  >
+                    Check Data Loss
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#f44336', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={warnAboutHardBuild}
+                  >
+                    Warn About Hard Build
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: '#4caf50', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={createPreBuildBackup}
+                  >
+                    Create Pre-Build Backup
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -200,6 +438,43 @@ const Timeline: React.FC = () => {
                       )}
                     </div>
                     
+                    {event.photo && (
+                      <div className="event-photo" style={{
+                        marginBottom: '1.5rem',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+                        border: '1px solid rgba(0, 0, 0, 0.1)',
+                        background: '#f8f9fa',
+                        position: 'relative'
+                      }}>
+                        <img 
+                          src={event.photo} 
+                          alt={event.name}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            maxHeight: '300px',
+                            objectFit: 'contain',
+                            display: 'block',
+                            transition: 'transform 0.3s ease'
+                          }}
+                          onError={(e) => {
+                            console.error('Failed to load image:', event.photo);
+                            console.error('Event:', event);
+                            // Hide the image container if image fails to load
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.style.display = 'none';
+                            }
+                          }}
+                          onLoad={(e) => {
+                            console.log('Image loaded successfully:', event.photo);
+                          }}
+                        />
+                      </div>
+                    )}
+                    
                     <div className="event-meta">
                       {event.location && (
                         <span className="event-meta-item">
@@ -221,16 +496,16 @@ const Timeline: React.FC = () => {
                     )}
                     
                     <div className="event-details">
-                      {event.attendees && (
+                      {event.category !== 'homework' && event.attendees && (
                         <span className="detail-item">
                           <i className="fas fa-users"></i> 
                           {event.attendees} attendees
                         </span>
                       )}
-                      {event.performers && (
+                      {event.category !== 'homework' && event.performers && (
                         <span className="detail-item">
                           <i className="fas fa-user-friends"></i> 
-                          {event.performers} {event.category === 'homework' ? 'volunteers' : 'performers'}
+                          {event.performers} performers
                         </span>
                       )}
                     </div>
@@ -322,31 +597,35 @@ const Timeline: React.FC = () => {
                 />
               </div>
               
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="attendees">Expected Attendees</label>
-                  <input
-                    type="text"
-                    id="attendees"
-                    name="attendees"
-                    value={formData.attendees}
-                    onChange={handleFormChange}
-                  />
+              {formData.category !== 'homework' && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="attendees">Expected Attendees</label>
+                    <input
+                      type="number"
+                      id="attendees"
+                      name="attendees"
+                      value={formData.attendees}
+                      onChange={handleFormChange}
+                      min="0"
+                      placeholder="Enter number of attendees"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="performers">Performers</label>
+                    <input
+                      type="number"
+                      id="performers"
+                      name="performers"
+                      value={formData.performers}
+                      onChange={handleFormChange}
+                      min="0"
+                      placeholder="Enter number of performers"
+                    />
+                  </div>
                 </div>
-                
-                <div className="form-group">
-                  <label htmlFor="performers">
-                    {formData.category === 'homework' ? 'Volunteers' : 'Performers'}
-                  </label>
-                  <input
-                    type="text"
-                    id="performers"
-                    name="performers"
-                    value={formData.performers}
-                    onChange={handleFormChange}
-                  />
-                </div>
-              </div>
+              )}
               
               <div className="form-group">
                 <label htmlFor="description">Description</label>
@@ -359,6 +638,96 @@ const Timeline: React.FC = () => {
                 />
               </div>
               
+              {/* Photo Upload Section */}
+              <div className="form-group" style={{ marginTop: '1.5rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', border: '2px solid #c4ae7b' }}>
+                <label htmlFor="photo" style={{ fontWeight: '600', color: '#333', fontSize: '1rem', marginBottom: '0.5rem', display: 'block' }}>
+                  EVENT PHOTO(S)
+                </label>
+                <div style={{
+                  border: '2px dashed #c4ae7b',
+                  borderRadius: '8px',
+                  padding: '1.5rem',
+                  textAlign: 'center',
+                  background: '#ffffff',
+                  marginTop: '0.5rem'
+                }}>
+                  <input
+                    type="file"
+                    id="photo"
+                    name="photo"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoChange}
+                    style={{ 
+                      display: 'none'
+                    }}
+                  />
+                  <label 
+                    htmlFor="photo"
+                    style={{
+                      display: 'inline-block',
+                      padding: '0.75rem 1.5rem',
+                      background: '#c4ae7b',
+                      color: 'white',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      border: 'none',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = '#b39a6a';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = '#c4ae7b';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    Choose Files
+                  </label>
+                  <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.85rem', color: '#666' }}>
+                    Select image files (JPG, PNG, GIF) - Multiple files allowed
+                  </p>
+                </div>
+                {formData.photos.length > 0 && (
+                  <div className="photo-preview" style={{
+                    marginTop: '1rem',
+                    padding: '1rem',
+                    background: '#ffffff',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '8px',
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: '#666' }}>
+                      Photo Preview ({formData.photos.length} file{formData.photos.length > 1 ? 's' : ''} selected):
+                    </p>
+                    <img 
+                      src={URL.createObjectURL(formData.photos[0])} 
+                      alt="Preview" 
+                      style={{ 
+                        maxWidth: '250px', 
+                        maxHeight: '180px',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      }}
+                    />
+                    {formData.photos.length > 1 && (
+                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: '#666' }}>
+                        +{formData.photos.length - 1} more photo{formData.photos.length > 2 ? 's' : ''}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.5rem', display: 'block', textAlign: 'center' }}>
+                  Adding a photo helps make your event more engaging
+                </small>
+              </div>
+
               <button type="submit" className="timeline-submit-btn">
                 <i className="fas fa-plus"></i>
                 Add Event

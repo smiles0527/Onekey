@@ -1,0 +1,11 @@
+/* Navigation Fixes for Admin Indicator */
+.nav-links .admin-indicator {
+  margin-right: 0;
+  transition: all 0.3s ease;
+}
+
+.nav-links .admin-indicator:hover {
+  background: rgba(196, 174, 123, 0.15);
+  border-color: rgba(196, 174, 123, 0.3);
+  transform: translateY(-1px);
+} 

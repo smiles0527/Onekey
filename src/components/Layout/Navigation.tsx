@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/authStore';
 import AuthModal from '../Auth/AuthModal';
 import RegisterModal from '../Auth/RegisterModal';
 import UserMenu from '../Auth/UserMenu';
+import AdminMenu from './AdminMenu';
 
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +13,7 @@ const Navigation: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   const location = useLocation();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, hasPermission } = useAuthStore();
   
   const isHomePage = location.pathname === '/';
 
@@ -60,14 +61,11 @@ const Navigation: React.FC = () => {
               <UserMenu user={user} />
             ) : (
               <>
-                <button className="register-btn" onClick={() => setShowRegisterModal(true)}>
-                  <i className="fas fa-user-plus"></i>
-                  Sign Up
-                </button>
-                <button className="login-btn" onClick={handleAuthClick}>
+                {/* Login button moved to footer */}
+                {/* <button className="login-btn" onClick={handleAuthClick}>
                   <i className="fas fa-sign-in-alt"></i>
                   Login
-                </button>
+                </button> */}
               </>
             )}
           </div>
@@ -80,17 +78,16 @@ const Navigation: React.FC = () => {
               <Link to="/about" onClick={closeMenu}>About</Link>
             </li>
             <li>
-              <Link to="/projects" onClick={closeMenu}>Projects</Link>
-            </li>
-            <li>
               <Link to="/timeline" onClick={closeMenu}>Timeline</Link>
-            </li>
-            <li>
-              <Link to="/get-involved" onClick={closeMenu}>Get Involved</Link>
             </li>
             <li>
               <Link to="/team" onClick={closeMenu}>Meet Our Team</Link>
             </li>
+            {isAuthenticated && user && hasPermission('basic_admin') && (
+              <li className="admin-menu-item">
+                <AdminMenu />
+              </li>
+            )}
           </ul>
         </nav>
       </header>

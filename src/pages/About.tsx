@@ -64,7 +64,7 @@ const About: React.FC = () => {
             <div className="philosophy-main">
               <h3>Where Passion Meets Purpose</h3>
               <p className="lead-text">OneKey was born from a simple belief: that music has the power to bridge generations and create lasting connections in our community.</p>
-              <p>Founded in 2020 by Curtis Wei and Ethan Xie, our organization began as a small initiative to bring musical performances to local senior living facilities. What started as weekend concerts has grown into a comprehensive community service program touching the lives of hundreds of students and seniors alike.</p>
+              <p>Founded in 2020, our organization began as a small initiative to bring musical performances to local senior living facilities. What started as weekend concerts has grown into a comprehensive community service program touching the lives of hundreds of students and seniors alike.</p>
               <p>Today, OneKey stands as a testament to the impact young people can make when given the opportunity to serve. Our volunteers don't just perform music—they create moments of joy, forge meaningful relationships, and develop leadership skills that will serve them throughout their lives.</p>
             </div>
           </div>
@@ -84,7 +84,7 @@ const About: React.FC = () => {
               <div className="milestone-year">2020</div>
               <div className="milestone-content">
                 <h3>The Beginning</h3>
-                <p>Curtis Wei and Ethan Xie organize the first senior home concert with just 5 student volunteers, performing for 20 residents at Sunset Manor.</p>
+                <p>OneKey organizes the first senior home concert with just 5 student volunteers, performing for 20 residents at Sunset Manor.</p>
                 <div className="milestone-tag">FOUNDING</div>
               </div>
             </div>
@@ -113,40 +113,6 @@ const About: React.FC = () => {
                 <h3>Community Recognition</h3>
                 <p>Received the Youth Volunteer Excellence Award and began our major fundraising initiatives for local families in need.</p>
                 <div className="milestone-tag">RECOGNITION</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Leadership Section - Team Showcase */}
-      <section className="leadership-section">
-        <div className="container">
-          <div className="leadership-header">
-            <h2>Leadership Team</h2>
-            <p>The visionaries behind our mission</p>
-          </div>
-          
-          <div className="leadership-grid">
-            <div className="team-member">
-              <div className="member-image">
-                <img src="/pics/curtiswei.jpg" alt="Curtis Wei" />
-              </div>
-              <div className="member-info">
-                <h3>Curtis Wei</h3>
-                <span className="member-role">Co-Founder & Musical Director</span>
-                <p>"Music transcends age, background, and circumstance. Through OneKey, we've discovered that a simple melody can bridge any gap and create lasting friendships."</p>
-              </div>
-            </div>
-            
-            <div className="team-member">
-              <div className="member-image">
-                <img src="/pics/ethanxie.jpg" alt="Ethan Xie" />
-              </div>
-              <div className="member-info">
-                <h3>Ethan Xie</h3>
-                <span className="member-role">Co-Founder & Operations Manager</span>
-                <p>"Every volunteer hour represents more than service—it's personal growth, community building, and the foundation of tomorrow's leaders."</p>
               </div>
             </div>
           </div>
@@ -246,7 +212,6 @@ const About: React.FC = () => {
             <h2>Ready to Make a Difference?</h2>
             <p>Join OneKey and become part of a student-driven organization that's transforming communities through music, education, and service. Whether you're a performer, tutor, or community supporter, there's a place for you in our mission.</p>
             <div className="join-buttons">
-              <Link to="/get-involved" className="btn-primary">Become a Volunteer</Link>
               <Link to="/contact" className="btn-secondary">Contact Us</Link>
             </div>
           </div>
