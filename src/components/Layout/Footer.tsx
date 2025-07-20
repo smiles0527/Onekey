@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="footer-content">
         <div className="footer-info">
           <div className="footer-logo">ONEKEY</div>
-          <p className="footer-tagline">Student volunteers making a difference</p>
+          <p className="footer-tagline">Student volunteers bridging generations through music, education, and community service</p>
           <p className="footer-contact">on3keymusic@gmail.com</p>
         </div>
         
@@ -15,8 +15,11 @@ const Footer: React.FC = () => {
           <h4>Navigate</h4>
           <Link to="/">Home</Link>
           <Link to="/about">About Us</Link>
+          <Link to="/mission">Our Mission</Link>
           <Link to="/projects">Projects</Link>
+          <Link to="/timeline">Timeline</Link>
           <Link to="/get-involved">Get Involved</Link>
+          <Link to="/contact">Contact</Link>
         </div>
         
         <div className="footer-connect">
@@ -34,13 +37,16 @@ const Footer: React.FC = () => {
             <a href="https://linkedin.com/company/onekey" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <i className="fab fa-linkedin"></i>
             </a>
+            <a href="mailto:on3keymusic@gmail.com" aria-label="Email">
+              <i className="fas fa-envelope"></i>
+            </a>
           </div>
         </div>
       </div>
       
       <div className="footer-bottom">
-        <p>&copy; 2023 ONEKEY Student Volunteers</p>
-        <p className="footer-school">Curtis Wei and Ethan Xie</p>
+        <p>&copy; 2024 OneKey Student Volunteers. All rights reserved.</p>
+        <p className="footer-school">Founded by Curtis Wei and Ethan Xie</p>
       </div>
     </footer>
   );

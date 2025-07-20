@@ -100,19 +100,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        
-        <div style={{ 
-          marginTop: '1rem', 
-          padding: '0.75rem', 
-          backgroundColor: '#f8f9fa', 
-          borderRadius: '4px',
-          fontSize: '0.9rem',
-          color: '#666'
-        }}>
-          <strong>Demo Credentials:</strong><br />
-          Username: admin<br />
-          Password: admin
-        </div>
       </div>
     </div>
   );

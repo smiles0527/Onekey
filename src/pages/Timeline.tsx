@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { format } from 'date-fns';
@@ -22,6 +22,41 @@ const Timeline: React.FC = () => {
     duration: '',
     description: ''
   });
+
+  // Smooth scrolling animations - Constance style
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+          
+          // Add staggered animations for child elements
+          const children = entry.target.querySelectorAll('.timeline-item, .filter-btn, .timeline-event-card');
+          children.forEach((child, index) => {
+            setTimeout(() => {
+              child.classList.add('animate');
+            }, index * 100);
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Add animation classes to sections
+    const animateElements = document.querySelectorAll('.timeline-hero, .timeline-filters, .timeline-content-section');
+    
+    animateElements.forEach((el, index) => {
+      el.classList.add('animate-on-scroll');
+      el.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const categories = [
     { id: 'performances', label: 'Performances', icon: 'fas fa-music' },
@@ -73,44 +108,66 @@ const Timeline: React.FC = () => {
 
   return (
     <div className="timeline-page">
-      <div className="container">
-        <header className="timeline-header">
-          <h1>Our Timeline</h1>
-          <p>Explore our journey of community service, performances, and educational initiatives.</p>
-        </header>
-
-        {/* Admin Controls */}
-        {canManageEvents && (
-          <div className="admin-controls">
-            <button 
-              className="add-event-btn"
-              onClick={() => setShowAddModal(true)}
-            >
-              <i className="fas fa-plus"></i>
-              Add New Event
-            </button>
+      {/* Hero Section - Constance Style */}
+      <section className="timeline-hero">
+        <div className="hero-background">
+          <div className="hero-overlay"></div>
+          <div className="container">
+            <div className="hero-content">
+              <h1>Our Timeline</h1>
+              <p className="hero-subtitle">Explore our journey of community service, performances, and educational initiatives that bridge generations through music</p>
+              <div className="hero-accent-line"></div>
+            </div>
           </div>
-        )}
-
-        {/* Category Filters */}
-        <div className="category-filters">
-          {categories.map(category => (
-            <button
-              key={category.id}
-              className={`filter-btn ${activeTab === category.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(category.id as typeof activeTab)}
-            >
-              <i className={category.icon}></i>
-              {category.label}
-            </button>
-          ))}
         </div>
+      </section>
 
-        {/* Timeline Content */}
-        <div className="timeline-content">
+      {/* Timeline Filters Section */}
+      <section className="timeline-filters">
+        <div className="container">
+          <div className="timeline-header">
+            <h2>EXPLORE OUR INITIATIVES</h2>
+            <p>Three pillars of community service</p>
+          </div>
+
+          {/* Admin Controls */}
+          {canManageEvents && (
+            <div className="admin-controls">
+              <button 
+                className="add-event-btn"
+                onClick={() => setShowAddModal(true)}
+              >
+                <i className="fas fa-plus"></i>
+                Add New Event
+              </button>
+            </div>
+          )}
+
+          {/* Category Filters */}
+          <div className="category-filters">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                className={`filter-btn ${activeTab === category.id ? 'active' : ''}`}
+                onClick={() => handleTabChange(category.id as typeof activeTab)}
+              >
+                <i className={category.icon}></i>
+                <span>{category.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline Content Section */}
+      <section className="timeline-content-section">
+        <div className="container">
           {currentEvents.length === 0 ? (
             <div className="empty-state">
-              <i className={categories.find(c => c.id === activeTab)?.icon}></i>
+              <div className="empty-icon">
+                <i className={categories.find(c => c.id === activeTab)?.icon}></i>
+              </div>
+              <h3>Coming Soon</h3>
               <p>{categories.find(c => c.id === activeTab)?.label} events will be added here soon!</p>
             </div>
           ) : (
@@ -123,11 +180,14 @@ const Timeline: React.FC = () => {
                     <span className="year">{format(new Date(event.date), 'yyyy')}</span>
                   </div>
                   
-                  <div className="timeline-icon">
-                    <i className={categories.find(c => c.id === event.category)?.icon}></i>
+                  <div className="timeline-connector">
+                    <div className="timeline-icon">
+                      <i className={categories.find(c => c.id === event.category)?.icon}></i>
+                    </div>
+                    <div className="timeline-line"></div>
                   </div>
                   
-                  <div className="timeline-content-item">
+                  <div className="timeline-event-card">
                     <div className="event-header">
                       <h3>{event.name}</h3>
                       {canManageEvents && (
@@ -136,24 +196,25 @@ const Timeline: React.FC = () => {
                           onClick={() => setShowConfirmDelete(event.id)}
                         >
                           <i className="fas fa-trash"></i>
-                          Remove
                         </button>
                       )}
                     </div>
                     
-                    {event.location && (
-                      <p className="event-location">
-                        <i className="fas fa-map-marker-alt"></i> 
-                        {event.location}
-                      </p>
-                    )}
-                    
-                    {event.time && (
-                      <p className="event-time">
-                        <i className="fas fa-clock"></i> 
-                        {event.time}
-                      </p>
-                    )}
+                    <div className="event-meta">
+                      {event.location && (
+                        <span className="event-meta-item">
+                          <i className="fas fa-map-marker-alt"></i> 
+                          {event.location}
+                        </span>
+                      )}
+                      
+                      {event.time && (
+                        <span className="event-meta-item">
+                          <i className="fas fa-clock"></i> 
+                          {event.time}
+                        </span>
+                      )}
+                    </div>
                     
                     {event.description && (
                       <p className="event-description">{event.description}</p>
@@ -179,12 +240,12 @@ const Timeline: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </section>
 
       {/* Add Event Modal */}
       {showAddModal && (
         <div className="modal-overlay active">
-          <div className="modal-content">
+          <div className="modal-content timeline-modal">
             <div className="modal-header">
               <h2>Add New Event</h2>
               <button 
@@ -195,44 +256,59 @@ const Timeline: React.FC = () => {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Event Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  required
-                />
+            <form onSubmit={handleSubmit} className="timeline-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="name">Event Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="category">Category</label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleFormChange}
+                    required
+                  >
+                    <option value="performances">Performances</option>
+                    <option value="homework">Homework Help</option>
+                    <option value="charity">Charity Events</option>
+                  </select>
+                </div>
               </div>
               
-              <div className="form-group">
-                <label htmlFor="date">Date</label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleFormChange}
-                  required
-                >
-                  <option value="performances">Performances</option>
-                  <option value="homework">Homework Help</option>
-                  <option value="charity">Charity Events</option>
-                </select>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="date">Date</label>
+                  <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="time">Time</label>
+                  <input
+                    type="time"
+                    id="time"
+                    name="time"
+                    value={formData.time}
+                    onChange={handleFormChange}
+                  />
+                </div>
               </div>
               
               <div className="form-group">
@@ -246,39 +322,30 @@ const Timeline: React.FC = () => {
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="time">Time</label>
-                <input
-                  type="time"
-                  id="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleFormChange}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="attendees">Expected Attendees</label>
-                <input
-                  type="text"
-                  id="attendees"
-                  name="attendees"
-                  value={formData.attendees}
-                  onChange={handleFormChange}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="performers">
-                  {formData.category === 'homework' ? 'Volunteers' : 'Performers'}
-                </label>
-                <input
-                  type="text"
-                  id="performers"
-                  name="performers"
-                  value={formData.performers}
-                  onChange={handleFormChange}
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="attendees">Expected Attendees</label>
+                  <input
+                    type="text"
+                    id="attendees"
+                    name="attendees"
+                    value={formData.attendees}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="performers">
+                    {formData.category === 'homework' ? 'Volunteers' : 'Performers'}
+                  </label>
+                  <input
+                    type="text"
+                    id="performers"
+                    name="performers"
+                    value={formData.performers}
+                    onChange={handleFormChange}
+                  />
+                </div>
               </div>
               
               <div className="form-group">
@@ -292,7 +359,8 @@ const Timeline: React.FC = () => {
                 />
               </div>
               
-              <button type="submit" className="submit-btn">
+              <button type="submit" className="timeline-submit-btn">
+                <i className="fas fa-plus"></i>
                 Add Event
               </button>
             </form>
@@ -303,7 +371,7 @@ const Timeline: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {showConfirmDelete && (
         <div className="modal-overlay active">
-          <div className="modal-content">
+          <div className="modal-content timeline-modal">
             <div className="modal-header">
               <h2>Confirm Delete</h2>
               <button 
@@ -314,7 +382,9 @@ const Timeline: React.FC = () => {
               </button>
             </div>
             
-            <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+            <div className="modal-body">
+              <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+            </div>
             
             <div className="modal-actions">
               <button 
@@ -333,8 +403,6 @@ const Timeline: React.FC = () => {
           </div>
         </div>
       )}
-
-
     </div>
   );
 };

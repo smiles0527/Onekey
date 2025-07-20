@@ -1,136 +1,257 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const About: React.FC = () => {
+  // Smooth scrolling animations - Constance style
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+          
+          // Add staggered animations for child elements
+          const children = entry.target.querySelectorAll('.value-card, .team-member, .milestone-item');
+          children.forEach((child, index) => {
+            setTimeout(() => {
+              child.classList.add('animate');
+            }, index * 100);
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Add animation classes to sections
+    const animateElements = document.querySelectorAll('.about-hero, .philosophy-about, .story-timeline, .leadership-section, .impact-stats, .join-about');
+    
+    animateElements.forEach((el, index) => {
+      el.classList.add('animate-on-scroll');
+      el.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="about-page">
-      <section className="intro">
-        <div className="container">
-          <div className="intro-content">
-            <h1>About OneKey</h1>
-            <p>
-              OneKey is a student-driven organization dedicated to making a positive impact 
-              in our community through music, education, and service. Our mission is to unlock 
-              the potential of young people and foster meaningful connections across generations.
-            </p>
-            <div className="intro-accent"></div>
-          </div>
-        </div>
-      </section>
-
-      <section className="story-section">
-        <div className="container">
-          <div className="story-container">
-            <div className="story-text">
-              <h2>Our Story</h2>
-              <p>
-                Founded in 2023 by a group of passionate students, OneKey began as a small 
-                initiative to bring music and joy to local senior homes. Over time, our team 
-                has grown, and so has our impact. Today, we organize performances and tutoring 
-                sessions for people of all ages.
-              </p>
-              <p>
-                We believe that everyone has something valuable to share, and we strive to 
-                create opportunities for students to give back to the community, while earning{' '}
-                <span className="highlight">volunteer hours</span>. Our volunteers come from 
-                diverse backgrounds, united by a common goal: to make a difference, one person at a time.
-              </p>
-            </div>
-            <div className="story-visual">
-              <div className="story-image-placeholder">
-                <i className="fas fa-music"></i>
-                <span>Building Communities Through Music</span>
-              </div>
+      {/* Hero Section - Constance Style */}
+      <section className="about-hero">
+        <div className="hero-background">
+          <div className="hero-overlay"></div>
+          <div className="container">
+            <div className="hero-content">
+              <h1>About OneKey</h1>
+              <p className="hero-subtitle">A student-driven organization bridging generations through music, education, and community service</p>
+              <div className="hero-accent-line"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="quote-banner">
+      {/* Philosophy Section - Like Constance */}
+      <section className="philosophy-about">
         <div className="container">
-          <div className="quote-content">
-            <blockquote>
-              "Where words fail, music speaks."
-            </blockquote>
-            <p className="quote-author">– Hans Christian Andersen</p>
+          <div className="philosophy-header">
+            <h2>OUR STORY</h2>
+          </div>
+          
+          <div className="philosophy-content">
+            <div className="philosophy-main">
+              <h3>Where Passion Meets Purpose</h3>
+              <p className="lead-text">OneKey was born from a simple belief: that music has the power to bridge generations and create lasting connections in our community.</p>
+              <p>Founded in 2020 by Curtis Wei and Ethan Xie, our organization began as a small initiative to bring musical performances to local senior living facilities. What started as weekend concerts has grown into a comprehensive community service program touching the lives of hundreds of students and seniors alike.</p>
+              <p>Today, OneKey stands as a testament to the impact young people can make when given the opportunity to serve. Our volunteers don't just perform music—they create moments of joy, forge meaningful relationships, and develop leadership skills that will serve them throughout their lives.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="values-section">
+      {/* Story Timeline - Constance Landmark Style */}
+      <section className="story-timeline">
         <div className="container">
-          <div className="values-container">
-            <h2>Our Impact</h2>
-            <div className="values-grid">
-              <div className="value-card">
-                <div className="value-icon">
-                  <i className="fas fa-handshake"></i>
-                </div>
-                <h3>Money Raised</h3>
-                <p>
-                  We work together, support each other, and celebrate our collective 
-                  achievements through fundraising initiatives.
-                </p>
+          <div className="timeline-header">
+            <h2>Our Journey</h2>
+            <p>Milestones that shaped our mission</p>
+          </div>
+          
+          <div className="timeline-milestones">
+            <div className="milestone-item">
+              <div className="milestone-year">2020</div>
+              <div className="milestone-content">
+                <h3>The Beginning</h3>
+                <p>Curtis Wei and Ethan Xie organize the first senior home concert with just 5 student volunteers, performing for 20 residents at Sunset Manor.</p>
+                <div className="milestone-tag">FOUNDING</div>
               </div>
-              <div className="value-card">
-                <div className="value-icon">
-                  <i className="fas fa-heart"></i>
-                </div>
-                <h3>Community Partners</h3>
-                <p>
-                  We lead with empathy and strive to make a positive impact on everyone 
-                  we meet through partnerships.
-                </p>
+            </div>
+            
+            <div className="milestone-item reverse">
+              <div className="milestone-year">2021</div>
+              <div className="milestone-content">
+                <h3>Program Expansion</h3>
+                <p>Launch of weekly concert series across 3 senior facilities, establishing our signature blend of classical and contemporary performances.</p>
+                <div className="milestone-tag">GROWTH</div>
               </div>
-              <div className="value-card">
-                <div className="value-icon">
-                  <i className="fas fa-seedling"></i>
-                </div>
-                <h3>Volunteer Hours</h3>
-                <p>
-                  We encourage learning, curiosity, and personal development for all 
-                  our members through service.
-                </p>
+            </div>
+            
+            <div className="milestone-item">
+              <div className="milestone-year">2022</div>
+              <div className="milestone-content">
+                <h3>Educational Outreach</h3>
+                <p>Introduction of tutoring programs, expanding our mission beyond music to include academic support for students of all ages.</p>
+                <div className="milestone-tag">EDUCATION</div>
               </div>
-              <div className="value-card">
-                <div className="value-icon">
-                  <i className="fas fa-users"></i>
-                </div>
-                <h3>Members</h3>
-                <p>
-                  We believe in building strong, inclusive communities where everyone 
-                  belongs and can contribute.
-                </p>
+            </div>
+            
+            <div className="milestone-item reverse">
+              <div className="milestone-year">2023</div>
+              <div className="milestone-content">
+                <h3>Community Recognition</h3>
+                <p>Received the Youth Volunteer Excellence Award and began our major fundraising initiatives for local families in need.</p>
+                <div className="milestone-tag">RECOGNITION</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="join-section">
+      {/* Leadership Section - Team Showcase */}
+      <section className="leadership-section">
+        <div className="container">
+          <div className="leadership-header">
+            <h2>Leadership Team</h2>
+            <p>The visionaries behind our mission</p>
+          </div>
+          
+          <div className="leadership-grid">
+            <div className="team-member">
+              <div className="member-image">
+                <img src="/pics/curtiswei.jpg" alt="Curtis Wei" />
+              </div>
+              <div className="member-info">
+                <h3>Curtis Wei</h3>
+                <span className="member-role">Co-Founder & Musical Director</span>
+                <p>"Music transcends age, background, and circumstance. Through OneKey, we've discovered that a simple melody can bridge any gap and create lasting friendships."</p>
+              </div>
+            </div>
+            
+            <div className="team-member">
+              <div className="member-image">
+                <img src="/pics/ethanxie.jpg" alt="Ethan Xie" />
+              </div>
+              <div className="member-info">
+                <h3>Ethan Xie</h3>
+                <span className="member-role">Co-Founder & Operations Manager</span>
+                <p>"Every volunteer hour represents more than service—it's personal growth, community building, and the foundation of tomorrow's leaders."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Statistics - Dark Section */}
+      <section className="impact-stats">
+        <div className="container">
+          <div className="stats-header">
+            <h2>OUR IMPACT IN NUMBERS</h2>
+            <p>as at December 2024</p>
+          </div>
+          
+          <div className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-number">200+</div>
+              <div className="stat-label">Seniors Served Weekly</div>
+            </div>
+            
+            <div className="stat-item">
+              <div className="stat-number">85+</div>
+              <div className="stat-label">Student Volunteers</div>
+            </div>
+            
+            <div className="stat-item">
+              <div className="stat-number">2,500+</div>
+              <div className="stat-label">Volunteer Hours</div>
+            </div>
+            
+            <div className="stat-item">
+              <div className="stat-number">$15,000+</div>
+              <div className="stat-label">Funds Raised</div>
+            </div>
+            
+            <div className="stat-item">
+              <div className="stat-number">5</div>
+              <div className="stat-label">Partner Facilities</div>
+            </div>
+            
+            <div className="stat-item">
+              <div className="stat-number">150+</div>
+              <div className="stat-label">Performances Given</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Grid - Constance Style */}
+      <section className="values-about">
+        <div className="container">
+          <div className="values-header">
+            <h2>Our Values</h2>
+            <p>The principles that guide our mission</p>
+          </div>
+          
+          <div className="values-grid-about">
+            <div className="value-card">
+              <div className="value-icon">
+                <i className="fas fa-heart"></i>
+              </div>
+              <h3>COMPASSION</h3>
+              <p>We lead with empathy and genuine care for every person we serve, creating meaningful connections across generations.</p>
+            </div>
+            
+            <div className="value-card">
+              <div className="value-icon">
+                <i className="fas fa-star"></i>
+              </div>
+              <h3>EXCELLENCE</h3>
+              <p>We strive for the highest standards in our performances, programs, and service to the community.</p>
+            </div>
+            
+            <div className="value-card">
+              <div className="value-icon">
+                <i className="fas fa-users"></i>
+              </div>
+              <h3>INCLUSIVITY</h3>
+              <p>We welcome volunteers from all backgrounds and ensure everyone has a place in our community of service.</p>
+            </div>
+            
+            <div className="value-card">
+              <div className="value-icon">
+                <i className="fas fa-seedling"></i>
+              </div>
+              <h3>GROWTH</h3>
+              <p>We believe in the power of service to develop character, leadership, and lifelong skills in our volunteers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Join Section - Luxury CTA */}
+      <section className="join-about">
         <div className="container">
           <div className="join-content">
-            <h2>Join Us</h2>
-            <p>
-              Interested in volunteering, performing, or supporting our mission? We welcome 
-              new members and partners! Reach out to us to learn more about how you can get 
-              involved with OneKey.
-            </p>
-            <div className="cta-buttons">
-              <Link to="/contact" className="cta-button">
-                <i className="fas fa-envelope"></i>
-                Contact Us
-              </Link>
-              <Link to="/get-involved" className="cta-button secondary">
-                <i className="fas fa-hands-helping"></i>
-                Get Involved
-              </Link>
+            <h2>Ready to Make a Difference?</h2>
+            <p>Join OneKey and become part of a student-driven organization that's transforming communities through music, education, and service. Whether you're a performer, tutor, or community supporter, there's a place for you in our mission.</p>
+            <div className="join-buttons">
+              <Link to="/get-involved" className="btn-primary">Become a Volunteer</Link>
+              <Link to="/contact" className="btn-secondary">Contact Us</Link>
             </div>
           </div>
         </div>
       </section>
-
-
     </div>
   );
 };
