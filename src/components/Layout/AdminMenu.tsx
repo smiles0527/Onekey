@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 const AdminMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { hasPermission, user } = useAuthStore();
+  const { isAuthenticated, hasPermission } = useAuthStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

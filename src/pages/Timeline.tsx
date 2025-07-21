@@ -60,7 +60,7 @@ const Timeline: React.FC = () => {
     
     // Check after a short delay to allow hydration
     setTimeout(checkStore, 500);
-  }, [events, activeTab, getEventsByCategory, checkForDataLoss]);
+  }, [events, activeTab, getEventsByCategory]);
 
   // Smooth scrolling animations - Constance style
   useEffect(() => {
