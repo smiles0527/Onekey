@@ -264,7 +264,7 @@ const GetInvolved: React.FC = () => {
           <div className="volunteers-grid">
             <div className="volunteer-card">
               <div className="volunteer-image">
-                <img src="/pics/alexzhang.jpg" alt="Alex Zhang" />
+                <img src="/Onekey/pics/alexzhang.jpg" alt="Alex Zhang" />
               </div>
               <div className="volunteer-info">
                 <h3>Alex Zhang</h3>
@@ -279,7 +279,7 @@ const GetInvolved: React.FC = () => {
             
             <div className="volunteer-card">
               <div className="volunteer-image">
-                <img src="/pics/selenayu.jpg" alt="Selena Yu" />
+                <img src="/Onekey/pics/selenayu.jpg" alt="Selena Yu" />
               </div>
               <div className="volunteer-info">
                 <h3>Selena Yu</h3>

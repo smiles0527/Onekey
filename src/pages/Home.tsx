@@ -5,17 +5,17 @@ const Home: React.FC = () => {
   
   const slides = [
     {
-      image: '/pics/Slide_1.jpg',
+      image: '/Onekey/pics/Slide_1.jpg',
       title: 'OneKey',
       subtitle: 'Student volunteers making a difference through music and community service'
     },
     {
-      image: '/pics/Slide_2.jpg',
+      image: '/Onekey/pics/Slide_2.jpg',
       title: 'Our Mission',
       subtitle: 'Bridging generations through the universal language of music'
     },
     {
-      image: '/pics/Slide_3.JPG',
+      image: '/Onekey/pics/Slide_3.JPG',
       title: 'Community Impact',
       subtitle: 'Creating lasting connections across our community'
     }
@@ -210,7 +210,7 @@ const Home: React.FC = () => {
                 <div className="landmark-tag">FOUNDING</div>
               </div>
               <div className="landmark-image">
-                <img src="/pics/curtiswei.jpg" alt="OneKey Founding" />
+                <img src="/Onekey/pics/curtiswei.jpg" alt="OneKey Founding" />
               </div>
             </div>
             
@@ -222,7 +222,7 @@ const Home: React.FC = () => {
                 <div className="landmark-tag">COMMUNITY SERVICE</div>
               </div>
               <div className="landmark-image">
-                <img src="/pics/ethanxie.jpg" alt="Senior Home Concerts" />
+                <img src="/Onekey/pics/ethanxie.jpg" alt="Senior Home Concerts" />
               </div>
             </div>
             
@@ -234,7 +234,7 @@ const Home: React.FC = () => {
                 <div className="landmark-tag">EDUCATION</div>
               </div>
               <div className="landmark-image">
-                <img src="/pics/selenayu.jpg" alt="Tutoring Program" />
+                <img src="/Onekey/pics/selenayu.jpg" alt="Tutoring Program" />
               </div>
             </div>
             
@@ -246,7 +246,7 @@ const Home: React.FC = () => {
                 <div className="landmark-tag">FUNDRAISING</div>
               </div>
               <div className="landmark-image">
-                <img src="/pics/jessicayu.jpg" alt="Fundraising" />
+                <img src="/Onekey/pics/jessicayu.jpg" alt="Fundraising" />
               </div>
             </div>
             
@@ -258,7 +258,7 @@ const Home: React.FC = () => {
                 <div className="landmark-tag">RECOGNITION</div>
               </div>
               <div className="landmark-image">
-                <img src="/pics/gabbyliu.jpg" alt="Recognition" />
+                <img src="/Onekey/pics/gabbyliu.jpg" alt="Recognition" />
               </div>
             </div>
           </div>
@@ -313,7 +313,7 @@ const Home: React.FC = () => {
           <div className="areas-grid">
             <div className="area-card music">
               <div className="area-image">
-                <img src="/pics/alexzhang.jpg" alt="Music Services" />
+                <img src="/Onekey/pics/alexzhang.jpg" alt="Music Services" />
               </div>
               <div className="area-content">
                 <h3>Music</h3>
@@ -323,7 +323,7 @@ const Home: React.FC = () => {
             
             <div className="area-card education">
               <div className="area-image">
-                <img src="/pics/shanezhang.jpg" alt="Education Services" />
+                <img src="/Onekey/pics/shanezhang.jpg" alt="Education Services" />
               </div>
               <div className="area-content">
                 <h3>Education</h3>
@@ -333,7 +333,7 @@ const Home: React.FC = () => {
             
             <div className="area-card community">
               <div className="area-image">
-                <img src="/pics/elizasun.jpg" alt="Community Services" />
+                <img src="/Onekey/pics/elizasun.jpg" alt="Community Services" />
               </div>
               <div className="area-content">
                 <h3>Community</h3>

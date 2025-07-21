@@ -53,7 +53,7 @@ const Dashboard: React.FC = () => {
           <div className="hero-overlay"></div>
           <div className="hero-content">
             <h1>Dashboard</h1>
-            <p className="hero-subtitle">Welcome back, {user.firstName || user.username}</p>
+            <p className="hero-subtitle">Welcome back</p>
             <div className="hero-accent-line"></div>
           </div>
         </div>

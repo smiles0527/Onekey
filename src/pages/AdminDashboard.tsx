@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
+import { useTeamStore, TeamMember } from '../store/teamStore';
 import { backupTimelineData } from '../utils/persistenceTest';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, user, hasPermission, users, activityLogs, addUser } = useAuthStore();
+  const { 
+    isAuthenticated, 
+    user, 
+    hasPermission, 
+    users, 
+    activityLogs, 
+    addUser, 
+    removeUser, 
+    updateUserRole, 
+    updateUserStatus, 
+    changePassword,
+    logActivity
+  } = useAuthStore();
   const { events, addEvent, removeEvent, updateEvent } = useTimelineStore();
+  const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, toggleTeamMemberStatus } = useTeamStore();
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [showEditEventModal, setShowEditEventModal] = useState(false);
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [showEditTeamModal, setShowEditTeamModal] = useState(false);
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
+  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -40,6 +59,15 @@ const AdminDashboard: React.FC = () => {
     photo: null as File | null,
     photos: [] as File[]
   });
+  const [newTeamData, setNewTeamData] = useState({
+    name: '',
+    role: '',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'leadership' as TeamMember['section']
+  });
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -55,7 +83,7 @@ const AdminDashboard: React.FC = () => {
     const urlParams = new URLSearchParams(location.search);
     const tabParam = urlParams.get('tab');
     
-    if (tabParam && ['overview', 'users', 'logs', 'timeline'].includes(tabParam)) {
+    if (tabParam && ['overview', 'users', 'team', 'logs', 'timeline'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [isAuthenticated, user, hasPermission, navigate, location.search]);
@@ -66,12 +94,24 @@ const AdminDashboard: React.FC = () => {
 
   const getActionIcon = (action: string) => {
     switch (action.toLowerCase()) {
-      case 'login': return 'fas fa-sign-in';
-      case 'logout': return 'fas fa-sign-out';
+      case 'login': return 'fas fa-sign-in-alt';
+      case 'logout': return 'fas fa-sign-out-alt';
       case 'create': return 'fas fa-plus';
       case 'update': return 'fas fa-edit';
       case 'delete': return 'fas fa-trash';
-      default: return 'fas fa-info';
+      case 'failed_login': return 'fas fa-exclamation-triangle';
+      case 'change_role': return 'fas fa-user-tag';
+      case 'change_status': return 'fas fa-toggle-on';
+      case 'change_password': return 'fas fa-key';
+      case 'add_user': return 'fas fa-user-plus';
+      case 'remove_user': return 'fas fa-user-minus';
+      case 'add_event': return 'fas fa-calendar-plus';
+      case 'update_event': return 'fas fa-calendar-edit';
+      case 'delete_event': return 'fas fa-calendar-times';
+      case 'add_team_member': return 'fas fa-user-friends';
+      case 'update_team_member': return 'fas fa-user-edit';
+      case 'remove_team_member': return 'fas fa-user-slash';
+      default: return 'fas fa-info-circle';
     }
   };
 
@@ -93,7 +133,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      await addUser({
+      const newUser = await addUser({
         username: newUserData.username,
         email: newUserData.email,
         firstName: newUserData.firstName,
@@ -101,6 +141,11 @@ const AdminDashboard: React.FC = () => {
         role: newUserData.role as 'admin' | 'user',
         password: newUserData.password
       });
+      
+      // Log the user creation
+      if (user) {
+        logActivity(user.id, 'add_user', `Created new user: ${newUser.username} (${newUser.role})`);
+      }
       
       setShowCreateUserModal(false);
       setNewUserData({
@@ -157,6 +202,9 @@ const AdminDashboard: React.FC = () => {
         createdBy: user.id
       });
       
+      // Log the event creation
+      logActivity(user.id, 'add_event', `Created event: ${newEvent.name} (${newEvent.category})`);
+      
       setShowCreateEventModal(false);
       setNewEventData({
         name: '',
@@ -204,7 +252,13 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteEvent = (eventId: string) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
+      const event = events.find(e => e.id === eventId);
       removeEvent(eventId);
+      
+      // Log the event deletion
+      if (user && event) {
+        logActivity(user.id, 'delete_event', `Deleted event: ${event.name} (${event.category})`);
+      }
     }
   };
 
@@ -253,6 +307,9 @@ const AdminDashboard: React.FC = () => {
         photos: photoUrls
       });
       
+      // Log the event update
+      logActivity(user.id, 'update_event', `Updated event: ${editingEvent.name} (${editingEvent.category})`);
+      
       setShowEditEventModal(false);
       setEditingEvent(null);
       setNewEventData({
@@ -292,8 +349,166 @@ const AdminDashboard: React.FC = () => {
 
   const filteredLogs = activityLogs.filter(log => {
     const user = users.find(u => u.id === log.userId);
-    return user && user.username.toLowerCase().includes(searchTerm.toLowerCase());
+    const username = user ? user.username : 'Unknown';
+    const matchesSearch = searchTerm === '' || 
+                         username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         log.details.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
   });
+
+  const handleTeamInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewTeamData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCreateTeamMember = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const newMember = addTeamMember(newTeamData);
+      
+      // Log the team member creation
+      if (user) {
+        logActivity(user.id, 'add_team_member', `Added team member: ${newMember.name} (${newMember.section})`);
+      }
+      
+      setShowCreateTeamModal(false);
+      setNewTeamData({
+        name: '',
+        role: '',
+        school: '',
+        bio: '',
+        instagram: '',
+        image: '',
+        section: 'leadership'
+      });
+    } catch (error) {
+      console.error('Error creating team member:', error);
+      alert('Failed to create team member');
+    }
+  };
+
+  const handleEditTeamMember = (member: TeamMember) => {
+    setEditingTeamMember(member);
+    setNewTeamData({
+      name: member.name,
+      role: member.role,
+      school: member.school,
+      bio: member.bio,
+      instagram: member.instagram,
+      image: member.image,
+      section: member.section
+    });
+    setShowEditTeamModal(true);
+  };
+
+  const handleUpdateTeamMember = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTeamMember) return;
+
+    try {
+      updateTeamMember(editingTeamMember.id, newTeamData);
+      setShowEditTeamModal(false);
+      setEditingTeamMember(null);
+      setNewTeamData({
+        name: '',
+        role: '',
+        school: '',
+        bio: '',
+        instagram: '',
+        image: '',
+        section: 'leadership'
+      });
+    } catch (error) {
+      console.error('Error updating team member:', error);
+      alert('Failed to update team member');
+    }
+  };
+
+  const handleDeleteTeamMember = (memberId: string) => {
+    if (window.confirm('Are you sure you want to delete this team member?')) {
+      const member = teamMembers.find(m => m.id === memberId);
+      removeTeamMember(memberId);
+      
+      // Log the team member deletion
+      if (user && member) {
+        logActivity(user.id, 'remove_team_member', `Removed team member: ${member.name} (${member.section})`);
+      }
+    }
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setNewUserData({
+      username: user.username,
+      email: user.email,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      role: user.role,
+      password: '',
+      confirmPassword: ''
+    });
+    setShowEditUserModal(true);
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingUser) return;
+
+    if (newUserData.password && newUserData.password !== newUserData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      // Update user role
+      updateUserRole(editingUser.id, newUserData.role as User['role']);
+      
+      // Update password if provided
+      if (newUserData.password) {
+        changePassword(editingUser.id, newUserData.password);
+      }
+
+      setShowEditUserModal(false);
+      setEditingUser(null);
+      setNewUserData({
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: 'user',
+        password: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Failed to update user');
+    }
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      const targetUser = users.find(u => u.id === userId);
+      removeUser(userId);
+      
+      // Log the user deletion
+      if (user && targetUser) {
+        logActivity(user.id, 'remove_user', `Deleted user: ${targetUser.username}`);
+      }
+    }
+  };
+
+  const handleToggleUserStatus = (userId: string) => {
+    const targetUser = users.find(u => u.id === userId);
+    if (targetUser) {
+      updateUserStatus(userId, !targetUser.isActive);
+    }
+  };
 
   return (
     <div className="admin-dashboard">
@@ -301,9 +516,7 @@ const AdminDashboard: React.FC = () => {
       <header className="admin-header">
         <div className="admin-header-content">
           <h1 className="admin-title">Admin Dashboard</h1>
-          <div className="admin-actions">
-            <span className="text-muted">Welcome, {user.firstName || user.username}</span>
-          </div>
+          {/* Welcome message hidden */}
         </div>
       </header>
 
@@ -327,6 +540,16 @@ const AdminDashboard: React.FC = () => {
               >
                 <i className="fas fa-users"></i>
                 Users
+              </button>
+            )}
+            
+            {hasPermission('manage_users') && (
+              <button 
+                className={`sidebar-item ${activeTab === 'team' ? 'active' : ''}`}
+                onClick={() => setActiveTab('team')}
+              >
+                <i className="fas fa-user-friends"></i>
+                Edit Team
               </button>
             )}
             
@@ -358,7 +581,7 @@ const AdminDashboard: React.FC = () => {
           {activeTab === 'overview' && (
             <>
               <div className="content-header">
-                <h2 className="content-title">System Overview</h2>
+                <h2 className="content-title">Dashboard Overview</h2>
               </div>
               
               <div className="stats-grid">
@@ -494,11 +717,26 @@ const AdminDashboard: React.FC = () => {
                       <td>{formatDate(user.createdAt)}</td>
                       <td>
                         <div className="content-actions">
-                          <button className="btn btn-sm btn-icon">
+                          <button 
+                            className="btn btn-sm btn-icon"
+                            onClick={() => handleEditUser(user)}
+                            title="Edit User"
+                          >
                             <i className="fas fa-edit"></i>
                           </button>
+                          <button 
+                            className={`btn btn-sm btn-icon ${user.isActive ? 'btn-warning' : 'btn-success'}`}
+                            onClick={() => handleToggleUserStatus(user.id)}
+                            title={user.isActive ? 'Deactivate User' : 'Activate User'}
+                          >
+                            <i className={`fas ${user.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                          </button>
                           {hasPermission('delete_users') && (
-                            <button className="btn btn-sm btn-icon btn-danger">
+                            <button 
+                              className="btn btn-sm btn-icon btn-danger"
+                              onClick={() => handleDeleteUser(user.id)}
+                              title="Delete User"
+                            >
                               <i className="fas fa-trash"></i>
                             </button>
                           )}
@@ -556,6 +794,150 @@ const AdminDashboard: React.FC = () => {
             </>
           )}
 
+          {/* Team Management Tab */}
+          {activeTab === 'team' && hasPermission('manage_users') && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Team Management</h2>
+                <div className="content-actions">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => setShowCreateTeamModal(true)}
+                  >
+                    <i className="fas fa-plus"></i>
+                    Add Team Member
+                  </button>
+                </div>
+              </div>
+
+              <div className="search-bar">
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search team members..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select 
+                  className="filter-select"
+                  value={roleFilter}
+                  onChange={(e) => setRoleFilter(e.target.value)}
+                >
+                  <option value="all">All Sections</option>
+                  <option value="leadership">Leadership</option>
+                  <option value="communications">Communications</option>
+                  <option value="coordinators">Coordinators</option>
+                  <option value="alumni">Alumni</option>
+                </select>
+              </div>
+
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>School</th>
+                    <th>Section</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teamMembers
+                    .filter(member => {
+                      const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                           member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                           member.school.toLowerCase().includes(searchTerm.toLowerCase());
+                      const matchesSection = roleFilter === 'all' || member.section === roleFilter;
+                      return matchesSearch && matchesSection;
+                    })
+                    .map((member) => (
+                    <tr key={member.id}>
+                      <td>
+                        <img 
+                          src={member.image} 
+                          alt={member.name}
+                          style={{ 
+                            width: '60px', 
+                            height: '60px', 
+                            objectFit: 'cover',
+                            borderRadius: '8px',
+                            border: '2px solid #e2e8f0',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (nextElement) {
+                              nextElement.style.display = 'flex';
+                            }
+                          }}
+                        />
+                        <div 
+                          style={{ 
+                            width: '60px', 
+                            height: '60px', 
+                            background: '#f7fafc',
+                            borderRadius: '8px',
+                            display: 'none',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            color: '#a0aec0',
+                            border: '2px solid #e2e8f0'
+                          }}
+                        >
+                          No img
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <strong>{member.name}</strong>
+                          <div className="text-muted">{member.bio.substring(0, 50)}...</div>
+                        </div>
+                      </td>
+                      <td>{member.role}</td>
+                      <td>{member.school}</td>
+                      <td>
+                        <span className={`role-badge ${member.section}`}>
+                          {member.section}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`status-badge ${member.isActive ? 'active' : 'inactive'}`}>
+                          {member.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="content-actions">
+                          <button 
+                            className="btn btn-sm btn-icon"
+                            onClick={() => handleEditTeamMember(member)}
+                          >
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-icon btn-warning"
+                            onClick={() => toggleTeamMemberStatus(member.id)}
+                          >
+                            <i className={`fas ${member.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-icon btn-danger"
+                            onClick={() => handleDeleteTeamMember(member.id)}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
           {/* Timeline Management Tab */}
           {activeTab === 'timeline' && hasPermission('manage_timeline') && (
             <>
@@ -595,18 +977,26 @@ const AdminDashboard: React.FC = () => {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
+                    <th>Date & Time</th>
                     <th>Photo</th>
-                    <th>Name</th>
+                    <th>Event Details</th>
                     <th>Category</th>
                     <th>Location</th>
+                    <th>Duration</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {events.filter(event => categoryFilter === 'all' || event.category === categoryFilter).map((event) => (
                     <tr key={event.id}>
-                      <td>{formatDate(event.date)}</td>
+                      <td>
+                        <div>
+                          <strong>{formatDate(event.date)}</strong>
+                          {event.time && (
+                            <div className="text-muted">{event.time}</div>
+                          )}
+                        </div>
+                      </td>
                       <td>
                         {event.photo ? (
                           <img 
@@ -643,7 +1033,24 @@ const AdminDashboard: React.FC = () => {
                       <td>
                         <div>
                           <strong>{event.name}</strong>
-                          <div className="text-muted">{event.description}</div>
+                          {event.description && (
+                            <div className="text-muted" style={{ fontSize: '12px', marginTop: '4px' }}>
+                              {event.description.length > 100 ? 
+                                `${event.description.substring(0, 100)}...` : 
+                                event.description
+                              }
+                            </div>
+                          )}
+                          {event.performers && (
+                            <div className="text-muted" style={{ fontSize: '11px', marginTop: '2px', color: '#718096' }}>
+                              <i className="fas fa-microphone"></i> {event.performers}
+                            </div>
+                          )}
+                          {event.attendees && (
+                            <div className="text-muted" style={{ fontSize: '11px', marginTop: '2px', color: '#718096' }}>
+                              <i className="fas fa-users"></i> {event.attendees}
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td>
@@ -652,6 +1059,7 @@ const AdminDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td>{event.location}</td>
+                      <td>{event.duration || 'N/A'}</td>
                       <td>
                         <div className="content-actions">
                           <button 
@@ -1255,6 +1663,354 @@ const AdminDashboard: React.FC = () => {
                 </button>
                 <button type="submit" className="btn btn-primary">
                   Update Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Team Member Modal */}
+      {showCreateTeamModal && (
+        <div className="modal-overlay active" onClick={() => setShowCreateTeamModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Add Team Member</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowCreateTeamModal(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <form onSubmit={handleCreateTeamMember} className="modal-form">
+              <div className="form-group">
+                <label htmlFor="teamName">Name *</label>
+                <input
+                  type="text"
+                  id="teamName"
+                  name="name"
+                  value={newTeamData.name}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamRole">Role *</label>
+                <input
+                  type="text"
+                  id="teamRole"
+                  name="role"
+                  value={newTeamData.role}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamSchool">School *</label>
+                <input
+                  type="text"
+                  id="teamSchool"
+                  name="school"
+                  value={newTeamData.school}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamSection">Section *</label>
+                <select
+                  id="teamSection"
+                  name="section"
+                  value={newTeamData.section}
+                  onChange={handleTeamInputChange}
+                  required
+                >
+                  <option value="leadership">Leadership</option>
+                  <option value="communications">Communications</option>
+                  <option value="coordinators">Coordinators</option>
+                  <option value="alumni">Alumni</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamBio">Bio *</label>
+                <textarea
+                  id="teamBio"
+                  name="bio"
+                  value={newTeamData.bio}
+                  onChange={handleTeamInputChange}
+                  rows={4}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamInstagram">Instagram URL</label>
+                <input
+                  type="url"
+                  id="teamInstagram"
+                  name="instagram"
+                  value={newTeamData.instagram}
+                  onChange={handleTeamInputChange}
+                  placeholder="https://www.instagram.com/username/"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="teamImage">Image Path *</label>
+                <input
+                  type="text"
+                  id="teamImage"
+                  name="image"
+                  value={newTeamData.image}
+                  onChange={handleTeamInputChange}
+                  placeholder="/Onekey/pics/filename.jpg"
+                  required
+                />
+              </div>
+              
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateTeamModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Add Team Member
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Member Modal */}
+      {showEditTeamModal && editingTeamMember && (
+        <div className="modal-overlay active" onClick={() => setShowEditTeamModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit Team Member</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowEditTeamModal(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <form onSubmit={handleUpdateTeamMember} className="modal-form">
+              <div className="form-group">
+                <label htmlFor="editTeamName">Name *</label>
+                <input
+                  type="text"
+                  id="editTeamName"
+                  name="name"
+                  value={newTeamData.name}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamRole">Role *</label>
+                <input
+                  type="text"
+                  id="editTeamRole"
+                  name="role"
+                  value={newTeamData.role}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamSchool">School *</label>
+                <input
+                  type="text"
+                  id="editTeamSchool"
+                  name="school"
+                  value={newTeamData.school}
+                  onChange={handleTeamInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamSection">Section *</label>
+                <select
+                  id="editTeamSection"
+                  name="section"
+                  value={newTeamData.section}
+                  onChange={handleTeamInputChange}
+                  required
+                >
+                  <option value="leadership">Leadership</option>
+                  <option value="communications">Communications</option>
+                  <option value="coordinators">Coordinators</option>
+                  <option value="alumni">Alumni</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamBio">Bio *</label>
+                <textarea
+                  id="editTeamBio"
+                  name="bio"
+                  value={newTeamData.bio}
+                  onChange={handleTeamInputChange}
+                  rows={4}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamInstagram">Instagram URL</label>
+                <input
+                  type="url"
+                  id="editTeamInstagram"
+                  name="instagram"
+                  value={newTeamData.instagram}
+                  onChange={handleTeamInputChange}
+                  placeholder="https://www.instagram.com/username/"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editTeamImage">Image Path *</label>
+                <input
+                  type="text"
+                  id="editTeamImage"
+                  name="image"
+                  value={newTeamData.image}
+                  onChange={handleTeamInputChange}
+                  placeholder="/Onekey/pics/filename.jpg"
+                  required
+                />
+              </div>
+              
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditTeamModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Update Team Member
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditUserModal && editingUser && (
+        <div className="modal-overlay active" onClick={() => setShowEditUserModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit User</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowEditUserModal(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <form onSubmit={handleUpdateUser} className="modal-form">
+              <div className="form-group">
+                <label htmlFor="editUsername">Username *</label>
+                <input
+                  type="text"
+                  id="editUsername"
+                  name="username"
+                  value={newUserData.username}
+                  onChange={handleInputChange}
+                  required
+                  disabled
+                />
+                <small>Username cannot be changed</small>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editEmail">Email *</label>
+                <input
+                  type="email"
+                  id="editEmail"
+                  name="email"
+                  value={newUserData.email}
+                  onChange={handleInputChange}
+                  required
+                  disabled
+                />
+                <small>Email cannot be changed</small>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="editFirstName">First Name</label>
+                  <input
+                    type="text"
+                    id="editFirstName"
+                    name="firstName"
+                    value={newUserData.firstName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="editLastName">Last Name</label>
+                  <input
+                    type="text"
+                    id="editLastName"
+                    name="lastName"
+                    value={newUserData.lastName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editRole">Role *</label>
+                <select
+                  id="editRole"
+                  name="role"
+                  value={newUserData.role}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editPassword">New Password (leave blank to keep current)</label>
+                <input
+                  type="password"
+                  id="editPassword"
+                  name="password"
+                  value={newUserData.password}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="editConfirmPassword">Confirm New Password</label>
+                <input
+                  type="password"
+                  id="editConfirmPassword"
+                  name="confirmPassword"
+                  value={newUserData.confirmPassword}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditUserModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Update User
                 </button>
               </div>
             </form>

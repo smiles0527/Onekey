@@ -32,11 +32,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   };
 
   const getDisplayName = () => {
-    // Show actual user name instead of role-based display
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    return user.username;
+    // Return empty string to hide user name display
+    return '';
   };
 
   const handleLogout = () => {
@@ -61,16 +58,12 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <i className={getRoleIcon(user.role)}></i>
-        <span className="user-name">{getDisplayName()}</span>
         <i className={`fas fa-chevron-down ${isOpen ? 'rotated' : ''}`}></i>
       </button>
       
       {isOpen && (
         <div className="user-dropdown active">
-          <div className="dropdown-header">
-            <strong>{user.username}</strong>
-            <small>{user.email}</small>
-          </div>
+          {/* User info hidden */}
           
           <hr className="dropdown-divider" />
           

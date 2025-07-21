@@ -64,7 +64,7 @@ const Projects: React.FC = () => {
           <div className="projects-grid">
             <div className="project-card featured">
               <div className="project-image">
-                <img src="/pics/alexzhang.jpg" alt="Music Program" />
+                <img src="/Onekey/pics/alexzhang.jpg" alt="Music Program" />
                 <div className="project-overlay">
                   <div className="project-icon">
                     <i className="fas fa-music"></i>
@@ -94,7 +94,7 @@ const Projects: React.FC = () => {
             
             <div className="project-card featured">
               <div className="project-image">
-                <img src="/pics/shanezhang.jpg" alt="Education Program" />
+                <img src="/Onekey/pics/shanezhang.jpg" alt="Education Program" />
                 <div className="project-overlay">
                   <div className="project-icon">
                     <i className="fas fa-graduation-cap"></i>
@@ -124,7 +124,7 @@ const Projects: React.FC = () => {
             
             <div className="project-card featured">
               <div className="project-image">
-                <img src="/pics/elizasun.jpg" alt="Community Program" />
+                <img src="/Onekey/pics/elizasun.jpg" alt="Community Program" />
                 <div className="project-overlay">
                   <div className="project-icon">
                     <i className="fas fa-heart"></i>
@@ -221,7 +221,7 @@ const Projects: React.FC = () => {
                 </div>
               </div>
               <div className="feature-image">
-                <img src="/pics/curtiswei.jpg" alt="Concert Series" />
+                <img src="/Onekey/pics/curtiswei.jpg" alt="Concert Series" />
               </div>
             </div>
             

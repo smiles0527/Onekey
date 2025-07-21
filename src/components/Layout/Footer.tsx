@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import AuthModal from '../Auth/AuthModal';
-import UserMenu from '../Auth/UserMenu';
 
 const Footer: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
@@ -54,9 +53,7 @@ const Footer: React.FC = () => {
             <p>&copy; 2023 OneKey Student Volunteers. All rights reserved.</p>
           </div>
           <div className="footer-bottom-right">
-            {isAuthenticated && user ? (
-              <UserMenu user={user} />
-            ) : (
+            {!isAuthenticated && (
               <button className="footer-login-btn" onClick={handleAuthClick}>
                 <i className="fas fa-sign-in-alt"></i>
                 Login

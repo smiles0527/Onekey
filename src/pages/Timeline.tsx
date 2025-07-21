@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { format } from 'date-fns';
-import { testLocalStorage, addTestEvent, clearTimelineData, testPersistenceWithRefresh, syncStoreWithLocalStorage, backupTimelineData, restoreTimelineData, checkForDataLoss, warnAboutHardBuild, createPreBuildBackup } from '../utils/persistenceTest';
+// Test functions removed
 
 const Timeline: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'performances' | 'homework' | 'charity'>('performances');
@@ -31,8 +31,7 @@ const Timeline: React.FC = () => {
     console.log('Current events from store:', events);
     console.log('Events in localStorage:', localStorage.getItem('onekey-timeline'));
     
-    // Check for data loss after hard build
-    checkForDataLoss();
+    // Data loss check removed
     
     // Check if events are being loaded from localStorage
     const storedData = localStorage.getItem('onekey-timeline');
@@ -145,8 +144,7 @@ const Timeline: React.FC = () => {
 
         console.log('Event created with photos:', newEvent.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
 
-        // Create backup after adding event
-        backupTimelineData();
+        // Backup removed
 
         setShowAddModal(false);
         setFormData({
@@ -243,141 +241,7 @@ const Timeline: React.FC = () => {
                 Add New Event
               </button>
               
-              {/* Debug buttons - only show for super_admin */}
-              {user?.role === 'super_admin' && (
-                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#007bff', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={testLocalStorage}
-                  >
-                    Test localStorage
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#28a745', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={addTestEvent}
-                  >
-                    Add Test Event
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#dc3545', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={clearTimelineData}
-                  >
-                    Clear Data
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#ffc107', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={testPersistenceWithRefresh}
-                  >
-                    Refresh Test
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#6c757d', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={syncStoreWithLocalStorage}
-                  >
-                    Sync Store
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#17a2b8', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={backupTimelineData}
-                  >
-                    Backup Data
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#fd7e14', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={restoreTimelineData}
-                  >
-                    Restore Data
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#e83e8c', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={checkForDataLoss}
-                  >
-                    Check Data Loss
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#f44336', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={warnAboutHardBuild}
-                  >
-                    Warn About Hard Build
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      background: '#4caf50', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      fontSize: '0.8rem'
-                    }}
-                    onClick={createPreBuildBackup}
-                  >
-                    Create Pre-Build Backup
-                  </button>
-                </div>
-              )}
+              {/* Debug buttons removed */}
             </div>
           )}
 

