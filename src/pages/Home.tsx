@@ -81,6 +81,7 @@ const Home: React.FC = () => {
         const rate = scrolled * -0.2;
         (element as HTMLElement).style.transform = `translate3d(0, ${rate}px, 0)`;
       });
+
     };
 
     window.addEventListener('scroll', handleScroll);

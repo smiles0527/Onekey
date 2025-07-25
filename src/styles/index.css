@@ -3100,12 +3100,15 @@ body {
   margin-top: 90px;
 }
 
+
+/* parallax scrolling */
 .hero-background {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh; /* not 100%!!!!!!1!! */
   display: flex;
   align-items: center;
+  overflow: hidden;
 }
 
 .hero-overlay {
@@ -4788,779 +4791,210 @@ body {
   transition: color 0.4s ease;
 }
 
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
+/* Team Page Background Decorations */
+.team-page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
 }
 
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+/* Floating Musical Notes */
+.floating-notes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
+.note {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(196, 174, 123, 0.1);
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.3;
 }
 
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
+.note-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
 }
 
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
+.note-2 {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1s;
+  animation-duration: 7s;
 }
 
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
+.note-3 {
+  top: 45%;
+  left: 5%;
+  animation-delay: 2s;
+  animation-duration: 9s;
 }
 
-/* Scrolling States */
-body.scrolling {
+.note-4 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+
+.note-5 {
+  top: 75%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.note-6 {
+  top: 85%;
+  right: 25%;
+  animation-delay: 5s;
+  animation-duration: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* Background Pattern Elements */
+.background-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern-circle {
+  position: absolute;
+  border: 1px solid rgba(196, 174, 123, 0.05);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: rotate 20s linear infinite;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation: rotate 15s linear infinite reverse;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.pattern-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(196, 174, 123, 0.1), transparent);
+  height: 1px;
+  opacity: 0.3;
+}
+
+.line-1 {
+  width: 60%;
+  top: 20%;
+  left: 20%;
+  transform: rotate(15deg);
+}
+
+.line-2 {
+  width: 40%;
+  top: 70%;
+  right: 10%;
+  transform: rotate(-10deg);
+}
+
+.line-3 {
+  width: 50%;
+  top: 40%;
+  left: 10%;
+  transform: rotate(5deg);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* Ensure team page content is above background */
+.team-page {
+  position: relative;
+  z-index: 2;
+}
+
+/* Subtle gradient overlay */
+.team-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 248, 248, 0.98) 100%);
+  z-index: 1;
   pointer-events: none;
 }
 
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
+.team-page > * {
+  position: relative;
+  z-index: 2;
 }
 
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
+  .note {
+    font-size: 1.5rem;
   }
   
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
+  .pattern-circle {
     display: none;
   }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
   
-  .logo {
-    font-size: 1.6rem;
+  .pattern-line {
+    display: none;
   }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-.landmark-item.reverse {
-  grid-template-columns: 300px 1fr 100px;
-}
-
-.landmark-item.reverse .landmark-year {
-  order: 3;
-}
-
-.landmark-item.reverse .landmark-content {
-  order: 2;
-  text-align: right;
-}
-
-.landmark-item.reverse .landmark-image {
-  order: 1;
-}
-
-
-.landmark-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.landmark-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-
-
-.landmark-image img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-.landmark-item:hover .landmark-image img {
-  transform: scale(1.1);
-}
-
-/* Statistics Section - Constance Numbers Style */
-
-.stats-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-.stats-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4rem;
-}
-
-
-
-.stat-box:last-child {
-  border-right: none;
-}
-
-
-
-/* Service Areas - Business Activities Style */
-
-
-.areas-intro h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.areas-intro p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  max-width: 600px;
-  margin: var(--center-margin);
-}
-
-
-
-
-.area-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-
-.area-card:hover .area-content {
-  transform: translateY(0);
-}
-
-.area-card:hover .area-image img {
-  transform: scale(1.1);
-}
-
-.area-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 1rem;
-}
-
-.area-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Snapshot Section - Company Snapshot Style */
-
-
-.snapshot-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-
-
-.snapshot-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-
-.snapshot-header-card h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-
-
-
-.snapshot-stat:last-child {
-  border-bottom: none;
-}
-
-
-
-
-
-.view-details:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-}
-
-/* Join CTA Section */
-
-.cta-content h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.cta-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-}
-
-
-.btn-primary,
-
-
-.btn-primary:hover {
-  background: #d4bf8a;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(196, 174, 123, 0.4);
-}
-
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--luxury-gold);
-  color: var(--luxury-gold);
-  transform: translateY(-3px);
 }
 
 /* Responsive Design - Constance Style */
@@ -6964,6 +6398,10 @@ body {
   background: #e8e8e8;
 }
 
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+}
 
 .btn-delete:hover {
   background: #c0392b;
@@ -7886,75 +7324,210 @@ body {
   transition: color 0.4s ease;
 }
 
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-.landmark-item.reverse {
-  grid-template-columns: 300px 1fr 100px;
-}
-
-.landmark-item.reverse .landmark-year {
-  order: 3;
-}
-
-.landmark-item.reverse .landmark-content {
-  order: 2;
-  text-align: right;
-}
-
-.landmark-item.reverse .landmark-image {
-  order: 1;
-}
-
-
-.landmark-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.landmark-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-
-
-.landmark-image img {
+/* Team Page Background Decorations */
+.team-page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.8s ease;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
 }
 
-.landmark-item:hover .landmark-image img {
-  transform: scale(1.1);
+/* Floating Musical Notes */
+.floating-notes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(196, 174, 123, 0.1);
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.note-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.note-2 {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+}
+
+.note-3 {
+  top: 45%;
+  left: 5%;
+  animation-delay: 2s;
+  animation-duration: 9s;
+}
+
+.note-4 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+
+.note-5 {
+  top: 75%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.note-6 {
+  top: 85%;
+  right: 25%;
+  animation-delay: 5s;
+  animation-duration: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* Background Pattern Elements */
+.background-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern-circle {
+  position: absolute;
+  border: 1px solid rgba(196, 174, 123, 0.05);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: rotate 20s linear infinite;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation: rotate 15s linear infinite reverse;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.pattern-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(196, 174, 123, 0.1), transparent);
+  height: 1px;
+  opacity: 0.3;
+}
+
+.line-1 {
+  width: 60%;
+  top: 20%;
+  left: 20%;
+  transform: rotate(15deg);
+}
+
+.line-2 {
+  width: 40%;
+  top: 70%;
+  right: 10%;
+  transform: rotate(-10deg);
+}
+
+.line-3 {
+  width: 50%;
+  top: 40%;
+  left: 10%;
+  transform: rotate(5deg);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* Ensure team page content is above background */
+.team-page {
+  position: relative;
+  z-index: 2;
+}
+
+/* Subtle gradient overlay */
+.team-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 248, 248, 0.98) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.team-page > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .note {
+    font-size: 1.5rem;
+  }
+  
+  .pattern-circle {
+    display: none;
+  }
+  
+  .pattern-line {
+    display: none;
+  }
 }
 
 /* Statistics Section - Constance Numbers Style */
@@ -9561,6 +9134,37 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .footer-content {
+    padding: 3rem 1rem 2rem;
+  }
+  
+  .footer-logo {
+    font-size: 2rem;
+  }
+  
+  .footer-tagline {
+    font-size: 1rem;
+  }
+  
+  .footer-social a {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .footer-social a i {
+    font-size: 1rem;
+  }
+  
+  .footer-bottom {
+    padding: 1rem;
+  }
+  
+  .footer-bottom p {
+    font-size: 0.8rem;
+  }
+}
+
 /* Dashboard Page Styles - Constance Hotels Theme */
 
 /* Dashboard Hero Section */
@@ -9771,37 +9375,6 @@ body {
   }
 }
 
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 3rem 1rem 2rem;
-  }
-  
-  .footer-logo {
-    font-size: 2rem;
-  }
-  
-  .footer-tagline {
-    font-size: 1rem;
-  }
-  
-  .footer-social a {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-social a i {
-    font-size: 1rem;
-  }
-  
-  .footer-bottom {
-    padding: 1rem;
-  }
-  
-  .footer-bottom p {
-    font-size: 0.8rem;
-  }
-}
-
 /* Meet Our Team Page Styles - Constance Hotels Theme */
 
 /* Team Hero Section */
@@ -9821,6 +9394,19 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+.team-hero .hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/pics/Slide_1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
 }
 
 .team-hero .hero-overlay {
@@ -11058,6 +10644,19 @@ body {
   align-items: center;
 }
 
+.team-hero .hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/pics/Slide_1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
 .team-hero .hero-overlay {
   position: absolute;
   top: 0;
@@ -12396,3958 +11995,195 @@ body {
   transition: color 0.4s ease;
 }
 
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
+/* Team Page Background Decorations */
+.team-page-background {
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-.landmark-item.reverse {
-  grid-template-columns: 300px 1fr 100px;
-}
-
-.landmark-item.reverse .landmark-year {
-  order: 3;
-}
-
-.landmark-item.reverse .landmark-content {
-  order: 2;
-  text-align: right;
-}
-
-.landmark-item.reverse .landmark-image {
-  order: 1;
-}
-
-
-.landmark-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.landmark-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-
-
-.landmark-image img {
   width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Floating Musical Notes */
+.floating-notes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(196, 174, 123, 0.1);
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.note-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.note-2 {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+}
+
+.note-3 {
+  top: 45%;
+  left: 5%;
+  animation-delay: 2s;
+  animation-duration: 9s;
+}
+
+.note-4 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+
+.note-5 {
+  top: 75%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.note-6 {
+  top: 85%;
+  right: 25%;
+  animation-delay: 5s;
+  animation-duration: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* Background Pattern Elements */
+.background-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern-circle {
+  position: absolute;
+  border: 1px solid rgba(196, 174, 123, 0.05);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: rotate 20s linear infinite;
+}
+
+.circle-2 {
+  width: 200px;
   height: 200px;
-  object-fit: cover;
-  transition: transform 0.8s ease;
+  bottom: -100px;
+  left: -100px;
+  animation: rotate 15s linear infinite reverse;
 }
 
-.landmark-item:hover .landmark-image img {
-  transform: scale(1.1);
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
 }
 
-/* Statistics Section - Constance Numbers Style */
-
-.stats-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+.pattern-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(196, 174, 123, 0.1), transparent);
+  height: 1px;
+  opacity: 0.3;
 }
 
-.stats-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4rem;
+.line-1 {
+  width: 60%;
+  top: 20%;
+  left: 20%;
+  transform: rotate(15deg);
 }
 
-
-
-.stat-box:last-child {
-  border-right: none;
+.line-2 {
+  width: 40%;
+  top: 70%;
+  right: 10%;
+  transform: rotate(-10deg);
 }
 
-
-
-/* Service Areas - Business Activities Style */
-
-
-.areas-intro h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
+.line-3 {
+  width: 50%;
+  top: 40%;
+  left: 10%;
+  transform: rotate(5deg);
 }
 
-.areas-intro p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  max-width: 600px;
-  margin: var(--center-margin);
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
 
+/* Ensure team page content is above background */
+.team-page {
+  position: relative;
+  z-index: 2;
+}
 
-
-.area-image img {
+/* Subtle gradient overlay */
+.team-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-
-.area-card:hover .area-content {
-  transform: translateY(0);
-}
-
-.area-card:hover .area-image img {
-  transform: scale(1.1);
-}
-
-.area-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 1rem;
-}
-
-.area-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Snapshot Section - Company Snapshot Style */
-
-
-.snapshot-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-
-
-.snapshot-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-
-.snapshot-header-card h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-
-
-
-.snapshot-stat:last-child {
-  border-bottom: none;
-}
-
-
-
-
-
-.view-details:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-}
-
-/* Join CTA Section */
-
-.cta-content h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.cta-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-}
-
-
-.btn-primary,
-
-
-.btn-primary:hover {
-  background: #d4bf8a;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(196, 174, 123, 0.4);
-}
-
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--luxury-gold);
-  color: var(--luxury-gold);
-  transform: translateY(-3px);
-}
-
-/* Responsive Design - Constance Style */
-@media (max-width: 1024px) {
-  .container {
-    padding: 0 1.5rem;
-  }
-  
-  .hero-main {
-    height: 80vh;
-  }
-  
-  .slide-content h1 {
-    font-size: clamp(3rem, 6vw, 5rem);
-  }
-  
-  .philosophy-content {
-    gap: 3rem;
-  }
-  
-  .values-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .landmark-item {
-    grid-template-columns: 80px 1fr 250px;
-  gap: 2rem;
-  }
-  
-  .landmark-item.reverse {
-    grid-template-columns: 250px 1fr 80px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .areas-grid {
-    gap: 1px;
-  }
-  
-  .snapshot-grid {
-    gap: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-main {
-    height: 70vh;
-  }
-  
-  .slide-content h1 {
-    font-size: clamp(2.5rem, 8vw, 4rem);
-  }
-  
-  .philosophy-section {
-    padding: 6rem 0;
-  }
-  
-  .philosophy-content {
-    grid-template-columns: 1fr;
-    gap: 4rem;
-  text-align: center;
-}
-
-  .values-section {
-    padding: 4rem 0;
-  }
-  
-  .values-grid {
-    grid-template-columns: 1fr;
-    gap: 1px;
-  }
-  
-  .value-item {
-    border-right: none;
-    border-bottom: 1px solid #e8e8e8;
-  }
-  
-  .value-item:last-child {
-    border-bottom: none;
-  }
-  
-  .history-section {
-    padding: 6rem 0;
-  }
-  
-  .landmark-item {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-  
-  .landmark-item.reverse {
-    grid-template-columns: 1fr;
-  }
-  
-  .landmark-item.reverse .landmark-year,
-  .landmark-item.reverse .landmark-content,
-  .landmark-item.reverse .landmark-image {
-    order: initial;
-  }
-  
-  .landmark-item.reverse .landmark-content {
-    text-align: center;
-  }
-  
-  .landmark-year {
-  font-size: 2rem;
-  }
-  
-  .landmark-image img {
-    height: 150px;
-  }
-  
-  .statistics-section {
-    padding: 4rem 0;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    max-width: 500px;
-  }
-  
-  .stat-box {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .stat-box:nth-child(2n) {
-    border-right: none;
-  }
-  
-  .stat-box:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
-  
-  .service-areas-section {
-    padding: 6rem 0;
-  }
-  
-  .areas-grid {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-  }
-  
-  .area-card {
-    aspect-ratio: 16/9;
-  }
-  
-  .snapshot-section {
-    padding: 6rem 0;
-  }
-  
-  .snapshot-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    max-width: 500px;
-  }
-  
-  .join-cta-section {
-    padding: 6rem 0;
-  }
-  
-  .cta-content h2 {
-    font-size: clamp(2.5rem, 6vw, 3rem);
-  }
-
-  .cta-buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Hover Effects */
-.value-item,
-.landmark-item,
-.area-card,
-
-/* Enhanced Performance */
-* {
-  box-sizing: border-box;
-}
-
-/* Scroll Snap for Smooth Navigation */
-
-.hero-main,
-.philosophy-section,
-.values-section,
-.history-section,
-.statistics-section,
-.service-areas-section,
-.snapshot-section,
-
-/* About Page Styles - Constance Hotels Theme */
-
-/* About Hero Section */
-
-
-
-
-.hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-
-
-/* Philosophy About Section */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.philosophy-main h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.5rem;
-  font-weight: 400;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 248, 248, 0.98) 100%);
+  z-index: 1;
   pointer-events: none;
 }
 
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
+.team-page > * {
   position: relative;
   z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
-
-.landmark-item.reverse {
-  grid-template-columns: 300px 1fr 100px;
-}
-
-.landmark-item.reverse .landmark-year {
-  order: 3;
-}
-
-.landmark-item.reverse .landmark-content {
-  order: 2;
-  text-align: right;
-}
-
-.landmark-item.reverse .landmark-image {
-  order: 1;
-}
-
-
-.landmark-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.landmark-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-
-
-.landmark-image img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-.landmark-item:hover .landmark-image img {
-  transform: scale(1.1);
-}
-
-/* Statistics Section - Constance Numbers Style */
-
-.stats-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-.stats-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4rem;
-}
-
-
-
-.stat-box:last-child {
-  border-right: none;
-}
-
-
-
-/* Service Areas - Business Activities Style */
-
-
-.areas-intro h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.areas-intro p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  max-width: 600px;
-  margin: var(--center-margin);
-}
-
-
-
-
-.area-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-
-.area-card:hover .area-content {
-  transform: translateY(0);
-}
-
-.area-card:hover .area-image img {
-  transform: scale(1.1);
-}
-
-.area-content h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 1rem;
-}
-
-.area-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Snapshot Section - Company Snapshot Style */
-
-
-.snapshot-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-
-
-.snapshot-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-
-.snapshot-header-card h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-
-
-
-.snapshot-stat:last-child {
-  border-bottom: none;
-}
-
-
-
-
-
-.view-details:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-}
-
-/* Join CTA Section */
-
-.cta-content h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.cta-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-}
-
-
-.btn-primary,
-
-
-.btn-primary:hover {
-  background: #d4bf8a;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(196, 174, 123, 0.4);
-}
-
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--luxury-gold);
-  color: var(--luxury-gold);
-  transform: translateY(-3px);
 }
 
 /* Responsive Design - Constance Style */
@@ -19886,6 +15722,37 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .footer-content {
+    padding: 3rem 1rem 2rem;
+  }
+  
+  .footer-logo {
+    font-size: 2rem;
+  }
+  
+  .footer-tagline {
+    font-size: 1rem;
+  }
+  
+  .footer-social a {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .footer-social a i {
+    font-size: 1rem;
+  }
+  
+  .footer-bottom {
+    padding: 1rem;
+  }
+  
+  .footer-bottom p {
+    font-size: 0.8rem;
+  }
+}
+
 /* Dashboard Page Styles - Constance Hotels Theme */
 
 /* Dashboard Hero Section */
@@ -20065,37 +15932,6 @@ body {
   }
 }
 
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 3rem 1rem 2rem;
-  }
-  
-  .footer-logo {
-    font-size: 2rem;
-  }
-  
-  .footer-tagline {
-    font-size: 1rem;
-  }
-  
-  .footer-social a {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-social a i {
-    font-size: 1rem;
-  }
-  
-  .footer-bottom {
-    padding: 1rem;
-  }
-  
-  .footer-bottom p {
-    font-size: 0.8rem;
-  }
-}
-
 /* Meet Our Team Page Styles - Constance Hotels Theme */
 
 /* Team Hero Section */
@@ -20106,6 +15942,19 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+.team-hero .hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/pics/Slide_1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
 }
 
 .team-hero .hero-overlay {
@@ -20320,14 +16169,6 @@ body {
   transform: translateY(100%);
   transition: transform 0.6s ease;
   z-index: 1;
-}
-
-.values-grid-about .value-card:hover::before {
-  transform: translateY(0);
-}
-
-.values-grid-about .value-card:hover {
-  color: white;
 }
 
 .values-grid-about .value-card:hover .value-icon i,
@@ -21301,6 +17142,19 @@ body {
   align-items: center;
 }
 
+.team-hero .hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/pics/Slide_1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
 .team-hero .hero-overlay {
   position: absolute;
   top: 0;
@@ -22087,6 +17941,7 @@ body {
 .btn-delete:hover {
   background: #c0392b;
   transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
 }
 
 /* Responsive Timeline */
@@ -22197,2943 +18052,195 @@ body {
   }
 }
 
-/* Footer Styles - Constance Hotels Theme */
-
-/* Modern Footer */
-
-.modern-footer::before {
-  content: '';
-  position: absolute;
+/* Team Page Background Decorations */
+.team-page-background {
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #c4ae7b, transparent);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
 }
 
-/* Footer Content */
-
-/* Footer Info Section */
-
-
-
-
-/* Footer Links Section */
-
-.footer-links h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-links h4::after {
-  content: '';
+/* Floating Musical Notes */
+.floating-notes {
   position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
+  width: 100%;
+  height: 100%;
 }
 
-.footer-links a {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 0;
-}
-
-.footer-links a::before {
-  content: '';
+.note {
   position: absolute;
-  left: 0;
+  font-size: 2rem;
+  color: rgba(196, 174, 123, 0.1);
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.note-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.note-2 {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+}
+
+.note-3 {
+  top: 45%;
+  left: 5%;
+  animation-delay: 2s;
+  animation-duration: 9s;
+}
+
+.note-4 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+
+.note-5 {
+  top: 75%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.note-6 {
+  top: 85%;
+  right: 25%;
+  animation-delay: 5s;
+  animation-duration: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* Background Pattern Elements */
+.background-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern-circle {
+  position: absolute;
+  border: 1px solid rgba(196, 174, 123, 0.05);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: rotate 20s linear infinite;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation: rotate 15s linear infinite reverse;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
   top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--luxury-gold);
-  transition: width 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: var(--luxury-gold);
-  padding-left: 1.5rem;
-}
-
-.footer-links a:hover::before {
-  width: 1rem;
-}
-
-/* Footer Connect Section */
-
-.footer-connect h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-connect h4::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
-}
-
-/* Footer Social Links */
-
-.footer-social a {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(196, 174, 123, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.footer-social a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.4s ease;
-  z-index: 1;
-}
-
-.footer-social a:hover::before {
-  transform: scale(1);
-}
-
-.footer-social a:hover {
-  border-color: var(--luxury-gold);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-.footer-social a i {
-  font-size: 1.2rem;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.footer-social a:hover i {
-  color: var(--luxury-dark);
-}
-
-/* Footer Bottom */
-
-.footer-bottom p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-
-
-
-
-
-
-.footer-login-btn:hover {
-  background: rgba(196, 174, 123, 0.3);
-  color: rgba(196, 174, 123, 1);
-  border-color: rgba(196, 174, 123, 0.5);
-  transform: translateY(-2px);
-}
-
-.footer-login-btn i {
-  font-size: 0.9rem;
-}
-
-/* Responsive Footer */
-@media (max-width: 1024px) {
-  .footer-content {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    padding: 5rem 2rem 3rem;
-  }
-  
-  .footer-info {
-    grid-column: 1 / -1;
-    text-align: center;
-    max-width: none;
-    margin-bottom: 2rem;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    text-align: center;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-  }
-  
-  .footer-info {
-    order: 1;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    order: 2;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-    justify-content: center;
-  }
-  
-  .footer-bottom {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .footer-login {
-    position: static;
-    margin-top: 1rem;
-  }
-  
-  .footer-login-btn {
-    margin: var(--center-margin);
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 3rem 1rem 2rem;
-  }
-  
-  .footer-logo {
-    font-size: 2rem;
-  }
-  
-  .footer-tagline {
-    font-size: 1rem;
-  }
-  
-  .footer-social a {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-social a i {
-    font-size: 1rem;
-  }
-  
-  .footer-bottom {
-    padding: 1rem;
-  }
-  
-  .footer-bottom p {
-    font-size: 0.8rem;
-  }
-}
-
-/* Meet Our Team Page Styles - Constance Hotels Theme */
-
-/* Team Hero Section */
-
-.team-hero .hero-background {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.team-hero .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
-  z-index: 1;
-}
-
-.team-hero .hero-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  margin: var(--center-margin);
-  padding: 2rem 2rem 4rem 2rem;
-}
-
-.team-hero .hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.team-hero .hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
-}
-
-.team-hero .hero-accent-line {
-  width: 80px;
-  height: 2px;
-  background: var(--luxury-gold);
-  margin: var(--center-margin);
-}
-
-/* Section Headers */
-.team-page .section-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.team-page .section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.team-page .section-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
   left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.pattern-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(196, 174, 123, 0.1), transparent);
   height: 1px;
-  background: var(--luxury-gold);
+  opacity: 0.3;
 }
 
-.team-page .section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2rem;
+.line-1 {
+  width: 60%;
+  top: 20%;
+  left: 20%;
+  transform: rotate(15deg);
 }
 
-/* Leadership Section */
-
-
-/* Communications Section */
-
-
-/* Coordinators Section */
-
-
-
-.team-member-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+.line-2 {
+  width: 40%;
+  top: 70%;
+  right: 10%;
+  transform: rotate(-10deg);
 }
 
-.team-member-card .member-image {
-  height: 250px;
-  overflow: hidden;
+.line-3 {
+  width: 50%;
+  top: 40%;
+  left: 10%;
+  transform: rotate(5deg);
 }
 
-.team-member-card .member-image img {
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* Ensure team page content is above background */
+.team-page {
+  position: relative;
+  z-index: 2;
+}
+
+/* Subtle gradient overlay */
+.team-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.team-member-card:hover .member-image img {
-  transform: scale(1.1);
-}
-
-.team-member-card .member-info {
-  padding: 1.8rem;
-  text-align: center;
-  position: relative;
-  height: auto;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.team-member-card .member-info h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-
-
-
-.member-info p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  font-style: italic;
-  margin: 0;
-}
-
-/* Impact Stats Section */
-
-.stats-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-.stats-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4rem;
-}
-
-
-
-.stat-item:last-child {
-  border-right: none;
-}
-
-
-
-/* Values About Section */
-
-
-.values-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.values-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-}
-
-
-.values-grid-about .value-card {
-  background: #f8f8f8;
-  padding: 3rem 2rem;
-  text-align: center;
-  transition: all 0.6s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.values-grid-about .value-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 248, 248, 0.98) 100%);
   z-index: 1;
-}
-
-.values-grid-about .value-card:hover::before {
-  transform: translateY(0);
-}
-
-.values-grid-about .value-card:hover {
-  color: white;
-}
-
-.values-grid-about .value-card:hover .value-icon i,
-.values-grid-about .value-card:hover h3,
-.values-grid-about .value-card:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-.values-grid-about .value-icon {
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 2;
-}
-
-.values-grid-about .value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.values-grid-about .value-card h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.values-grid-about .value-card p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* Join About Section */
-
-.join-content h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.join-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-}
-
-
-/* Responsive About Page */
-@media (max-width: 768px) {
-  .about-hero {
-    height: 50vh;
-    margin-top: 80px;
-  }
-  
-  .hero-content h1 {
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
-  }
-  
-  .philosophy-about,
-  .story-timeline,
-  .leadership-section,
-  .values-about,
-  .join-about {
-    padding: 6rem 0;
-  }
-  
-  .impact-stats {
-    padding: 4rem 0;
-  }
-  
-  .timeline-milestones .milestone-item {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-  
-  .milestone-item.reverse {
-    grid-template-columns: 1fr;
-  }
-  
-  .milestone-item.reverse .milestone-year,
-  .milestone-item.reverse .milestone-content {
-    order: initial;
-  }
-  
-  .milestone-item.reverse .milestone-content {
-    text-align: center;
-  }
-  
-  .leadership-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    max-width: 500px;
-  }
-  
-  .stat-item {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .stat-item:nth-child(2n) {
-    border-right: none;
-  }
-  
-  .stat-item:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
-  
-  .values-grid-about {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  
-  .join-buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-hero {
-    height: 40vh;
-    margin-top: 70px;
-  }
-  
-  .philosophy-about,
-  .story-timeline,
-  .leadership-section,
-  .values-about,
-  .join-about {
-    padding: 4rem 0;
-  }
-  
-  .impact-stats {
-    padding: 3rem 0;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    max-width: 300px;
-  }
-  
-  .stat-item {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5rem 1rem;
-  }
-  
-  .stat-item:last-child {
-    border-bottom: none;
-  }
-}
-
-/* Timeline Page Styles - Constance Hotels Theme */
-
-/* Timeline Hero Section */
-
-.timeline-hero .hero-background {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.timeline-hero .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
-  z-index: 1;
-}
-
-.timeline-hero .hero-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  margin: var(--center-margin);
-}
-
-.timeline-hero .hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.timeline-hero .hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
-}
-
-.timeline-hero .hero-accent-line {
-  width: 80px;
-  height: 2px;
-  background: var(--luxury-gold);
-  margin: var(--center-margin);
-}
-
-/* Timeline Filters Section */
-
-.timeline-filters .timeline-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.timeline-filters .timeline-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.timeline-filters .timeline-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-.timeline-filters .timeline-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2rem;
-}
-
-/* Admin Controls */
-
-
-.add-event-btn:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-.add-event-btn i {
-  font-size: 0.8rem;
-}
-
-/* Category Filters */
-
-
-.filter-btn i {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.filter-btn.active {
-  background: var(--luxury-gold);
-  border-color: var(--luxury-gold);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(196, 174, 123, 0.3);
-}
-
-.filter-btn:hover:not(.active) {
-  border-color: var(--luxury-gold);
-  color: var(--luxury-gold);
-  transform: translateY(-2px);
-}
-
-/* Timeline Content Section */
-
-/* Empty State */
-
-
-.empty-icon i {
-  font-size: 4rem;
-  color: var(--luxury-gold);
-  opacity: 0.5;
-}
-
-.empty-state h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.empty-state p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-}
-
-/* Timeline List */
-
-.timeline-list::before {
-  content: '';
-  position: absolute;
-  left: 120px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, #c4ae7b, #d4bf8a);
-}
-
-/* Timeline Item */
-
-.timeline-item:last-child .timeline-line {
-  display: none;
-}
-
-/* Timeline Date */
-
-.timeline-date .month {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--luxury-gold);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.timeline-date .day {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin: 0.5rem 0;
-}
-
-.timeline-date .year {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #666;
-}
-
-/* Timeline Connector */
-
-
-.timeline-icon i {
-  font-size: 1.2rem;
-  color: white;
-}
-
-
-/* Timeline Event Card */
-
-.timeline-event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-.timeline-event-card:hover .timeline-date {
-  border-color: var(--luxury-gold);
-  background: var(--luxury-gold);
-  color: white;
-}
-
-.timeline-event-card:hover .timeline-date .month,
-.timeline-event-card:hover .timeline-date .day,
-.timeline-event-card:hover .timeline-date .year {
-  color: white;
-}
-
-.timeline-event-card:hover .timeline-icon {
-  background: #b8a068;
-  transform: scale(1.1);
-}
-
-/* Event Header */
-
-.event-header h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin: 0;
-  line-height: 1.3;
-}
-
-
-.delete-event-btn:hover {
-  background: #e74c3c;
-  color: white;
-}
-
-/* Event Meta */
-
-
-.event-meta-item i {
-  color: var(--luxury-gold);
-  font-size: 0.8rem;
-}
-
-/* Event Description */
-
-/* Event Details */
-
-
-.detail-item i {
-  color: var(--luxury-gold);
-  font-size: 0.8rem;
-}
-
-/* Timeline Modals */
-
-.timeline-modal .modal-header {
-  background: #1a1a1a;
-  color: white;
-  padding: 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.timeline-modal .modal-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  margin: 0;
-}
-
-.timeline-modal .close-modal {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.timeline-modal .close-modal:hover {
-  color: var(--luxury-gold);
-  transform: scale(1.1);
-}
-
-/* Timeline Form */
-
-
-.timeline-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.timeline-form .form-group label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  display: block;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.timeline-form .form-group input,
-.timeline-form .form-group select,
-.timeline-form .form-group textarea {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid #e8e8e8;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  color: #333;
-  transition: all 0.3s ease;
-}
-
-.timeline-form .form-group input:focus,
-.timeline-form .form-group select:focus,
-.timeline-form .form-group textarea:focus {
-  outline: none;
-  border-color: var(--luxury-gold);
-  box-shadow: 0 0 0 3px rgba(196, 174, 123, 0.1);
-}
-
-.timeline-form .form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-
-.timeline-submit-btn:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-/* Modal Body and Actions */
-
-.modal-body p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  text-align: center;
-  margin: 0;
-}
-
-
-.btn-cancel,
-
-
-.btn-cancel:hover {
-  background: #e8e8e8;
-}
-
-
-.btn-delete:hover {
-  background: #c0392b;
-  transform: translateY(-1px);
-}
-
-/* Responsive Timeline */
-@media (max-width: 768px) {
-  .timeline-hero {
-    height: 50vh;
-    margin-top: 80px;
-  }
-  
-  .timeline-filters {
-    padding: 6rem 0 4rem;
-  }
-  
-  .category-filters {
-    gap: 1rem;
-  }
-  
-  .filter-btn {
-    padding: 1rem 1.5rem;
-    min-width: 120px;
-  }
-  
-  .timeline-list::before {
-    left: 30px;
-  }
-  
-  .timeline-item {
-    grid-template-columns: 60px 1fr;
-    gap: 1rem;
-  }
-  
-  .timeline-connector {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-  }
-  
-  .timeline-date {
-    grid-column: 2;
-    grid-row: 1;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    text-align: left;
-  }
-  
-  .timeline-event-card {
-    grid-column: 2;
-    grid-row: 2;
-    padding: 2rem;
-  }
-  
-  .timeline-content-section {
-    padding: 4rem 0 6rem;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .event-meta,
-  .event-details {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .timeline-hero {
-    height: 40vh;
-    margin-top: 70px;
-  }
-  
-  .timeline-filters {
-    padding: 4rem 0 3rem;
-  }
-  
-  .category-filters {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .filter-btn {
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .timeline-item {
-    margin-bottom: 3rem;
-  }
-  
-  .timeline-event-card {
-    padding: 1.5rem;
-  }
-  
-  .event-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: start;
-  }
-  
-  .timeline-date .day {
-    font-size: 1.5rem;
-  }
-}
-
-/* Footer Styles - Constance Hotels Theme */
-
-/* Modern Footer */
-
-.modern-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #c4ae7b, transparent);
-}
-
-/* Footer Content */
-
-/* Footer Info Section */
-
-
-
-
-/* Footer Links Section */
-
-.footer-links h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-links h4::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
-}
-
-.footer-links a {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 0;
-}
-
-.footer-links a::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--luxury-gold);
-  transition: width 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: var(--luxury-gold);
-  padding-left: 1.5rem;
-}
-
-.footer-links a:hover::before {
-  width: 1rem;
-}
-
-/* Footer Connect Section */
-
-.footer-connect h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-connect h4::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
-}
-
-/* Footer Social Links */
-
-.footer-social a {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(196, 174, 123, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.footer-social a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.4s ease;
-  z-index: 1;
-}
-
-.footer-social a:hover::before {
-  transform: scale(1);
-}
-
-.footer-social a:hover {
-  border-color: var(--luxury-gold);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-.footer-social a i {
-  font-size: 1.2rem;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.footer-social a:hover i {
-  color: var(--luxury-dark);
-}
-
-/* Footer Bottom */
-
-.footer-bottom p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-
-
-
-
-
-
-.footer-login-btn:hover {
-  background: rgba(196, 174, 123, 0.3);
-  color: rgba(196, 174, 123, 1);
-  border-color: rgba(196, 174, 123, 0.5);
-  transform: translateY(-2px);
-}
-
-.footer-login-btn i {
-  font-size: 0.9rem;
-}
-
-/* Responsive Footer */
-@media (max-width: 1024px) {
-  .footer-content {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    padding: 5rem 2rem 3rem;
-  }
-  
-  .footer-info {
-    grid-column: 1 / -1;
-    text-align: center;
-    max-width: none;
-    margin-bottom: 2rem;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    text-align: center;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-  justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-  }
-  
-  .footer-info {
-    order: 1;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    order: 2;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-    justify-content: center;
-  }
-  
-  .footer-bottom {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .footer-login {
-    position: static;
-    margin-top: 1rem;
-  }
-  
-  .footer-login-btn {
-    margin: var(--center-margin);
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 3rem 1rem 2rem;
-  }
-  
-  .footer-logo {
-    font-size: 2rem;
-  }
-  
-  .footer-tagline {
-    font-size: 1rem;
-  }
-  
-  .footer-social a {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-social a i {
-    font-size: 1rem;
-  }
-  
-  .footer-bottom {
-    padding: 1rem;
-  }
-  
-  .footer-bottom p {
-    font-size: 0.8rem;
-  }
-}
-
-/* Meet Our Team Page Styles - Constance Hotels Theme */
-
-/* Team Hero Section */
-
-.team-hero .hero-background {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.team-hero .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
-  z-index: 1;
-}
-
-.team-hero .hero-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  margin: var(--center-margin);
-  padding: 2rem 2rem 4rem 2rem;
-}
-
-.team-hero .hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.team-hero .hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
-}
-
-.team-hero .hero-accent-line {
-  width: 80px;
-  height: 2px;
-  background: var(--luxury-gold);
-  margin: var(--center-margin);
-}
-
-/* Section Headers */
-.team-page .section-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.team-page .section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.team-page .section-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-.team-page .section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2rem;
-}
-
-/* Leadership Section */
-
-
-/* Communications Section */
-
-
-/* Coordinators Section */
-
-
-
-.team-member-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
-}
-
-.team-member-card .member-image {
-  height: 250px;
-  overflow: hidden;
-}
-
-.team-member-card .member-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.team-member-card:hover .member-image img {
-  transform: scale(1.1);
-}
-
-.team-member-card .member-info {
-  padding: 1.8rem;
-  text-align: center;
-  position: relative;
-  height: auto;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.team-member-card .member-info h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-
-
-
-.member-info p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  font-style: italic;
-  margin: 0;
-}
-
-/* Impact Stats Section */
-
-.stats-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-.stats-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4rem;
-}
-
-
-
-.stat-item:last-child {
-  border-right: none;
-}
-
-
-
-/* Values About Section */
-
-
-.values-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.values-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-}
-
-
-.values-grid-about .value-card {
-  background: #f8f8f8;
-  padding: 3rem 2rem;
-  text-align: center;
-  transition: all 0.6s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.values-grid-about .value-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.values-grid-about .value-card:hover::before {
-  transform: translateY(0);
-}
-
-.values-grid-about .value-card:hover {
-  color: white;
-}
-
-.values-grid-about .value-card:hover .value-icon i,
-.values-grid-about .value-card:hover h3,
-.values-grid-about .value-card:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-.values-grid-about .value-icon {
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 2;
-}
-
-.values-grid-about .value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.values-grid-about .value-card h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.values-grid-about .value-card p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* Join About Section */
-
-.join-content h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.join-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-}
-
-
-/* Responsive About Page */
-@media (max-width: 768px) {
-  .about-hero {
-    height: 50vh;
-    margin-top: 80px;
-  }
-  
-  .hero-content h1 {
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
-  }
-  
-  .philosophy-about,
-  .story-timeline,
-  .leadership-section,
-  .values-about,
-  .join-about {
-    padding: 6rem 0;
-  }
-  
-  .impact-stats {
-    padding: 4rem 0;
-  }
-  
-  .timeline-milestones .milestone-item {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-  
-  .milestone-item.reverse {
-    grid-template-columns: 1fr;
-  }
-  
-  .milestone-item.reverse .milestone-year,
-  .milestone-item.reverse .milestone-content {
-    order: initial;
-  }
-  
-  .milestone-item.reverse .milestone-content {
-    text-align: center;
-  }
-  
-  .leadership-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    max-width: 500px;
-  }
-  
-  .stat-item {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .stat-item:nth-child(2n) {
-    border-right: none;
-  }
-  
-  .stat-item:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
-  
-  .values-grid-about {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  
-  .join-buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-hero {
-    height: 40vh;
-    margin-top: 70px;
-  }
-  
-  .philosophy-about,
-  .story-timeline,
-  .leadership-section,
-  .values-about,
-  .join-about {
-    padding: 4rem 0;
-  }
-  
-  .impact-stats {
-    padding: 3rem 0;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    max-width: 300px;
-  }
-  
-  .stat-item {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5rem 1rem;
-  }
-  
-  .stat-item:last-child {
-    border-bottom: none;
-  }
-}
-
-/* Timeline Page Styles - Constance Hotels Theme */
-
-/* Timeline Hero Section */
-
-.timeline-hero .hero-background {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.timeline-hero .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
-  z-index: 1;
-}
-
-.timeline-hero .hero-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  margin: var(--center-margin);
-}
-
-.timeline-hero .hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.timeline-hero .hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
-}
-
-.timeline-hero .hero-accent-line {
-  width: 80px;
-  height: 2px;
-  background: var(--luxury-gold);
-  margin: var(--center-margin);
-}
-
-/* Timeline Filters Section */
-
-.timeline-filters .timeline-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.timeline-filters .timeline-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.timeline-filters .timeline-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-.timeline-filters .timeline-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2rem;
-}
-
-/* Admin Controls */
-
-
-.add-event-btn:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-.add-event-btn i {
-  font-size: 0.8rem;
-}
-
-/* Category Filters */
-
-
-.filter-btn i {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.filter-btn.active {
-  background: var(--luxury-gold);
-  border-color: var(--luxury-gold);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(196, 174, 123, 0.3);
-}
-
-.filter-btn:hover:not(.active) {
-  border-color: var(--luxury-gold);
-  color: var(--luxury-gold);
-  transform: translateY(-2px);
-}
-
-/* Timeline Content Section */
-
-/* Empty State */
-
-
-.empty-icon i {
-  font-size: 4rem;
-  color: var(--luxury-gold);
-  opacity: 0.5;
-}
-
-.empty-state h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.empty-state p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-}
-
-/* Timeline List */
-
-.timeline-list::before {
-  content: '';
-  position: absolute;
-  left: 120px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, #c4ae7b, #d4bf8a);
-}
-
-/* Timeline Item */
-
-.timeline-item:last-child .timeline-line {
-  display: none;
-}
-
-/* Timeline Date */
-
-.timeline-date .month {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--luxury-gold);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.timeline-date .day {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin: 0.5rem 0;
-}
-
-.timeline-date .year {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #666;
-}
-
-/* Timeline Connector */
-
-
-.timeline-icon i {
-  font-size: 1.2rem;
-  color: white;
-}
-
-
-/* Timeline Event Card */
-
-.timeline-event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-.timeline-event-card:hover .timeline-date {
-  border-color: var(--luxury-gold);
-  background: var(--luxury-gold);
-  color: white;
-}
-
-.timeline-event-card:hover .timeline-date .month,
-.timeline-event-card:hover .timeline-date .day,
-.timeline-event-card:hover .timeline-date .year {
-  color: white;
-}
-
-.timeline-event-card:hover .timeline-icon {
-  background: #b8a068;
-  transform: scale(1.1);
-}
-
-/* Event Header */
-
-.event-header h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin: 0;
-  line-height: 1.3;
-}
-
-
-.delete-event-btn:hover {
-  background: #e74c3c;
-  color: white;
-}
-
-/* Event Meta */
-
-
-.event-meta-item i {
-  color: var(--luxury-gold);
-  font-size: 0.8rem;
-}
-
-/* Event Description */
-
-/* Event Details */
-
-
-.detail-item i {
-  color: var(--luxury-gold);
-  font-size: 0.8rem;
-}
-
-/* Timeline Modals */
-
-.timeline-modal .modal-header {
-  background: #1a1a1a;
-  color: white;
-  padding: 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.timeline-modal .modal-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  margin: 0;
-}
-
-.timeline-modal .close-modal {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.timeline-modal .close-modal:hover {
-  color: var(--luxury-gold);
-  transform: scale(1.1);
-}
-
-/* Timeline Form */
-
-
-.timeline-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.timeline-form .form-group label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  display: block;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.timeline-form .form-group input,
-.timeline-form .form-group select,
-.timeline-form .form-group textarea {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid #e8e8e8;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  color: #333;
-  transition: all 0.3s ease;
-}
-
-.timeline-form .form-group input:focus,
-.timeline-form .form-group select:focus,
-.timeline-form .form-group textarea:focus {
-  outline: none;
-  border-color: var(--luxury-gold);
-  box-shadow: 0 0 0 3px rgba(196, 174, 123, 0.1);
-}
-
-.timeline-form .form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-
-.timeline-submit-btn:hover {
-  background: #b8a068;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-/* Modal Body and Actions */
-
-.modal-body p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  text-align: center;
-  margin: 0;
-}
-
-
-.btn-cancel,
-
-
-.btn-cancel:hover {
-  background: #e8e8e8;
-}
-
-
-.btn-delete:hover {
-  background: #c0392b;
-  transform: translateY(-1px);
-}
-
-/* Responsive Timeline */
-@media (max-width: 768px) {
-  .timeline-hero {
-    height: 50vh;
-    margin-top: 80px;
-  }
-  
-  .timeline-filters {
-    padding: 6rem 0 4rem;
-  }
-  
-  .category-filters {
-    gap: 1rem;
-  }
-  
-  .filter-btn {
-    padding: 1rem 1.5rem;
-    min-width: 120px;
-  }
-  
-  .timeline-list::before {
-    left: 30px;
-  }
-  
-  .timeline-item {
-    grid-template-columns: 60px 1fr;
-    gap: 1rem;
-  }
-  
-  .timeline-connector {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-  }
-  
-  .timeline-date {
-    grid-column: 2;
-    grid-row: 1;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    text-align: left;
-  }
-  
-  .timeline-event-card {
-    grid-column: 2;
-    grid-row: 2;
-    padding: 2rem;
-  }
-  
-  .timeline-content-section {
-    padding: 4rem 0 6rem;
-}
-
-  
-  .event-meta,
-  .event-details {
-    flex-direction: column;
-  gap: 1rem;
-}
-
-}
-
-@media (max-width: 480px) {
-  .timeline-hero {
-    height: 40vh;
-    margin-top: 70px;
-  }
-  
-  .timeline-filters {
-    padding: 4rem 0 3rem;
-  }
-  
-  .category-filters {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .filter-btn {
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .timeline-item {
-    margin-bottom: 3rem;
-  }
-  
-  .timeline-event-card {
-    padding: 1.5rem;
-  }
-  
-  .event-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: start;
-  }
-  
-  .timeline-date .day {
-    font-size: 1.5rem;
-  }
-}
-
-/* Footer Styles - Constance Hotels Theme */
-
-/* Modern Footer */
-
-.modern-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #c4ae7b, transparent);
-}
-
-/* Footer Content */
-
-/* Footer Info Section */
-
-
-
-
-/* Footer Links Section */
-
-.footer-links h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-links h4::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
-}
-
-.footer-links a {
-  display: block;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 0;
-}
-
-.footer-links a::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--luxury-gold);
-  transition: width 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: var(--luxury-gold);
-  padding-left: 1.5rem;
-}
-
-.footer-links a:hover::before {
-  width: 1rem;
-}
-
-/* Footer Connect Section */
-
-.footer-connect h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.footer-connect h4::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--luxury-gold);
-}
-
-/* Footer Social Links */
-
-.footer-social a {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(196, 174, 123, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.footer-social a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.4s ease;
-  z-index: 1;
-}
-
-.footer-social a:hover::before {
-  transform: scale(1);
-}
-
-.footer-social a:hover {
-  border-color: var(--luxury-gold);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-.footer-social a i {
-  font-size: 1.2rem;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.footer-social a:hover i {
-  color: var(--luxury-dark);
-}
-
-/* Footer Bottom */
-
-.footer-bottom p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-
-
-
-
-
-
-.footer-login-btn:hover {
-  background: rgba(196, 174, 123, 0.3);
-  color: rgba(196, 174, 123, 1);
-  border-color: rgba(196, 174, 123, 0.5);
-  transform: translateY(-2px);
-}
-
-.footer-login-btn i {
-  font-size: 0.9rem;
-}
-
-/* Responsive Footer */
-@media (max-width: 1024px) {
-  .footer-content {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    padding: 5rem 2rem 3rem;
-  }
-  
-  .footer-info {
-    grid-column: 1 / -1;
-    text-align: center;
-    max-width: none;
-    margin-bottom: 2rem;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    text-align: center;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-  justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-  }
-  
-  .footer-info {
-    order: 1;
-  }
-  
-  .footer-links,
-  .footer-connect {
-    order: 2;
-  }
-  
-  .footer-links h4::after,
-  .footer-connect h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .footer-social {
-    justify-content: center;
-  }
-  
-  .footer-bottom {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .footer-login {
-    position: static;
-    margin-top: 1rem;
-  }
-  
-  .footer-login-btn {
-    margin: var(--center-margin);
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 3rem 1rem 2rem;
-  }
-  
-  .footer-logo {
-    font-size: 2rem;
-  }
-  
-  .footer-tagline {
-    font-size: 1rem;
-  }
-  
-  .footer-social a {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-social a i {
-    font-size: 1rem;
-  }
-  
-  .footer-bottom {
-    padding: 1rem;
-  }
-  
-  .footer-bottom p {
-    font-size: 0.8rem;
-  }
-}
-
-/* Meet Our Team Page Styles - Constance Hotels Theme */
-
-/* Team Hero Section */
-
-.team-hero .hero-background {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.team-hero .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
-  z-index: 1;
-}
-
-.team-hero .hero-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  margin: var(--center-margin);
-  padding: 2rem 2rem 4rem 2rem;
-}
-
-.team-hero .hero-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-}
-
-.team-hero .hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
-}
-
-.team-hero .hero-accent-line {
-  width: 80px;
-  height: 2px;
-  background: var(--luxury-gold);
-  margin: var(--center-margin);
-}
-
-/* Section Headers */
-.team-page .section-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.team-page .section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.team-page .section-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-.team-page .section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2rem;
-}
-
-/* Leadership Section */
-
-
-/* Communications Section */
-
-
-/* Coordinators Section */
-
-
-
-.team-member-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
-}
-
-.team-member-card .member-image {
-  height: 250px;
-  overflow: hidden;
-}
-
-.team-member-card .member-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.team-member-card:hover .member-image img {
-  transform: scale(1.1);
-}
-
-.team-member-card .member-info {
-  padding: 1.8rem;
-  text-align: center;
-  position: relative;
-  height: auto;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.team-member-card .member-info h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-
-
-
-.member-bio {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0 0 auto 0;
-  flex-grow: 1;
-}
-
-.member-image-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 3rem;
-}
-
-.instagram-btn {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  width: 30px;
-  height: 30px;
-  background: rgba(131, 58, 180, 0.3);
-  color: rgba(131, 58, 180, 0.7);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.instagram-btn:hover {
-  background: rgba(131, 58, 180, 0.5);
-  color: rgba(131, 58, 180, 1);
-  transform: scale(1.1);
-}
-
-.instagram-btn i {
-  font-size: 0.9rem;
-}
-
-
-
-/* Alumni Section */
-.alumni-section {
-  padding: 5.5rem 0;
-  background: #f8f8f8;
-}
-
-.alumni-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  max-width: 900px;
-  margin: var(--center-margin);
-}
-
-.alumni-card {
-  background: #ffffff;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  transition: all 0.6s ease;
-  overflow: hidden;
-  border: 2px solid rgba(196, 174, 123, 0.3);
-}
-
-.alumni-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  border-color: rgba(196, 174, 123, 0.6);
-}
-
-.alumni-card .member-image {
-  height: 250px;
-  overflow: hidden;
-  position: relative;
-}
-
-.alumni-card .member-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(196, 174, 123, 0.1);
   pointer-events: none;
 }
 
-.alumni-card .member-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-  filter: sepia(10%);
-}
-
-.alumni-card:hover .member-image img {
-  transform: scale(1.1);
-  filter: sepia(0%);
-}
-
-.alumni-card .member-info {
-  padding: 1.8rem;
-  text-align: center;
+.team-page > * {
   position: relative;
-  height: auto;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.alumni-card .member-info h3 {
-  font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-}
-
-.alumni-card .member-details {
-  margin-bottom: 1rem;
+  z-index: 2;
 }
 
 .alumni-card .member-school {
@@ -25176,6 +18283,116 @@ body {
 .alumni-card .instagram-btn:hover {
   background: rgba(131, 58, 180, 0.4);
   color: rgba(131, 58, 180, 0.9);
+}
+
+/* Alumni Section */
+.alumni-section {
+  padding: 5.5rem 0;
+  background: #f8f8f8;
+  position: relative;
+  overflow: hidden;
+}
+
+.alumni-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(196, 174, 123, 0.05) 0%, rgba(196, 174, 123, 0.02) 100%);
+  pointer-events: none;
+}
+
+.alumni-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.alumni-card {
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.6s ease;
+  overflow: hidden;
+  border: 2px solid rgba(196, 174, 123, 0.3);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.alumni-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-color: rgba(196, 174, 123, 0.6);
+}
+
+.alumni-card .member-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1.5rem;
+  border: 3px solid rgba(196, 174, 123, 0.3);
+  transition: all 0.3s ease;
+}
+
+.alumni-card:hover .member-image {
+  border-color: rgba(196, 174, 123, 0.8);
+  transform: scale(1.05);
+}
+
+.alumni-card .member-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.alumni-card:hover .member-image img {
+  transform: scale(1.1);
+}
+
+.alumni-card .member-info {
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.alumni-card .member-info h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--luxury-dark);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.alumni-card .instagram-btn {
+  align-self: center;
+  margin-top: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: rgba(131, 58, 180, 0.2);
+  color: rgba(131, 58, 180, 0.6);
+}
+
+.alumni-card .instagram-btn:hover {
+  background: rgba(131, 58, 180, 0.4);
+  color: rgba(131, 58, 180, 0.9);
+  transform: scale(1.1);
 }
 
 /* Join Team Section */
@@ -25437,6 +18654,7 @@ body {
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
   font-size: 0.8rem;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -26046,4 +19264,177 @@ tr:hover {
     padding: 0.75rem 1rem;
     font-size: 0.8rem;
   }
+}
+
+/* Team Page Background Decorations */
+.team-page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Floating Musical Notes */
+.floating-notes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(196, 174, 123, 0.1);
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.note-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.note-2 {
+  top: 25%;
+  right: 15%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+}
+
+.note-3 {
+  top: 45%;
+  left: 5%;
+  animation-delay: 2s;
+  animation-duration: 9s;
+}
+
+.note-4 {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+
+.note-5 {
+  top: 75%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.note-6 {
+  top: 85%;
+  right: 25%;
+  animation-delay: 5s;
+  animation-duration: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* Background Pattern Elements */
+.background-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern-circle {
+  position: absolute;
+  border: 1px solid rgba(196, 174, 123, 0.05);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: rotate 20s linear infinite;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation: rotate 15s linear infinite reverse;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.pattern-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(196, 174, 123, 0.1), transparent);
+  height: 1px;
+  opacity: 0.3;
+}
+
+.line-1 {
+  width: 60%;
+  top: 20%;
+  left: 20%;
+  transform: rotate(15deg);
+}
+
+.line-2 {
+  width: 40%;
+  top: 70%;
+  right: 10%;
+  transform: rotate(-10deg);
+}
+
+.line-3 {
+  width: 50%;
+  top: 40%;
+  left: 10%;
+  transform: rotate(5deg);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* Ensure team page content is above background */
+.team-page {
+  position: relative;
+  z-index: 2;
 }
