@@ -46,9 +46,22 @@ const MeetOurTeam: React.FC = () => {
     // Parallax scrolling for hero background
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const heroBgImage = document.querySelector('.team-hero .hero-bg-image') as HTMLElement;
+      const heroBgImage = document.querySelector('.team-hero .hero-bg-image') as HTMLElement | null;
+      const leadershipBgImage = document.querySelector('.leadership-section .leadership-bg-image') as HTMLElement | null;
+      const communicatorsBgImage = document.querySelector('.communications-section .communications-bg-image') as HTMLElement | null;
+      const coordinatorsBgImage = document.querySelector('.coordinators-section .coordinators-bg-image') as HTMLElement | null;
+      
       if (heroBgImage) {
         heroBgImage.style.transform = `translateY(${scrollY * 0.3}px)`;
+      }
+      if (leadershipBgImage) {
+        leadershipBgImage.style.transform = `translateY(${scrollY * 0.3}px)`;
+      }
+      if (communicatorsBgImage) {
+        communicatorsBgImage.style.transform = `translateY(${scrollY * 0.3}px)`;
+      }
+      if (coordinatorsBgImage) {
+        coordinatorsBgImage.style.transform = `translateY(${scrollY * 0.3}px)`;
       }
     };
 
@@ -59,7 +72,6 @@ const MeetOurTeam: React.FC = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
   return (
     <div className="team-page">
       {/* Hero Section */}
@@ -75,11 +87,6 @@ const MeetOurTeam: React.FC = () => {
               backgroundAttachment: 'fixed',
             }}
           />
-
-      
-
-
-
           <div className="hero-overlay" />
           <div className="container">
             <div className="hero-content">
@@ -93,9 +100,20 @@ const MeetOurTeam: React.FC = () => {
           </div>
         </div>
       </section>
-
+  
       {/* Leadership Section */}
       <section className="leadership-section">
+        <div
+          className="leadership-bg-image"
+          style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_2.jpg)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="leadership-overlay" />
         <div className="container">
           <div className="section-header">
             <h2>LEADERSHIP</h2>
@@ -130,9 +148,20 @@ const MeetOurTeam: React.FC = () => {
           </div>
         </div>
       </section>
-
+  
       {/* Communications Section */}
       <section className="communications-section">
+        <div
+          className="communications-bg-image"
+          style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_3.JPG)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="communications-overlay" />
         <div className="container">
           <div className="section-header">
             <h2>COMMUNICATIONS</h2>
@@ -167,9 +196,20 @@ const MeetOurTeam: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Program Coordinators Section */}
+  
+      {/* Coordinators Section */}
       <section className="coordinators-section">
+        <div
+          className="coordinators-bg-image"
+          style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_4.JPG)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="coordinators-overlay" />
         <div className="container">
           <div className="section-header">
             <h2>COORDINATORS</h2>
@@ -204,7 +244,7 @@ const MeetOurTeam: React.FC = () => {
           </div>
         </div>
       </section>
-
+  
       {/* Alumni Section */}
       <section className="alumni-section">
         <div className="container">
@@ -247,16 +287,16 @@ const MeetOurTeam: React.FC = () => {
           </div>
         </div>
       </section>
-
+  
       {/* Join Our Team Section */}
       <section className="join-team-section">
         <div className="container">
           <div className="join-content">
             <h2>Join Our Team</h2>
             <p>
-              Ready to make a difference? OneKey is always looking for
-              passionate students who want to give back to their community
-              through music and education.
+              Ready to make a difference? OneKey is always looking for passionate
+              students who want to give back to their community through music and
+              education.
             </p>
             <div className="join-opportunities">
               <div className="opportunity-card">
@@ -265,8 +305,8 @@ const MeetOurTeam: React.FC = () => {
                 </div>
                 <h3>Musicians</h3>
                 <p>
-                  Share your musical talents with senior residents through
-                  weekly concerts and performances.
+                  Share your musical talents with senior residents through weekly
+                  concerts and performances.
                 </p>
               </div>
               <div className="opportunity-card">
@@ -285,8 +325,8 @@ const MeetOurTeam: React.FC = () => {
                 </div>
                 <h3>Leaders</h3>
                 <p>
-                  Take on leadership roles and help expand OneKey's impact in
-                  the community.
+                  Take on leadership roles and help expand OneKey's impact in the
+                  community.
                 </p>
               </div>
             </div>
@@ -295,10 +335,7 @@ const MeetOurTeam: React.FC = () => {
                 <i className="fas fa-info-circle" />
                 About Us
               </Link>
-              <a
-                href="mailto:on3keymusic@gmail.com"
-                className="btn-secondary"
-              >
+              <a href="mailto:on3keymusic@gmail.com" className="btn-secondary">
                 <i className="fas fa-envelope" />
                 Contact Us
               </a>

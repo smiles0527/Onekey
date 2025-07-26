@@ -5389,6 +5389,27 @@ body {
 .leadership-section {
   padding: 8rem 0;
   background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.leadership-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.leadership-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 1;
 }
 
 .leadership-header {
@@ -5410,6 +5431,11 @@ body {
   font-size: 1.1rem;
   font-weight: 300;
   color: #666;
+}
+
+.leadership-section .container {
+  position: relative;
+  z-index: 2;
 }
 
 .leadership-grid {
@@ -9498,6 +9524,32 @@ body {
 .communications-section {
   padding: 5.5rem 0;
   background: #f8f8f8;
+  position: relative;
+  overflow: hidden;
+}
+
+.communications-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.communications-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(248, 248, 248, 0.85);
+  z-index: 1;
+}
+
+.communications-section .container {
+  position: relative;
+  z-index: 2;
 }
 
 .communications-grid {
@@ -9509,9 +9561,36 @@ body {
 }
 
 /* Coordinators Section */
+
 .coordinators-section {
-  padding: 5.5rem 0;
+  padding: 8rem 0;
   background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.coordinators-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.coordinators-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 1;
+}
+
+.coordinators-section .container {
+  position: relative;
+  z-index: 2;
 }
 
 .coordinators-grid {
