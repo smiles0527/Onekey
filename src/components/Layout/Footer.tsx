@@ -5,7 +5,7 @@ import AuthModal from '../Auth/AuthModal';
 
 const Footer: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
@@ -45,20 +45,39 @@ const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="footer-bottom tw-flex tw-justify-between tw-items-center tw-px-8 tw-py-4">
-          <div className="footer-bottom-left tw-flex-1">
-            <p className="footer-school tw-text-sm tw-text-luxury-600">Website made by Curtis Wei and Ethan Xie</p>
+        <div className="footer-bottom">
+          <div className="footer-bottom-left">
+            <p className="footer-school">Website made by Curtis Wei and Ethan Xie</p>
           </div>
-          <div className="footer-bottom-center tw-flex-1 tw-text-center">
-            <p className="tw-text-sm tw-text-luxury-600">&copy; 2023 OneKey Student Volunteers. All rights reserved.</p>
+          <div className="footer-bottom-center">
+            <p>&copy; 2023 OneKey Student Volunteers. All rights reserved.</p>
           </div>
-          <div className="footer-bottom-right tw-flex-1 tw-flex tw-justify-end">
-            {!isAuthenticated && (
-              <button className="footer-login-btn tw-flex tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-bg-gold-600 tw-text-white tw-rounded-lg tw-font-sans tw-font-medium tw-text-sm tw-uppercase tw-tracking-wide tw-transition-all tw-duration-300 hover:tw-bg-gold-700 hover:tw-transform hover:tw--translate-y-1" onClick={handleAuthClick}>
-                <i className="fas fa-sign-in-alt"></i>
-                Login
-              </button>
-            )}
+          <div className="footer-bottom-right">
+            <div className="footer-login">
+              {!isAuthenticated ? (
+                <button 
+                  className="footer-login-btn" 
+                  onClick={handleAuthClick}
+                >
+                  <i className="fas fa-sign-in-alt"></i>
+                  Login
+                </button>
+              ) : (
+                <>
+                  <Link to="/admin" className="footer-admin-btn">
+                    <i className="fas fa-cog"></i>
+                    Admin Dashboard
+                  </Link>
+                  <button 
+                    className="footer-logout-btn"
+                    onClick={logout}
+                  >
+                    <i className="fas fa-sign-out-alt"></i>
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </footer>

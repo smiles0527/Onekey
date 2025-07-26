@@ -135,14 +135,14 @@ const Timeline: React.FC = () => {
           console.log('Photos converted successfully:', photoUrls.length, 'photos');
         }
 
-        const newEvent = addEvent({
+        const newEvent = await addEvent({
           ...formData,
           photo: photoUrls[0] || null, // Keep first photo as main photo for now
           photos: photoUrls, // Store all photos
           createdBy: user.id
         });
 
-        console.log('Event created with photos:', newEvent.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
+        console.log('Event created with photos:', newEvent?.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
 
         // Backup removed
 
@@ -188,8 +188,8 @@ const Timeline: React.FC = () => {
     }
   };
 
-  const handleDelete = (eventId: string) => {
-    removeEvent(eventId);
+  const handleDelete = async (eventId: string) => {
+    await removeEvent(eventId);
     setShowConfirmDelete(null);
   };
 

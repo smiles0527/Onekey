@@ -63,14 +63,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose }) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Create new user (default role is 'user')
-      addUser({
+      await addUser({
         username: formData.username,
         email: formData.email,
         password: formData.password,
         role: 'user',
         firstName: formData.firstName,
-        lastName: formData.lastName,
-        department: formData.department
+        lastName: formData.lastName
       });
 
       // Reset form and close modal

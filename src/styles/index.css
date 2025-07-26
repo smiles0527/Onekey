@@ -9087,6 +9087,74 @@ body {
   font-size: 0.9rem;
 }
 
+/* Footer Admin Button */
+.footer-admin-btn {
+  background: rgba(44, 62, 80, 0.2);
+  color: rgba(44, 62, 80, 0.9);
+  border: 1px solid rgba(44, 62, 80, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.footer-admin-btn:hover {
+  background: rgba(44, 62, 80, 0.3);
+  color: rgba(44, 62, 80, 1);
+  border-color: rgba(44, 62, 80, 0.5);
+  transform: translateY(-2px);
+}
+
+.footer-admin-btn i {
+  font-size: 0.9rem;
+}
+
+/* Footer Logout Button */
+.footer-logout-btn {
+  background: rgba(231, 76, 60, 0.2);
+  color: rgba(231, 76, 60, 0.9);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.footer-logout-btn:hover {
+  background: rgba(231, 76, 60, 0.3);
+  color: rgba(231, 76, 60, 1);
+  border-color: rgba(231, 76, 60, 0.5);
+  transform: translateY(-2px);
+}
+
+.footer-logout-btn i {
+  font-size: 0.9rem;
+}
+
+/* Footer Login Container */
+.footer-login {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Responsive Footer */
 @media (max-width: 1024px) {
   .footer-content {
@@ -9153,10 +9221,16 @@ body {
   .footer-login {
     position: static;
     margin-top: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
-  .footer-login-btn {
-    margin: var(--center-margin);
+  .footer-login-btn,
+  .footer-logout-btn,
+  .footer-admin-btn {
+    margin: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
   }
 }
 
@@ -9184,6 +9258,14 @@ body {
   
   .footer-bottom {
     padding: 1rem;
+  }
+  
+  .footer-login {
+    gap: 0.25rem;
+  }
+  
+  .footer-admin-btn {
+    margin-right: 0.25rem;
   }
   
   .footer-bottom p {

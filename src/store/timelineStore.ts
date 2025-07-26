@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { apiService, TimelineEvent as ApiTimelineEvent, CreateEventRequest } from '../services/api';
 
 export interface TimelineEvent {
   id: string;
@@ -20,60 +21,175 @@ export interface TimelineEvent {
 
 interface TimelineState {
   events: TimelineEvent[];
-  addEvent: (eventData: Omit<TimelineEvent, 'id' | 'createdAt'>) => TimelineEvent;
-  removeEvent: (eventId: string) => void;
-  updateEvent: (eventId: string, updates: Partial<TimelineEvent>) => void;
+  isLoading: boolean;
+  error: string | null;
+  fetchEvents: () => Promise<void>;
+  addEvent: (eventData: Omit<TimelineEvent, 'id' | 'createdAt'>) => Promise<TimelineEvent | null>;
+  removeEvent: (eventId: string) => Promise<boolean>;
+  updateEvent: (eventId: string, updates: Partial<TimelineEvent>) => Promise<boolean>;
   getEventsByCategory: (category: TimelineEvent['category']) => TimelineEvent[];
   getEventById: (eventId: string) => TimelineEvent | undefined;
+  clearError: () => void;
 }
 
 export const useTimelineStore = create<TimelineState>()(
   persist(
     (set, get) => ({
       events: [],
+      isLoading: false,
+      error: null,
 
-      addEvent: (eventData) => {
-        const newEvent: TimelineEvent = {
-          ...eventData,
-          id: `event-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
+      fetchEvents: async () => {
+        set({ isLoading: true, error: null });
         
-        console.log('Adding new event:', newEvent);
-        
-        set(state => {
-          const updatedEvents = [...state.events, newEvent].sort((a, b) => 
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-          );
-          console.log('Updated events array:', updatedEvents);
-          console.log('Saving to localStorage...');
-          return { events: updatedEvents };
-        });
-        
-        // Force localStorage update
-        setTimeout(() => {
-          const currentState = get();
-          console.log('Current state after add:', currentState);
-          console.log('localStorage after add:', localStorage.getItem('onekey-timeline'));
-        }, 100);
-        
-        return newEvent;
+        try {
+          const response = await apiService.getEvents();
+          
+          if (response.success && response.data) {
+            const events: TimelineEvent[] = response.data.events.map(apiEvent => ({
+              id: apiEvent.id,
+              name: apiEvent.name,
+              date: apiEvent.date,
+              category: apiEvent.category as TimelineEvent['category'],
+              location: apiEvent.location,
+              time: apiEvent.time,
+              attendees: apiEvent.attendees,
+              performers: apiEvent.performers,
+              duration: apiEvent.duration,
+              description: apiEvent.description,
+              photo: apiEvent.photo_url,
+              createdAt: apiEvent.created_at,
+              createdBy: 'system', // Backend doesn't provide this yet
+            }));
+            
+            set({ events, isLoading: false, error: null });
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to fetch events'
+            });
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to fetch events'
+          });
+        }
       },
 
-      removeEvent: (eventId) => {
-        console.log('Removing event:', eventId);
-        set(state => ({
-          events: state.events.filter(event => event.id !== eventId)
-        }));
+      addEvent: async (eventData) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const apiEventData: CreateEventRequest = {
+            name: eventData.name,
+            date: eventData.date,
+            category: eventData.category,
+            location: eventData.location,
+            time: eventData.time,
+            attendees: eventData.attendees,
+            performers: eventData.performers,
+            duration: eventData.duration,
+            description: eventData.description,
+            photo_url: eventData.photo || undefined,
+          };
+          
+          const response = await apiService.createEvent(apiEventData);
+          
+          if (response.success) {
+            // Refresh events list
+            await get().fetchEvents();
+            set({ isLoading: false, error: null });
+            
+            // Return the created event
+            const newEvent: TimelineEvent = {
+              ...eventData,
+              id: response.data?.id || '',
+              createdAt: new Date().toISOString(),
+            };
+            
+            return newEvent;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to create event'
+            });
+            return null;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to create event'
+          });
+          return null;
+        }
       },
 
-      updateEvent: (eventId, updates) => {
-        console.log('Updating event:', eventId, updates);
-        set(state => ({
-          events: state.events.map(event => 
-            event.id === eventId ? { ...event, ...updates } : event
-          )
-        }));
+      removeEvent: async (eventId) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const response = await apiService.deleteEvent(eventId);
+          
+          if (response.success) {
+            // Refresh events list
+            await get().fetchEvents();
+            set({ isLoading: false, error: null });
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to delete event'
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to delete event'
+          });
+          return false;
+        }
+      },
+
+      updateEvent: async (eventId, updates) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const apiEventData: CreateEventRequest = {
+            name: updates.name || '',
+            date: updates.date || '',
+            category: updates.category || 'performances',
+            location: updates.location,
+            time: updates.time,
+            attendees: updates.attendees,
+            performers: updates.performers,
+            duration: updates.duration,
+            description: updates.description,
+            photo_url: updates.photo || undefined,
+          };
+          
+          const response = await apiService.updateEvent(eventId, apiEventData);
+          
+          if (response.success) {
+            // Refresh events list
+            await get().fetchEvents();
+            set({ isLoading: false, error: null });
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to update event'
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to update event'
+          });
+          return false;
+        }
       },
 
       getEventsByCategory: (category) => {
@@ -87,47 +203,16 @@ export const useTimelineStore = create<TimelineState>()(
         const { events } = get();
         return events.find(event => event.id === eventId);
       },
+
+      clearError: () => {
+        set({ error: null });
+      },
     }),
     {
       name: 'onekey-timeline',
       partialize: (state) => ({
         events: state.events,
       }),
-      onRehydrateStorage: () => (state) => {
-        console.log('Timeline store rehydrated from localStorage:', state);
-        if (state) {
-          console.log('Rehydrated events count:', state.events?.length || 0);
-        }
-      },
-      version: 1,
-      storage: {
-        getItem: (name) => {
-          try {
-            const value = localStorage.getItem(name);
-            console.log(`Getting ${name} from localStorage:`, value ? 'EXISTS' : 'NOT FOUND');
-            return value ? JSON.parse(value) : null;
-          } catch (error) {
-            console.error('Error getting from localStorage:', error);
-            return null;
-          }
-        },
-        setItem: (name, value) => {
-          try {
-            console.log(`Setting ${name} in localStorage:`, value);
-            localStorage.setItem(name, JSON.stringify(value));
-          } catch (error) {
-            console.error('Error setting localStorage:', error);
-          }
-        },
-        removeItem: (name) => {
-          try {
-            console.log(`Removing ${name} from localStorage`);
-            localStorage.removeItem(name);
-          } catch (error) {
-            console.error('Error removing from localStorage:', error);
-          }
-        },
-      },
     }
   )
 ); 

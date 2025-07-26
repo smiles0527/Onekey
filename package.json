@@ -30,8 +30,13 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "react-scripts start",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:full": "concurrently \"npm run dev:backend\" \"wait-on http://localhost:3001 && npm run dev:frontend\"",
+    "dev:custom": "node dev-server.js",
+    "install:all": "npm install && cd backend && npm install",
+    "setup": "npm run install:all && cd backend && npm run migrate && npm run seed"
   },
   "eslintConfig": {
     "extends": [
@@ -54,8 +59,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.0",
     "gh-pages": "^6.3.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "wait-on": "^8.0.4"
   }
 }

@@ -49,7 +49,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -65,7 +65,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
       department: newUserForm.department
     };
 
-    addUser(userData);
+    await addUser(userData);
     
     // Reset form
     setNewUserForm({
@@ -82,21 +82,21 @@ const UserManagement: React.FC<UserManagementProps> = ({ isOpen, onClose }) => {
     setActiveTab('users');
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
     if (userId === currentUser?.id) {
       alert("You cannot delete your own account!");
       return;
     }
-    removeUser(userId);
+    await removeUser(userId);
     setShowDeleteConfirm(null);
   };
 
-  const handleRoleChange = (userId: string, newRole: User['role']) => {
+  const handleRoleChange = async (userId: string, newRole: User['role']) => {
     if (userId === currentUser?.id) {
       alert("You cannot change your own role!");
       return;
     }
-    updateUserRole(userId, newRole);
+    await updateUserRole(userId, newRole);
   };
 
   const getRoleColor = (role: User['role']) => {

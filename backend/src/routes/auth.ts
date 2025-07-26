@@ -37,7 +37,8 @@ router.post('/login', (req, res) => {
           username: user.username,
           email: user.email,
           firstName: user.first_name,
-          lastName: user.last_name
+          lastName: user.last_name,
+          role: user.role || 'user'
         }
       });
     });
@@ -59,11 +60,16 @@ router.get('/me', (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as any;
     
-    db.get('SELECT id, username, email, first_name, last_name FROM users WHERE id = ?', [decoded.userId], (err: any, user: any) => {
+    db.get('SELECT id, username, email, first_name, last_name, role FROM users WHERE id = ?', [decoded.userId], (err: any, user: any) => {
       if (err || !user) {
         return res.status(401).json({ error: 'Invalid token' });
       }
-      return res.json({ user });
+      return res.json({ 
+        user: {
+          ...user,
+          role: user.role || 'user'
+        }
+      });
     });
     
     // Explicit return for the outer function

@@ -6,15 +6,21 @@ async function seed() {
   const adminId = uuidv4();
   const hashedPassword = await bcrypt.hash(process.env['DEFAULT_ADMIN_PASSWORD'] || 'admin123', 12);
 
+  // First, ensure the role column exists
+  db.run('ALTER TABLE users ADD COLUMN role TEXT DEFAULT "user"', () => {
+    // Ignore error if column already exists
+  });
+
   db.run(
-    'INSERT OR IGNORE INTO users (id, username, email, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)',
+    'INSERT OR IGNORE INTO users (id, username, email, password_hash, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
     [
       adminId,
       process.env['DEFAULT_ADMIN_USERNAME'] || 'admin',
       process.env['DEFAULT_ADMIN_EMAIL'] || 'on3keymusic@gmail.com',
       hashedPassword,
       'System',
-      'Administrator'
+      'Administrator',
+      'super_admin'
     ],
     function(err: any) {
       if (err) {

@@ -35,6 +35,23 @@ app.use('/api/v1/timeline', timelineRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/users', userRoutes);
 
+// Root route
+app.get('/', (_req, res) => {
+  res.json({
+    message: 'Onekey Backend API',
+    version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      auth: '/api/v1/auth',
+      users: '/api/v1/users',
+      timeline: '/api/v1/timeline',
+      upload: '/api/v1/upload'
+    }
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });

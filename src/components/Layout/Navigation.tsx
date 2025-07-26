@@ -3,8 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import AuthModal from '../Auth/AuthModal';
 import RegisterModal from '../Auth/RegisterModal';
-// UserMenu removed
-import AdminMenu from './AdminMenu';
 
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +11,7 @@ const Navigation: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   const location = useLocation();
-  const { isAuthenticated, user, hasPermission } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   
   const isHomePage = location.pathname === '/';
 
@@ -48,8 +46,6 @@ const Navigation: React.FC = () => {
             ONEKEY
           </Link>
           
-          {/* Login button moved to footer */}
-          
           <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
             <li>
               <Link to="/" onClick={closeMenu}>Home</Link>
@@ -63,9 +59,9 @@ const Navigation: React.FC = () => {
             <li>
               <Link to="/team" onClick={closeMenu}>Meet Our Team</Link>
             </li>
-            {isAuthenticated && user && hasPermission('basic_admin') && (
-              <li className="admin-menu-item">
-                <AdminMenu />
+            {isAuthenticated && (
+              <li>
+                <Link to="/admin" onClick={closeMenu}>Admin Dashboard</Link>
               </li>
             )}
           </ul>

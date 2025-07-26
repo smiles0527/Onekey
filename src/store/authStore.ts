@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { apiService, User as ApiUser, CreateUserRequest, UpdateUserRequest } from '../services/api';
 
 export interface User {
   id: string;
@@ -33,18 +34,22 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   users: User[];
-  credentials: UserCredentials[];
   activityLogs: ActivityLog[];
+  isLoading: boolean;
+  error: string | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
-  addUser: (userData: Omit<User, 'id' | 'createdAt' | 'isActive'> & { password: string }) => User;
-  removeUser: (userId: string) => void;
-  updateUserRole: (userId: string, role: User['role']) => void;
-  updateUserStatus: (userId: string, isActive: boolean) => void;
-  changePassword: (userId: string, newPassword: string) => boolean;
+  getCurrentUser: () => Promise<void>;
+  fetchUsers: () => Promise<void>;
+  addUser: (userData: CreateUserRequest) => Promise<User | null>;
+  removeUser: (userId: string) => Promise<boolean>;
+  updateUserRole: (userId: string, role: User['role']) => Promise<boolean>;
+  updateUserStatus: (userId: string, isActive: boolean) => Promise<boolean>;
+  changePassword: (userId: string, newPassword: string) => Promise<boolean>;
   logActivity: (userId: string, action: string, details: string) => void;
   getUserPermissions: (role: User['role']) => string[];
   hasPermission: (permission: string) => boolean;
+  clearError: () => void;
 }
 
 // Default admin credentials
@@ -101,147 +106,271 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      users: DEFAULT_USERS,
-      credentials: DEFAULT_CREDENTIALS,
+      users: [],
       activityLogs: [],
+      isLoading: false,
+      error: null,
 
       login: async (username: string, password: string) => {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        set({ isLoading: true, error: null });
         
-        const { users, credentials, logActivity } = get();
-        
-        // Find user by username
-        const user = users.find(u => u.username === username && u.isActive);
-        if (!user) {
+        try {
+          const response = await apiService.login({ username, password });
+          
+          if (response.success && response.data) {
+            const user: User = {
+              id: response.data.user.id,
+              username: response.data.user.username,
+              email: response.data.user.email,
+              firstName: response.data.user.firstName,
+              lastName: response.data.user.lastName,
+              role: response.data.user.role as User['role'] || 'user',
+              isActive: true,
+              createdAt: new Date().toISOString(),
+            };
+            
+            set({ 
+              user, 
+              isAuthenticated: true, 
+              isLoading: false,
+              error: null
+            });
+            
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Login failed' 
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Login failed' 
+          });
           return false;
         }
-        
-        // Check password
-        const userCredential = credentials.find(c => c.userId === user.id);
-        if (!userCredential || userCredential.passwordHash !== password) {
-          // Log failed login attempt
-          logActivity(user.id, 'failed_login', `Failed login attempt for ${username}`);
-          return false;
-        }
-        
-        // Update last login time
-        const updatedUser = { ...user, lastLoginAt: new Date().toISOString() };
-        set(state => ({
-          user: updatedUser,
-          isAuthenticated: true,
-          users: state.users.map(u => u.id === user.id ? updatedUser : u)
-        }));
-        
-        // Log successful login
-        logActivity(user.id, 'login', `User ${username} logged in successfully`);
-        
-        return true;
       },
 
       logout: () => {
-        const { user, logActivity } = get();
-        if (user) {
-          logActivity(user.id, 'logout', `User ${user.username} logged out`);
-        }
-        set({ user: null, isAuthenticated: false });
+        apiService.clearToken();
+        set({ user: null, isAuthenticated: false, error: null });
       },
 
-      addUser: (userData) => {
-        const { logActivity, user: currentUser } = get();
-        const newUser: User = {
-          username: userData.username,
-          email: userData.email,
-          role: userData.role,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          department: userData.department,
-          id: `user-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          isActive: true,
-        };
+      getCurrentUser: async () => {
+        set({ isLoading: true, error: null });
         
-        // Create credentials for new user
-        const newCredentials: UserCredentials = {
-          userId: newUser.id,
-          passwordHash: userData.password // In production, hash the password
-        };
-        
-        set(state => ({
-          users: [...state.users, newUser],
-          credentials: [...state.credentials, newCredentials]
-        }));
-        
-        // Log user creation
-        if (currentUser) {
-          logActivity(currentUser.id, 'create_user', `Created new user: ${newUser.username} with role ${newUser.role}`);
-        }
-        
-        return newUser;
-      },
-
-      removeUser: (userId) => {
-        const { users, logActivity, user: currentUser } = get();
-        const userToDelete = users.find(u => u.id === userId);
-        
-        set(state => ({
-          users: state.users.filter(user => user.id !== userId),
-          credentials: state.credentials.filter(c => c.userId !== userId)
-        }));
-        
-        // Log user deletion
-        if (currentUser && userToDelete) {
-          logActivity(currentUser.id, 'delete_user', `Deleted user: ${userToDelete.username}`);
+        try {
+          const response = await apiService.getCurrentUser();
+          
+          if (response.success && response.data) {
+            const user: User = {
+              id: response.data.user.id,
+              username: response.data.user.username,
+              email: response.data.user.email,
+              firstName: response.data.user.firstName,
+              lastName: response.data.user.lastName,
+              role: response.data.user.role as User['role'] || 'user',
+              isActive: response.data.user.isActive,
+              createdAt: response.data.user.createdAt,
+              lastLoginAt: response.data.user.lastLoginAt,
+            };
+            
+            set({ 
+              user, 
+              isAuthenticated: true, 
+              isLoading: false,
+              error: null
+            });
+          } else {
+            set({ 
+              user: null, 
+              isAuthenticated: false, 
+              isLoading: false,
+              error: response.error || 'Failed to get user'
+            });
+          }
+        } catch (error) {
+          set({ 
+            user: null, 
+            isAuthenticated: false, 
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Failed to get user'
+          });
         }
       },
 
-      updateUserRole: (userId, role) => {
-        const { users, logActivity, user: currentUser } = get();
-        const targetUser = users.find(u => u.id === userId);
+      fetchUsers: async () => {
+        set({ isLoading: true, error: null });
         
-        set(state => ({
-          users: state.users.map(user => 
-            user.id === userId ? { ...user, role } : user
-          )
-        }));
-        
-        // Log role change
-        if (currentUser && targetUser) {
-          logActivity(currentUser.id, 'change_role', `Changed ${targetUser.username}'s role to ${role}`);
+        try {
+          const response = await apiService.getUsers();
+          
+          if (response.success && response.data) {
+            const users: User[] = response.data.users.map(apiUser => ({
+              id: apiUser.id,
+              username: apiUser.username,
+              email: apiUser.email,
+              firstName: apiUser.firstName,
+              lastName: apiUser.lastName,
+              role: apiUser.role as User['role'] || 'user',
+              isActive: apiUser.isActive,
+              createdAt: apiUser.createdAt,
+              lastLoginAt: apiUser.lastLoginAt,
+            }));
+            
+            set({ users, isLoading: false, error: null });
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to fetch users'
+            });
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to fetch users'
+          });
         }
       },
 
-      updateUserStatus: (userId, isActive) => {
-        const { users, logActivity, user: currentUser } = get();
-        const targetUser = users.find(u => u.id === userId);
+      addUser: async (userData) => {
+        set({ isLoading: true, error: null });
         
-        set(state => ({
-          users: state.users.map(user => 
-            user.id === userId ? { ...user, isActive } : user
-          )
-        }));
-        
-        // Log status change
-        if (currentUser && targetUser) {
-          logActivity(currentUser.id, 'change_status', `${isActive ? 'Activated' : 'Deactivated'} user: ${targetUser.username}`);
+        try {
+          const response = await apiService.createUser(userData);
+          
+          if (response.success) {
+            // Refresh users list
+            await get().fetchUsers();
+            set({ isLoading: false, error: null });
+            
+            // Return the created user (we'll need to fetch it)
+            const newUser: User = {
+              id: response.data?.userId || '',
+              username: userData.username,
+              email: userData.email,
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              role: userData.role as User['role'] || 'user',
+              isActive: true,
+              createdAt: new Date().toISOString(),
+            };
+            
+            return newUser;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to create user'
+            });
+            return null;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to create user'
+          });
+          return null;
         }
       },
 
-      changePassword: (userId, newPassword) => {
-        const { logActivity, user: currentUser } = get();
+      removeUser: async (userId) => {
+        set({ isLoading: true, error: null });
         
-        set(state => ({
-          credentials: state.credentials.map(c => 
-            c.userId === userId ? { ...c, passwordHash: newPassword } : c
-          )
-        }));
-        
-        // Log password change
-        if (currentUser) {
-          logActivity(currentUser.id, 'change_password', `Changed password for user ID: ${userId}`);
+        try {
+          const response = await apiService.deleteUser(userId);
+          
+          if (response.success) {
+            // Refresh users list
+            await get().fetchUsers();
+            set({ isLoading: false, error: null });
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to delete user'
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to delete user'
+          });
+          return false;
         }
+      },
+
+      updateUserRole: async (userId, role) => {
+        set({ isLoading: true, error: null });
         
-        return true;
+        try {
+          const response = await apiService.updateUser(userId, { role });
+          
+          if (response.success) {
+            // Refresh users list
+            await get().fetchUsers();
+            set({ isLoading: false, error: null });
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to update user role'
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to update user role'
+          });
+          return false;
+        }
+      },
+
+      updateUserStatus: async (userId, isActive) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const response = await apiService.updateUser(userId, { isActive });
+          
+          if (response.success) {
+            // Refresh users list
+            await get().fetchUsers();
+            set({ isLoading: false, error: null });
+            return true;
+          } else {
+            set({ 
+              isLoading: false, 
+              error: response.error || 'Failed to update user status'
+            });
+            return false;
+          }
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to update user status'
+          });
+          return false;
+        }
+      },
+
+      changePassword: async (userId, newPassword) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          // Note: Backend doesn't have a change password endpoint yet
+          // This would need to be implemented in the backend
+          set({ isLoading: false, error: 'Password change not implemented in backend yet' });
+          return false;
+        } catch (error) {
+          set({ 
+            isLoading: false, 
+            error: error instanceof Error ? error.message : 'Failed to change password'
+          });
+          return false;
+        }
       },
 
       logActivity: (userId, action, details) => {
@@ -270,15 +399,16 @@ export const useAuthStore = create<AuthState>()(
         const userPermissions = PERMISSIONS[user.role] || [];
         return userPermissions.includes(permission);
       },
+
+      clearError: () => {
+        set({ error: null });
+      },
     }),
     {
       name: 'onekey-auth',
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
-        users: state.users,
-        credentials: state.credentials,
-        activityLogs: state.activityLogs,
       }),
     }
   )

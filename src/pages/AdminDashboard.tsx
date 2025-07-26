@@ -11,17 +11,30 @@ const AdminDashboard: React.FC = () => {
   const { 
     isAuthenticated, 
     user, 
-    hasPermission, 
     users, 
     activityLogs, 
+    isLoading: authLoading,
+    error: authError,
     addUser, 
     removeUser, 
     updateUserRole, 
     updateUserStatus, 
     changePassword,
-    logActivity
+    logActivity,
+    fetchUsers,
+    getCurrentUser,
+    clearError: clearAuthError
   } = useAuthStore();
-  const { events, addEvent, removeEvent, updateEvent } = useTimelineStore();
+  const { 
+    events, 
+    addEvent, 
+    removeEvent, 
+    updateEvent, 
+    isLoading: timelineLoading,
+    error: timelineError,
+    fetchEvents,
+    clearError: clearTimelineError
+  } = useTimelineStore();
   const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, toggleTeamMemberStatus } = useTeamStore();
   
   const [activeTab, setActiveTab] = useState('overview');
@@ -75,20 +88,19 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
-    if (!hasPermission('basic_admin')) {
-      navigate('/');
-      return;
-    }
-
     const urlParams = new URLSearchParams(location.search);
     const tabParam = urlParams.get('tab');
     
     if (tabParam && ['overview', 'users', 'team', 'logs', 'timeline'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
-  }, [isAuthenticated, user, hasPermission, navigate, location.search]);
 
-  if (!isAuthenticated || !user || !hasPermission('basic_admin')) {
+    // Fetch data from backend
+    fetchUsers();
+    fetchEvents();
+  }, [isAuthenticated, user, navigate, location.search, fetchUsers, fetchEvents]);
+
+  if (!isAuthenticated || !user) {
     return null;
   }
 
@@ -142,8 +154,7 @@ const AdminDashboard: React.FC = () => {
         password: newUserData.password
       });
       
-      // Log the user creation
-      if (user) {
+      if (newUser && user) {
         logActivity(user.id, 'add_user', `Created new user: ${newUser.username} (${newUser.role})`);
       }
       
@@ -195,15 +206,17 @@ const AdminDashboard: React.FC = () => {
         }
       }
       
-      const newEvent = addEvent({
+      const newEvent = await addEvent({
         ...newEventData,
         photo: photoUrls[0] || null, // Keep first photo as main photo for now
         photos: photoUrls, // Store all photos
         createdBy: user.id
       });
       
-      // Log the event creation
-      logActivity(user.id, 'add_event', `Created event: ${newEvent.name} (${newEvent.category})`);
+      if (newEvent) {
+        // Log the event creation
+        logActivity(user.id, 'add_event', `Created event: ${newEvent.name} (${newEvent.category})`);
+      }
       
       setShowCreateEventModal(false);
       setNewEventData({
@@ -250,10 +263,10 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteEvent = (eventId: string) => {
+  const handleDeleteEvent = async (eventId: string) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       const event = events.find(e => e.id === eventId);
-      removeEvent(eventId);
+      await removeEvent(eventId);
       
       // Log the event deletion
       if (user && event) {
@@ -301,7 +314,7 @@ const AdminDashboard: React.FC = () => {
         photoUrls = editingEvent.photos;
       }
       
-      updateEvent(editingEvent.id, {
+      await updateEvent(editingEvent.id, {
         ...newEventData,
         photo: photoUrls[0] || null,
         photos: photoUrls
@@ -467,11 +480,11 @@ const AdminDashboard: React.FC = () => {
 
     try {
       // Update user role
-      updateUserRole(editingUser.id, newUserData.role as User['role']);
+      await updateUserRole(editingUser.id, newUserData.role as User['role']);
       
       // Update password if provided
       if (newUserData.password) {
-        changePassword(editingUser.id, newUserData.password);
+        await changePassword(editingUser.id, newUserData.password);
       }
 
       setShowEditUserModal(false);
@@ -491,10 +504,10 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       const targetUser = users.find(u => u.id === userId);
-      removeUser(userId);
+      await removeUser(userId);
       
       // Log the user deletion
       if (user && targetUser) {
@@ -503,10 +516,10 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleToggleUserStatus = (userId: string) => {
+  const handleToggleUserStatus = async (userId: string) => {
     const targetUser = users.find(u => u.id === userId);
     if (targetUser) {
-      updateUserStatus(userId, !targetUser.isActive);
+      await updateUserStatus(userId, !targetUser.isActive);
     }
   };
 
@@ -533,45 +546,37 @@ const AdminDashboard: React.FC = () => {
               Overview
             </button>
             
-            {hasPermission('manage_users') && (
-              <button 
-                className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`}
-                onClick={() => setActiveTab('users')}
-              >
-                <i className="fas fa-users"></i>
-                Users
-              </button>
-            )}
+            <button 
+              className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`}
+              onClick={() => setActiveTab('users')}
+            >
+              <i className="fas fa-users"></i>
+              Users
+            </button>
             
-            {hasPermission('manage_users') && (
-              <button 
-                className={`sidebar-item ${activeTab === 'team' ? 'active' : ''}`}
-                onClick={() => setActiveTab('team')}
-              >
-                <i className="fas fa-user-friends"></i>
-                Edit Team
-              </button>
-            )}
+            <button 
+              className={`sidebar-item ${activeTab === 'team' ? 'active' : ''}`}
+              onClick={() => setActiveTab('team')}
+            >
+              <i className="fas fa-user-friends"></i>
+              Edit Team
+            </button>
             
-            {hasPermission('view_activity_logs') && (
-              <button 
-                className={`sidebar-item ${activeTab === 'logs' ? 'active' : ''}`}
-                onClick={() => setActiveTab('logs')}
-              >
-                <i className="fas fa-list"></i>
-                Activity
-              </button>
-            )}
+            <button 
+              className={`sidebar-item ${activeTab === 'logs' ? 'active' : ''}`}
+              onClick={() => setActiveTab('logs')}
+            >
+              <i className="fas fa-list"></i>
+              Activity
+            </button>
             
-            {hasPermission('manage_timeline') && (
-              <button 
-                className={`sidebar-item ${activeTab === 'timeline' ? 'active' : ''}`}
-                onClick={() => setActiveTab('timeline')}
-              >
-                <i className="fas fa-calendar"></i>
-                Timeline
-              </button>
-            )}
+            <button 
+              className={`sidebar-item ${activeTab === 'timeline' ? 'active' : ''}`}
+              onClick={() => setActiveTab('timeline')}
+            >
+              <i className="fas fa-calendar"></i>
+              Timeline
+            </button>
           </nav>
         </aside>
 
@@ -644,20 +649,18 @@ const AdminDashboard: React.FC = () => {
           )}
 
           {/* Users Tab */}
-          {activeTab === 'users' && hasPermission('manage_users') && (
+          {activeTab === 'users' && (
             <>
               <div className="content-header">
                 <h2 className="content-title">User Management</h2>
                 <div className="content-actions">
-                  {hasPermission('manage_users') && (
-                    <button 
-                      className="btn btn-primary"
-                      onClick={() => setShowCreateUserModal(true)}
-                    >
-                      <i className="fas fa-plus"></i>
-                      Add User
-                    </button>
-                  )}
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => setShowCreateUserModal(true)}
+                  >
+                    <i className="fas fa-plus"></i>
+                    Add User
+                  </button>
                 </div>
               </div>
 
@@ -731,15 +734,13 @@ const AdminDashboard: React.FC = () => {
                           >
                             <i className={`fas ${user.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                           </button>
-                          {hasPermission('delete_users') && (
-                            <button 
-                              className="btn btn-sm btn-icon btn-danger"
-                              onClick={() => handleDeleteUser(user.id)}
-                              title="Delete User"
-                            >
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          )}
+                          <button 
+                            className="btn btn-sm btn-icon btn-danger"
+                            onClick={() => handleDeleteUser(user.id)}
+                            title="Delete User"
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -750,7 +751,7 @@ const AdminDashboard: React.FC = () => {
           )}
 
           {/* Activity Logs Tab */}
-          {activeTab === 'logs' && hasPermission('view_activity_logs') && (
+          {activeTab === 'logs' && (
             <>
               <div className="content-header">
                 <h2 className="content-title">Activity Logs</h2>
@@ -795,7 +796,7 @@ const AdminDashboard: React.FC = () => {
           )}
 
           {/* Team Management Tab */}
-          {activeTab === 'team' && hasPermission('manage_users') && (
+          {activeTab === 'team' && (
             <>
               <div className="content-header">
                 <h2 className="content-title">Team Management</h2>
@@ -939,7 +940,7 @@ const AdminDashboard: React.FC = () => {
           )}
 
           {/* Timeline Management Tab */}
-          {activeTab === 'timeline' && hasPermission('manage_timeline') && (
+          {activeTab === 'timeline' && (
             <>
               <div className="content-header">
                 <h2 className="content-title">Timeline Management</h2>
