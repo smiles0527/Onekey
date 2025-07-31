@@ -11,7 +11,7 @@ const Navigation: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   const location = useLocation();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   
   const isHomePage = location.pathname === '/';
 
@@ -62,6 +62,11 @@ const Navigation: React.FC = () => {
             {isAuthenticated && (
               <li>
                 <Link to="/admin" onClick={closeMenu}>Admin Dashboard</Link>
+              </li>
+            )}
+            {isAuthenticated && user && (user.role === 'admin' || user.role === 'super_admin') && (
+              <li>
+                <Link to="/testing" onClick={closeMenu}>Testing</Link>
               </li>
             )}
           </ul>

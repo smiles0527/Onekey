@@ -7,6 +7,7 @@ import Timeline from './pages/Timeline';
 import MeetOurTeam from './pages/MeetOurTeam';
 import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
+import Testing from './pages/Testing';
 
 function App() {
   const location = useLocation();
@@ -134,16 +135,24 @@ function App() {
   }, []);
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/timeline" element={<Timeline />} />
-        <Route path="/team" element={<MeetOurTeam />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      {/* Testing page without layout */}
+      <Route path="/testing" element={<Testing />} />
+      
+      {/* All other pages with layout */}
+      <Route path="/*" element={
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/team" element={<MeetOurTeam />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </Layout>
+      } />
+    </Routes>
   );
 }
 

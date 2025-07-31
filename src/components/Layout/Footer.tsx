@@ -5,7 +5,7 @@ import AuthModal from '../Auth/AuthModal';
 
 const Footer: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
@@ -68,6 +68,12 @@ const Footer: React.FC = () => {
                     <i className="fas fa-cog"></i>
                     Admin Dashboard
                   </Link>
+                  {user && (user.role === 'admin' || user.role === 'super_admin') && (
+                    <Link to="/testing" className="footer-admin-btn">
+                      <i className="fas fa-flask"></i>
+                      Testing
+                    </Link>
+                  )}
                   <button 
                     className="footer-logout-btn"
                     onClick={logout}
