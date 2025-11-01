@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getCurrentMonthYear } from '../utils/dateUtils';
 
 const About: React.FC = () => {
   // Smooth scrolling animations - Constance style
@@ -127,7 +128,7 @@ const About: React.FC = () => {
         <div className="container">
           <div className="stats-header">
             <h2>OUR IMPACT IN NUMBERS</h2>
-            <p>as at December 2024</p>
+            <p>as of {getCurrentMonthYear()}</p>
           </div>
           
           <div className="stats-grid">

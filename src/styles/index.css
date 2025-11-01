@@ -9421,15 +9421,49 @@ body {
   margin-bottom: 4rem;
 }
 
+.impact-stats .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 
-.stat-item {
+.impact-stats .stat-item {
   padding: 2rem 1rem;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.stat-item:last-child {
+.impact-stats .stat-item:last-child {
   border-right: none;
+}
+
+.impact-stats .stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  color: #c4ae7b;
+  margin-bottom: 1rem;
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+}
+
+.impact-stats .stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  text-align: center;
+  width: 100%;
 }
 
 

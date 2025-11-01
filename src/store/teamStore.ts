@@ -139,7 +139,7 @@ export const useTeamStore = create<TeamState>()(
           school: 'University Name',
           bio: 'Grace is a passionate musician and one of the co-founders of OneKey. With an ARCT-level piano background and a love for community, Grace helped create OneKey to connect music students and let others see the joy of sharing music and knowledge. She finds fulfillment in sharing joy through student-led concerts and tutoring to create a meaningful impact. Grace is dedicated to fostering supportive, inspiring spaces where young musicians can grow and support one another.',
           instagram: 'https://www.instagram.com/joyleaf7/',
-          image: '', // No image available - will show placeholder
+          image: '/pics/grace.jpg',
           section: 'alumni',
           isActive: true,
           createdAt: '2024-01-01T00:00:00Z',
