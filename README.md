@@ -1,6 +1,11 @@
 # OneKey Student Volunteers
 
-A modern web application for managing student volunteer activities, built with React frontend and Node.js backend.
+TODO:
+
+- update JWT token
+- firebase auth (postgres)?
+- slideshow
+
 
 ## 🚀 Quick Start
 
