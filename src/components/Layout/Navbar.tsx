@@ -67,9 +67,6 @@ const Navbar = () => {
               </Link>
             );
           })}
-          <Link to="/admin" className="site-nav__cta">
-            Get Involved
-          </Link>
         </motion.div>
 
         <button
@@ -115,13 +112,6 @@ const Navbar = () => {
                   </Link>
                 );
               })}
-              <Link
-                to="/admin"
-                className="site-nav__cta site-nav__cta--mobile"
-                onClick={() => setIsOpen(false)}
-              >
-                Get Involved
-              </Link>
             </motion.div>
           </>
         )}
