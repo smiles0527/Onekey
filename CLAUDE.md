@@ -121,3 +121,6 @@ DEFAULT_ADMIN_PASSWORD=admin123
 
 ## Commit style
 Short, lowercase, conventional-commits style: `feat(scope): description` or `fix(scope): description`. No AI/Claude co-authorship hints.
+
+## Animations
+Always include at least some form of Framer Motion or GSAP animation in any UI work — even if small and subtle (a fade-in, hover scale, stagger on mount, etc.). Never ship a static UI change with zero motion.
