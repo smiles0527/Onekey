@@ -1,164 +1,207 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { apiService } from '../../services/api';
-import { getCroppedImageBlob } from '../../utils/cropImage';
 import { resolveTeamImageSrc } from '../../utils/teamImageUrl';
 
-const VIEWPORT_SIZE = 280;
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 3;
+const VIEWPORT = 260;
+const OUTPUT_SIZE = 800;
 
-interface TeamPhotoFieldProps {
+interface Props {
   id: string;
   label?: string;
   value: string;
-  onChange: (imagePath: string) => void;
+  onChange: (path: string) => void;
   required?: boolean;
 }
 
-const TeamPhotoField: React.FC<TeamPhotoFieldProps> = ({
-  id,
-  label = 'Photo',
-  value,
-  onChange,
-  required = false,
-}) => {
+const TeamPhotoField: React.FC<Props> = ({ id, label = 'Photo', value, onChange, required = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [sourceImage, setSourceImage] = useState<string | null>(null);
-  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
-  const [showCropper, setShowCropper] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  const [sourceDataUrl, setSourceDataUrl] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [uploading, setUploading] = useState(false);
-  const [showPathInput, setShowPathInput] = useState(false);
-  const dragRef = useRef<{ startX: number; startY: number; cropX: number; cropY: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const dragRef = useRef<{ sx: number; sy: number; cx: number; cy: number } | null>(null);
 
   const previewSrc = resolveTeamImageSrc(value);
 
-  const resetCropState = () => {
-    setCrop({ x: 0, y: 0 });
-    setZoom(1);
-    setNaturalSize({ width: 0, height: 0 });
-  };
+  // Draw the crop preview onto the canvas whenever source/crop/zoom changes
+  const drawCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    const img = imgRef.current;
+    if (!canvas || !img || !img.complete) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  const openCropperWithSrc = (src: string) => {
-    setSourceImage(src);
-    resetCropState();
-    setShowCropper(true);
+    const baseScale = Math.max(VIEWPORT / img.naturalWidth, VIEWPORT / img.naturalHeight);
+    const scale = baseScale * zoom;
+    const dw = img.naturalWidth * scale;
+    const dh = img.naturalHeight * scale;
+
+    // Centre offset + pan
+    const ox = (VIEWPORT - dw) / 2 + crop.x;
+    const oy = (VIEWPORT - dh) / 2 + crop.y;
+
+    ctx.clearRect(0, 0, VIEWPORT, VIEWPORT);
+    ctx.drawImage(img, ox, oy, dw, dh);
+  }, [crop, zoom]);
+
+  useEffect(() => {
+    if (sourceDataUrl) drawCanvas();
+  }, [sourceDataUrl, crop, zoom, drawCanvas]);
+
+  const loadSourceImage = (dataUrl: string) => {
+    const img = new Image();
+    img.onload = () => {
+      imgRef.current = img;
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setSourceDataUrl(dataUrl);
+    };
+    img.src = dataUrl;
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setError(null);
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        openCropperWithSrc(reader.result);
-      }
+      if (typeof reader.result === 'string') loadSourceImage(reader.result);
     };
     reader.readAsDataURL(file);
     e.target.value = '';
   };
 
-  const handleAdjustExisting = () => {
-    if (!previewSrc) return;
-    openCropperWithSrc(previewSrc);
-  };
-
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e.currentTarget;
-    setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
-  };
-
-  const baseScale =
-    naturalSize.width && naturalSize.height
-      ? Math.max(VIEWPORT_SIZE / naturalSize.width, VIEWPORT_SIZE / naturalSize.height)
-      : 1;
-  const displayWidth = naturalSize.width * baseScale * zoom;
-  const displayHeight = naturalSize.height * baseScale * zoom;
-
-  const handlePointerDown = (e: React.PointerEvent) => {
+  // Pointer drag handlers
+  const onPointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      cropX: crop.x,
-      cropY: crop.y,
-    };
+    dragRef.current = { sx: e.clientX, sy: e.clientY, cx: crop.x, cy: crop.y };
   };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
+  const onPointerMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
     setCrop({
-      x: dragRef.current.cropX + (e.clientX - dragRef.current.startX),
-      y: dragRef.current.cropY + (e.clientY - dragRef.current.startY),
+      x: dragRef.current.cx + e.clientX - dragRef.current.sx,
+      y: dragRef.current.cy + e.clientY - dragRef.current.sy,
     });
   };
+  const onPointerUp = () => { dragRef.current = null; };
 
-  const handlePointerUp = () => {
-    dragRef.current = null;
-  };
-
-  const handleApplyCrop = useCallback(async () => {
-    if (!sourceImage) return;
+  const handleApply = async () => {
+    if (!sourceDataUrl || !imgRef.current) return;
     setUploading(true);
+    setError(null);
     try {
-      const blob = await getCroppedImageBlob(sourceImage, crop, zoom, VIEWPORT_SIZE);
+      // Draw final crop to an offscreen canvas at output resolution
+      const img = imgRef.current;
+      const baseScale = Math.max(VIEWPORT / img.naturalWidth, VIEWPORT / img.naturalHeight);
+      const scale = baseScale * zoom;
+      const ox = (VIEWPORT - img.naturalWidth * scale) / 2 + crop.x;
+      const oy = (VIEWPORT - img.naturalHeight * scale) / 2 + crop.y;
+
+      // Source rect in image coordinates
+      const srcX = Math.max(0, -ox / scale);
+      const srcY = Math.max(0, -oy / scale);
+      const srcW = Math.min(img.naturalWidth - srcX, VIEWPORT / scale);
+      const srcH = Math.min(img.naturalHeight - srcY, VIEWPORT / scale);
+
+      const out = document.createElement('canvas');
+      out.width = OUTPUT_SIZE;
+      out.height = OUTPUT_SIZE;
+      const ctx = out.getContext('2d')!;
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
+
+      const blob = await new Promise<Blob>((res, rej) =>
+        out.toBlob(b => b ? res(b) : rej(new Error('Crop failed')), 'image/jpeg', 0.92)
+      );
+
       const file = new File([blob], `team-${Date.now()}.jpg`, { type: 'image/jpeg' });
       const result = await apiService.uploadImage(file);
       if (result.success && result.data) {
         onChange(result.data.filePath);
-        setShowCropper(false);
-        setSourceImage(null);
-        resetCropState();
+        setSourceDataUrl(null);
+        imgRef.current = null;
       } else {
-        alert(result.error || 'Failed to upload photo');
+        setError(result.error || 'Upload failed');
       }
-    } catch (err) {
-      console.error(err);
-      alert('Could not crop or upload the image. Try another file.');
+    } catch (err: any) {
+      setError(err.message || 'Could not upload photo');
     } finally {
       setUploading(false);
     }
-  }, [sourceImage, crop, zoom, onChange]);
+  };
 
-  const handleCancelCrop = () => {
-    setShowCropper(false);
-    setSourceImage(null);
-    resetCropState();
+  const handleCancel = () => {
+    setSourceDataUrl(null);
+    imgRef.current = null;
+    setError(null);
   };
 
   return (
-    <div className="team-photo-field form-group">
+    <div className="form-group tpf">
       <label htmlFor={id}>{label}{required ? ' *' : ''}</label>
 
-      {previewSrc && !showCropper && (
-        <div className="team-photo-field__preview">
-          <img src={previewSrc} alt="Team member preview" />
+      {/* Current photo preview */}
+      {previewSrc && !sourceDataUrl && (
+        <div className="tpf__preview">
+          <img src={previewSrc} alt="Current" />
         </div>
       )}
 
-      {!showCropper && (
-        <div className="team-photo-field__actions">
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {value ? 'Replace photo' : 'Upload photo'}
-          </button>
-          {value && (
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleAdjustExisting}>
-              Adjust crop
+      {/* Cropper */}
+      {sourceDataUrl && (
+        <div className="tpf__cropper">
+          <p className="tpf__hint">Drag to pan · slider to zoom</p>
+          <canvas
+            ref={canvasRef}
+            width={VIEWPORT}
+            height={VIEWPORT}
+            className="tpf__canvas"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+          />
+          {/* re-draw when canvas mounts */}
+          <div style={{ display: 'none' }} ref={() => { setTimeout(drawCanvas, 0); }} />
+
+          <label className="tpf__zoom-label">
+            Zoom
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.05}
+              value={zoom}
+              onChange={e => setZoom(Number(e.target.value))}
+              className="tpf__zoom-slider"
+            />
+          </label>
+
+          {error && <p className="tpf__error">{error}</p>}
+
+          <div className="tpf__crop-btns">
+            <button type="button" className="btn btn-secondary btn-sm" onClick={handleCancel} disabled={uploading}>
+              Cancel
             </button>
-          )}
-          <button
-            type="button"
-            className="team-photo-field__path-toggle"
-            onClick={() => setShowPathInput((v) => !v)}
-          >
-            {showPathInput ? 'Hide path' : 'Use image path'}
+            <button type="button" className="btn btn-primary btn-sm" onClick={handleApply} disabled={uploading}>
+              {uploading ? 'Uploading…' : 'Apply & upload'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* File picker trigger */}
+      {!sourceDataUrl && (
+        <div className="tpf__actions">
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => fileInputRef.current?.click()}>
+            {value ? 'Replace photo' : 'Choose photo'}
           </button>
+          {error && <p className="tpf__error">{error}</p>}
         </div>
       )}
 
@@ -166,78 +209,11 @@ const TeamPhotoField: React.FC<TeamPhotoFieldProps> = ({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        className="team-photo-field__file-input"
+        style={{ display: 'none' }}
         onChange={handleFileSelect}
         tabIndex={-1}
         aria-label={`${label} file`}
       />
-      {required && (
-        <input type="hidden" name="image" value={value} required={!value} />
-      )}
-
-      {showPathInput && !showCropper && (
-        <input
-          type="text"
-          name="image"
-          className="team-photo-field__path"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="/pics/member.jpg or uploaded URL"
-          required={required && !value}
-        />
-      )}
-
-      {showCropper && sourceImage && (
-        <div className="team-photo-crop">
-          <p className="team-photo-crop__hint">Drag to reposition · use slider to zoom</p>
-          <div
-            className="team-photo-crop__viewport"
-            style={{ width: VIEWPORT_SIZE, height: VIEWPORT_SIZE }}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-          >
-            <img
-              src={sourceImage}
-              alt="Crop preview"
-              className="team-photo-crop__image"
-              onLoad={handleImageLoad}
-              style={{
-                width: displayWidth || undefined,
-                height: displayHeight || undefined,
-                transform: `translate(calc(-50% + ${crop.x}px), calc(-50% + ${crop.y}px))`,
-              }}
-              draggable={false}
-            />
-          </div>
-
-          <label className="team-photo-crop__zoom-label">
-            Zoom
-            <input
-              type="range"
-              min={MIN_ZOOM}
-              max={MAX_ZOOM}
-              step={0.05}
-              value={zoom}
-              onChange={(e) => setZoom(Number(e.target.value))}
-            />
-          </label>
-
-          <div className="team-photo-crop__buttons">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleCancelCrop} disabled={uploading}>
-              Cancel
-            </button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={handleApplyCrop} disabled={uploading}>
-              {uploading ? 'Uploading…' : 'Apply & upload'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {required && !value && !showCropper && (
-        <p className="team-photo-field__required-note">A photo is required (upload or enter a path).</p>
-      )}
     </div>
   );
 };
