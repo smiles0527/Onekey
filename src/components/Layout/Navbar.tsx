@@ -23,10 +23,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { label: 'text', path: '/' },
-    { label: 'text', path: '/about' },
-    { label: 'text', path: '/timeline' },
-    { label: 'text', path: '/team' },
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Timeline', path: '/timeline' },
+    { name: 'Team', path: '/team' },
   ];
 
   const navShellClass = [
@@ -46,7 +46,7 @@ const Navbar = () => {
         transition={{ duration: 0.25 }}
       >
         <Link to="/" className="site-nav__logo">
-          text
+          One<span className="text-earth-300">Key</span>
         </Link>
 
         <motion.div
@@ -59,16 +59,16 @@ const Navbar = () => {
             const isActive = location.pathname === link.path;
             return (
               <Link
-                key={link.path}
+                key={link.name}
                 to={link.path}
                 className={`site-nav__link ${isActive ? 'site-nav__link--active' : ''}`}
               >
-                {link.label}
+                {link.name}
               </Link>
             );
           })}
           <Link to="/admin" className="site-nav__cta">
-            text
+            Get Involved
           </Link>
         </motion.div>
 
@@ -106,12 +106,12 @@ const Navbar = () => {
                 const isActive = location.pathname === link.path;
                 return (
                   <Link
-                    key={link.path}
+                    key={link.name}
                     to={link.path}
                     className={`site-nav__mobile-link ${isActive ? 'site-nav__mobile-link--active' : ''}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    {link.label}
+                    {link.name}
                   </Link>
                 );
               })}
@@ -120,7 +120,7 @@ const Navbar = () => {
                 className="site-nav__cta site-nav__cta--mobile"
                 onClick={() => setIsOpen(false)}
               >
-                text
+                Get Involved
               </Link>
             </motion.div>
           </>
