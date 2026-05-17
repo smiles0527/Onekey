@@ -41,6 +41,58 @@ const CAT = {
 type CatKey = keyof typeof CAT;
 type FilterKey = 'all' | CatKey;
 
+// ─── TEMP preview events (remove before prod) ────────────────────────────────
+const PREVIEW_EVENTS: (TimelineEvent & { _left: boolean })[] = [
+  {
+    id: '__preview_1',
+    name: 'Spring Concert at Sunrise Manor',
+    date: '2025-04-12',
+    category: 'performances',
+    location: 'Sunrise Manor, Room 4',
+    time: '14:00',
+    attendees: '45 seniors',
+    performers: '8 student volunteers',
+    duration: '2 hours',
+    description: 'Students performed a mix of classical and pop pieces for residents of Sunrise Manor, ending with a Q&A session that turned into an hour-long conversation about music.',
+    photo: '/slideshow/041A0050.JPG',
+    createdAt: new Date().toISOString(),
+    createdBy: 'preview',
+    _left: true,
+  },
+  {
+    id: '__preview_2',
+    name: 'Weekly Tutoring Session',
+    date: '2025-03-08',
+    category: 'homework',
+    location: 'Riverside Community Center',
+    time: '15:30',
+    attendees: '12 students',
+    performers: '5 volunteers',
+    duration: '90 minutes',
+    description: 'Helped middle schoolers with algebra, essay writing, and SAT prep.',
+    photo: '/slideshow/041A1349.JPG',
+    createdAt: new Date().toISOString(),
+    createdBy: 'preview',
+    _left: false,
+  },
+  {
+    id: '__preview_3',
+    name: 'Food Bank Fundraiser Drive',
+    date: '2025-02-22',
+    category: 'charity',
+    location: 'Lincoln High School',
+    time: '10:00',
+    attendees: '120 community members',
+    performers: '15 volunteers',
+    duration: '4 hours',
+    description: 'Raised $2,400 and collected over 600 lbs of non-perishables for the local food bank.',
+    photo: '/slideshow/041A5710.JPG',
+    createdAt: new Date().toISOString(),
+    createdBy: 'preview',
+    _left: true,
+  },
+];
+
 // ─── Blank form ───────────────────────────────────────────────────────────────
 const BLANK = {
   name: '', date: '', category: 'performances' as CatKey,
@@ -77,6 +129,9 @@ const Timeline: React.FC = () => {
   const [sortDir, setSortDir]   = useState<'desc' | 'asc'>('desc');
   const [expandedId, setExpand] = useState<string | null>(null);
 
+  // Hover photo bubble
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   // Modals
   const [showAdd, setShowAdd]           = useState(false);
   const [editing, setEditing]           = useState<TimelineEvent | null>(null);
@@ -94,7 +149,8 @@ const Timeline: React.FC = () => {
 
   // ── Derived data ────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
-    const base = filter === 'all' ? events : events.filter(e => e.category === filter);
+    const source = events.length > 0 ? events : PREVIEW_EVENTS;
+    const base = filter === 'all' ? source : source.filter(e => e.category === filter);
     return [...base].sort((a, b) => {
       const d = new Date(a.date).getTime() - new Date(b.date).getTime();
       return sortDir === 'desc' ? -d : d;
@@ -244,7 +300,7 @@ const Timeline: React.FC = () => {
       </section>
 
       {/* ── Stats strip ── */}
-      <div id="timeline-body" className="border-b border-white/8 bg-stone-900/80 backdrop-blur-sm">
+      <div id="timeline-body" className="border-b border-stone-700 bg-stone-900">
         <div className="container py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -269,7 +325,7 @@ const Timeline: React.FC = () => {
       </div>
 
       {/* ── Sticky filter bar ── */}
-      <div className="sticky top-[4.4rem] z-30 bg-stone-900/92 backdrop-blur-md border-b border-white/8">
+      <div className="sticky top-[4.4rem] z-30 bg-stone-900 border-b border-stone-700">
         <div className="container py-3 flex flex-wrap items-center gap-2 justify-between">
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
@@ -400,7 +456,7 @@ const Timeline: React.FC = () => {
                     >
                       {/* Dot on spine */}
                       <div
-                        className={`absolute left-[1.1rem] md:left-1/2 top-5 z-10 w-3 h-3 -translate-x-1/2 rounded-full ring-4 ring-stone-900 shadow-lg ${meta.dot} ${meta.glow}`}
+                        className={`absolute left-[1.1rem] md:left-1/2 top-5 z-10 w-3 h-3 -translate-x-1/2 rounded-full ring-4 ring-stone-900 ${meta.dot}`}
                       />
 
                       {/* Mobile: all cards offset to the right of spine */}
@@ -411,29 +467,36 @@ const Timeline: React.FC = () => {
 
                       {/* Card wrapper */}
                       <div className={`
-                        flex-1 pl-10 md:pl-0 md:flex-none md:w-[calc(50%-2.5rem)]
+                        relative flex-1 pl-10 md:pl-0 md:flex-none md:w-[calc(50%-2.5rem)]
                         ${isLeft ? 'md:mr-auto md:pr-0' : 'md:ml-auto md:pl-0'}
                       `}>
-                        <motion.article
-                          className="group bg-stone-800/55 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
-                          whileHover={{ y: -5, boxShadow: '0 20px 40px rgba(0,0,0,0.35)' }}
-                          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-                          onClick={() => setExpand(isExpanded ? null : event.id)}
-                        >
-                          {/* Cover photo */}
-                          {event.photo && (
-                            <div className="aspect-[16/7] overflow-hidden">
-                              <motion.img
+                        {/* Hover photo bubble */}
+                        <AnimatePresence>
+                          {hoveredId === event.id && event.photo && (
+                            <motion.div
+                              className="absolute bottom-[calc(100%+10px)] left-4 z-40 pointer-events-none"
+                              initial={{ opacity: 0, scale: 0.6, y: 14 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.6, y: 14 }}
+                              transition={{ type: 'spring', stiffness: 460, damping: 26 }}
+                            >
+                              <img
                                 src={event.photo}
                                 alt={event.name}
-                                className="w-full h-full object-cover"
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ duration: 0.7 }}
-                                loading="lazy"
-                                onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                                className="block max-w-[320px] max-h-[320px] w-auto h-auto rounded-2xl shadow-2xl ring-1 ring-white/15"
                               />
-                            </div>
+                            </motion.div>
                           )}
+                        </AnimatePresence>
+
+                        <motion.article
+                          className="group bg-stone-800 border border-stone-700 rounded-2xl overflow-hidden hover:border-stone-600 transition-colors cursor-pointer"
+                          whileHover={{ y: -3 }}
+                          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                          onHoverStart={() => setHoveredId(event.id)}
+                          onHoverEnd={() => setHoveredId(null)}
+                          onClick={() => setExpand(isExpanded ? null : event.id)}
+                        >
 
                           <div className="p-5">
                             {/* Top row: category + date + admin actions */}
@@ -443,7 +506,7 @@ const Timeline: React.FC = () => {
                                   <i className={`${meta.icon} text-[9px]`} />
                                   {meta.label}
                                 </span>
-                                <time className="text-[11px] text-stone-500">
+                                <time className="text-[11px] text-stone-400">
                                   {safeFormat(event.date, 'MMMM d, yyyy')}
                                 </time>
                               </div>
@@ -476,20 +539,20 @@ const Timeline: React.FC = () => {
                             {(event.location || event.time || event.duration) && (
                               <div className="flex flex-wrap gap-1.5 mb-3">
                                 {event.location && (
-                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-300 bg-stone-700/60 border border-stone-600">
                                     <i className="fas fa-map-marker-alt text-[9px] text-earth-400" />
                                     {event.location}
                                   </span>
                                 )}
                                 {event.time && (
-                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
-                                    <i className="fas fa-clock text-[9px] text-stone-500" />
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-300 bg-stone-700/60 border border-stone-600">
+                                    <i className="fas fa-clock text-[9px] text-stone-400" />
                                     {event.time}
                                   </span>
                                 )}
                                 {event.duration && (
-                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
-                                    <i className="fas fa-hourglass-half text-[9px] text-stone-500" />
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-300 bg-stone-700/60 border border-stone-600">
+                                    <i className="fas fa-hourglass-half text-[9px] text-stone-400" />
                                     {event.duration}
                                   </span>
                                 )}
@@ -498,7 +561,7 @@ const Timeline: React.FC = () => {
 
                             {/* Description preview (collapsed) */}
                             {event.description && !isExpanded && (
-                              <p className="text-sm text-stone-400 leading-relaxed line-clamp-2 mb-1">
+                              <p className="text-sm text-stone-300 leading-relaxed line-clamp-2 mb-1">
                                 {event.description}
                               </p>
                             )}
@@ -540,7 +603,7 @@ const Timeline: React.FC = () => {
 
                             {/* Expand toggle */}
                             {(event.description || event.attendees || event.performers) && (
-                              <div className="mt-3 flex items-center gap-1 text-[11px] text-stone-600 hover:text-stone-400 transition-colors select-none">
+                              <div className="mt-3 flex items-center gap-1 text-[11px] text-stone-500 hover:text-stone-300 transition-colors select-none">
                                 <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'} text-[8px]`} />
                                 {isExpanded ? 'Collapse' : 'Read more'}
                               </div>
