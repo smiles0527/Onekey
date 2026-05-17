@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
   return (
-    <footer className="relative py-12 overflow-hidden bg-stone-950">
+    <footer className="relative py-12 overflow-hidden bg-stone-900">
       {/* Subtle decorative orbs */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-earth-500/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-sage-500/10 rounded-full blur-3xl"></div>
