@@ -4,6 +4,7 @@ import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
 import { apiService } from '../services/api';
+import TeamPhotoField from '../components/Admin/TeamPhotoField';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -2000,19 +2001,13 @@ const AdminDashboard: React.FC = () => {
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="teamImage">Image Path *</label>
-                <input
-                  type="text"
-                  id="teamImage"
-                  name="image"
-                  value={newTeamData.image}
-                  onChange={handleTeamInputChange}
-                  placeholder="/Onekey/pics/filename.jpg"
-                  required
-                />
-              </div>
-              
+              <TeamPhotoField
+                id="teamImage"
+                label="Photo"
+                value={newTeamData.image}
+                onChange={(path) => setNewTeamData(prev => ({ ...prev, image: path }))}
+              />
+
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowCreateTeamModal(false)}>
                   Cancel
@@ -2116,19 +2111,13 @@ const AdminDashboard: React.FC = () => {
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="editTeamImage">Image Path *</label>
-                <input
-                  type="text"
-                  id="editTeamImage"
-                  name="image"
-                  value={newTeamData.image}
-                  onChange={handleTeamInputChange}
-                  placeholder="/Onekey/pics/filename.jpg"
-                  required
-                />
-              </div>
-              
+              <TeamPhotoField
+                id="editTeamImage"
+                label="Photo"
+                value={newTeamData.image}
+                onChange={(path) => setNewTeamData(prev => ({ ...prev, image: path }))}
+              />
+
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowEditTeamModal(false)}>
                   Cancel
