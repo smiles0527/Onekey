@@ -243,7 +243,7 @@ const Timeline: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Our Story
+            text
           </motion.h1>
           <motion.p 
             className="max-w-2xl mx-auto text-lg leading-relaxed text-surface-700"
@@ -251,7 +251,7 @@ const Timeline: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Every performance, every act of service, every moment that brings us together
+            text
           </motion.p>
         </div>
       </section>

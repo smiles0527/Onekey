@@ -72,7 +72,7 @@ const About: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="mb-4 text-4xl font-bold tracking-tight text-white md:text-6xl"
           >
-            About <span className="font-light text-orange-300">OneKey</span>
+            text
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +80,7 @@ const About: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl mx-auto text-lg leading-relaxed text-gray-200"
           >
-            A student-driven organization bridging generations through music, education, and community service
+            text
           </motion.p>
         </div>
       </section>

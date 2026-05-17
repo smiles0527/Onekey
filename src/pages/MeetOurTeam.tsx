@@ -98,7 +98,7 @@ const MeetOurTeam: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 text-4xl font-semibold tracking-tight text-gray-100 md:text-6xl"
           >
-            Meet Our <span className="font-light text-amber-200">Team</span>
+            text
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -106,7 +106,7 @@ const MeetOurTeam: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="max-w-2xl mx-auto text-lg leading-relaxed text-gray-200"
           >
-            The passionate students and volunteers who bring OneKey's mission to life
+            text
           </motion.p>
         </div>
       </section>

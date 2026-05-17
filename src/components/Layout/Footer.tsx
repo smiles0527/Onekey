@@ -17,10 +17,10 @@ const Footer = () => {
         {/* Brand Column */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight text-white font-display">OneKey</span>
+            <span className="text-xl font-bold tracking-tight text-white font-display">text</span>
           </div>
           <p className="max-w-xs text-xs font-light leading-relaxed text-stone-300/90">
-            Bridging generations through the universal language of music. A student-driven non-profit organization dedicated to community service.
+            text
           </p>
           <div className="flex space-x-3">
             <motion.a
@@ -46,18 +46,18 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div>
-          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">Quick Links</h4>
+          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">text</h4>
           <ul className="space-y-2 text-xs font-light">
-            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/about" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Our Story</Link></motion.div></li>
-            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/team" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Meet the Team</Link></motion.div></li>
-            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/timeline" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Events & Timeline</Link></motion.div></li>
-            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/admin" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Volunteer Portal</Link></motion.div></li>
+            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/about" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">text</Link></motion.div></li>
+            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/team" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">text</Link></motion.div></li>
+            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/timeline" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">text</Link></motion.div></li>
+            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/admin" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">text</Link></motion.div></li>
           </ul>
         </div>
 
         {/* Contact Info */}
         <div>
-          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">Contact Us</h4>
+          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">text</h4>
           <ul className="space-y-3 text-xs font-light">
             <li className="flex items-start space-x-2 group">
               <div className="p-1.5 rounded-lg bg-earth-500/10 border border-earth-400/20">
@@ -76,13 +76,13 @@ const Footer = () => {
 
         {/* Newsletter */}
         <div>
-          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">Stay Updated</h4>
-          <p className="mb-3 text-xs font-light text-stone-300/80">Subscribe to our newsletter for upcoming events.</p>
+          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">text</h4>
+          <p className="mb-3 text-xs font-light text-stone-300/80">text</p>
           <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
             <div className="relative">
               <input 
                 type="email" 
-                placeholder="Your email" 
+                placeholder="text" 
                 className="w-full px-3 py-2 text-xs font-light text-white transition-all bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm focus:outline-none focus:border-primary-400/50 focus:bg-white/10 placeholder-surface-500"
               />
             </div>
@@ -93,7 +93,7 @@ const Footer = () => {
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              Subscribe <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+              text
             </motion.button>
           </form>
         </div>
@@ -103,9 +103,9 @@ const Footer = () => {
       <div className="container relative z-10 mx-auto">
         <div className="h-px mb-4 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         <div className="flex flex-col items-center justify-between text-xs font-light text-center text-stone-400/80 md:flex-row">
-          <p>&copy; {new Date().getFullYear()} OneKey Organization. All rights reserved.</p>
+          <p>text</p>
           <Link to="/admin" className="mt-2 transition-all duration-300 cursor-pointer text-stone-500/60 hover:text-earth-400 md:mt-0">
-            Admin Portal
+            text
           </Link>
         </div>
       </div>

@@ -1,7 +1,6 @@
 
 import React, { useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Slideshow from '../components/Slideshow';
 import PhotoGallery from '../components/PhotoGallery';
@@ -36,33 +35,18 @@ const Home: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15 }}
           >
-              <p className="hero-section__eyebrow">Student-led music outreach</p>
-              <h1 className="hero-section__title">
-                Harmony in <span className="hero-section__accent">Service</span>
-              </h1>
-              <p className="hero-section__subtitle">
-                Bridging generations through the universal language of music.
-                We are student volunteers making a difference in senior communities.
-              </p>
+              <h1 className="hero-section__title">text</h1>
+              <p className="hero-section__subtitle">text</p>
               <div className="hero-section__actions">
                 <Link to="/about" className="hero-section__btn hero-section__btn--primary">
-                  Our Mission
+                  text
                 </Link>
                 <Link to="/timeline" className="hero-section__btn hero-section__btn--secondary">
-                  Upcoming Events
+                  text
                 </Link>
               </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, y: [0, 8, 0] }}
-            transition={{ delay: 1, duration: 2.2, repeat: Infinity }}
-            className="hero-section__scroll"
-          >
-            <span className="hero-section__scroll-label">Scroll</span>
-            <ArrowRight className="rotate-90" size={18} strokeWidth={2} />
-          </motion.div>
         </motion.div>
       </section>
 
@@ -82,7 +66,6 @@ const Home: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="block mb-3 text-lg italic text-earth-400 font-display">Our Philosophy</span>
             <motion.h2 
               className="mb-6 text-3xl font-medium leading-tight text-white md:text-4xl font-display"
               initial={{ opacity: 0, y: 15 }}
@@ -90,7 +73,7 @@ const Home: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              More than just music. <br/> It's about connection.
+              text
             </motion.h2>
             <motion.p 
               className="text-base leading-relaxed text-gray-200"
@@ -99,9 +82,7 @@ const Home: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              OneKey was founded on the belief that music has the power to heal, connect, and inspire. 
-              Our student volunteers dedicate their time and talent to bring joy to senior communities, 
-              fostering intergenerational bonds that enrich lives on both sides.
+              text
             </motion.p>
           </motion.div>
         </div>
@@ -112,24 +93,9 @@ const Home: React.FC = () => {
         <div className="container relative">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
             {[
-              {
-                title: "Music",
-                subtitle: "Senior Home Concerts",
-                image: heroImages[0],
-                desc: "Regular performances that bring the concert hall to the community."
-              },
-              {
-                title: "Education",
-                subtitle: "Academic Support",
-                image: heroImages[1],
-                desc: "Empowering younger students through peer tutoring and mentorship."
-              },
-              {
-                title: "Community",
-                subtitle: "Fundraising & Volunteering",
-                image: heroImages[2],
-                desc: "Active participation in local events to support those in need."
-              }
+              { title: 'text', subtitle: 'text', image: heroImages[0], desc: 'text' },
+              { title: 'text', subtitle: 'text', image: heroImages[1], desc: 'text' },
+              { title: 'text', subtitle: 'text', image: heroImages[2], desc: 'text' },
             ].map((service, index) => (
               <motion.div
                 key={index}
@@ -159,7 +125,7 @@ const Home: React.FC = () => {
       {/* Photo Gallery Section */}
       <section className="relative py-16">
         <div className="container">
-          <PhotoGallery images={galleryImages} title="Our Community in Pictures" />
+          <PhotoGallery images={galleryImages} title="text" />
         </div>
       </section>
 
@@ -178,10 +144,8 @@ const Home: React.FC = () => {
             whileHover={{ scale: 1.02, boxShadow: "0 25px 50px -12px rgba(245, 158, 11, 0.25)" }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <h2 className="mb-4 text-2xl font-bold text-white">Ready to Make a Difference?</h2>
-            <p className="max-w-2xl mx-auto mb-6 text-base text-stone-300">
-              Join OneKey and become part of a student-driven organization dedicated to creating positive change.
-            </p>
+            <h2 className="mb-4 text-2xl font-bold text-white">text</h2>
+            <p className="max-w-2xl mx-auto mb-6 text-base text-stone-300">text</p>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -192,7 +156,7 @@ const Home: React.FC = () => {
                 to="/timeline" 
                 className="inline-flex items-center px-6 py-3 text-sm font-semibold text-white transition-all duration-300 rounded-full bg-earth-600 hover:bg-earth-700 hover:shadow-lg"
               >
-                View Upcoming Events <ArrowRight size={18} className="ml-2" />
+                text
               </Link>
             </motion.div>
           </motion.div>
