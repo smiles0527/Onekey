@@ -1,691 +1,804 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { apiService } from '../services/firebaseService';
-import { format } from 'date-fns';
 import Slideshow from '../components/Slideshow';
 import { getRandomPhotos } from '../data/photos';
-// Test functions removed
 
+// ─── Category config ──────────────────────────────────────────────────────────
+const CAT = {
+  performances: {
+    label: 'Performances',
+    icon: 'fas fa-music',
+    color: 'text-earth-300',
+    bg: 'bg-earth-500/15',
+    border: 'border-earth-400/30',
+    dot: 'bg-earth-400',
+    glow: 'shadow-earth-500/30',
+  },
+  homework: {
+    label: 'Homework Help',
+    icon: 'fas fa-graduation-cap',
+    color: 'text-sage-300',
+    bg: 'bg-sage-500/15',
+    border: 'border-sage-400/30',
+    dot: 'bg-sage-400',
+    glow: 'shadow-sage-500/30',
+  },
+  charity: {
+    label: 'Charity',
+    icon: 'fas fa-heart',
+    color: 'text-rose-300',
+    bg: 'bg-rose-500/15',
+    border: 'border-rose-400/30',
+    dot: 'bg-rose-400',
+    glow: 'shadow-rose-500/30',
+  },
+} as const;
+
+type CatKey = keyof typeof CAT;
+type FilterKey = 'all' | CatKey;
+
+// ─── Blank form ───────────────────────────────────────────────────────────────
+const BLANK = {
+  name: '', date: '', category: 'performances' as CatKey,
+  location: '', time: '', attendees: '', performers: '',
+  duration: '', description: '', photo: null as File | null,
+};
+
+// ─── Safe date parse ──────────────────────────────────────────────────────────
+function safeFormat(dateStr: string, fmt: string): string {
+  try { return format(parseISO(dateStr), fmt); }
+  catch { return dateStr; }
+}
+
+// ─── Input component (dark-themed) ───────────────────────────────────────────
+const TInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
+  <input {...props} className={`tlm-input ${props.className ?? ''}`} />
+);
+const TTextarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = (props) => (
+  <textarea {...props} className={`tlm-input resize-none ${props.className ?? ''}`} />
+);
+const TSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = ({ children, ...props }) => (
+  <select {...props} className={`tlm-input ${props.className ?? ''}`}>{children}</select>
+);
+
+// ─── Main component ───────────────────────────────────────────────────────────
 const Timeline: React.FC = () => {
-  const heroImages = React.useMemo(() => getRandomPhotos(5), []);
-  const [activeTab, setActiveTab] = useState<'performances' | 'homework' | 'charity'>('performances');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
-  
+  const heroImages = useMemo(() => getRandomPhotos(6), []);
+
   const { isAuthenticated, user, hasPermission } = useAuthStore();
-  const { addEvent, removeEvent, getEventsByCategory, events, fetchEvents } = useTimelineStore();
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    date: '',
-    category: 'performances' as TimelineEvent['category'],
-    location: '',
-    time: '',
-    attendees: '',
-    performers: '',
-    duration: '',
-    description: '',
-    photos: [] as File[]
-  });
+  const { events, addEvent, removeEvent, updateEvent, fetchEvents, isLoading } = useTimelineStore();
 
-  // Fetch events on mount
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+  // UI
+  const [filter, setFilter]     = useState<FilterKey>('all');
+  const [sortDir, setSortDir]   = useState<'desc' | 'asc'>('desc');
+  const [expandedId, setExpand] = useState<string | null>(null);
 
-  // Debug: Check localStorage and events on component mount
-  useEffect(() => {
-    console.log('Timeline component mounted');
-    console.log('Current events from store:', events);
-    console.log('Events in localStorage:', localStorage.getItem('onekey-timeline'));
-    
-    // Data loss check removed
-    
-    // Check if events are being loaded from localStorage
-    const storedData = localStorage.getItem('onekey-timeline');
-    if (storedData) {
-      try {
-        const parsed = JSON.parse(storedData);
-        console.log('Parsed localStorage data:', parsed);
-        
-        // If we have events in localStorage but not in store, there might be a hydration issue
-        if (parsed.state?.events?.length > 0 && events.length === 0) {
-          console.log('WARNING: Events found in localStorage but not in store!');
-          console.log('localStorage events:', parsed.state.events.length);
-          console.log('Store events:', events.length);
-        }
-      } catch (error) {
-        console.error('Error parsing localStorage data:', error);
-      }
-    }
-    
-    // Force a store refresh to ensure hydration
-    const checkStore = () => {
-      const currentEvents = getEventsByCategory(activeTab);
-      console.log('Current events after hydration check:', currentEvents.length);
-    };
-    
-    // Check after a short delay to allow hydration
-    setTimeout(checkStore, 500);
-  }, [events, activeTab, getEventsByCategory]);
+  // Modals
+  const [showAdd, setShowAdd]           = useState(false);
+  const [editing, setEditing]           = useState<TimelineEvent | null>(null);
+  const [deleteId, setDeleteId]         = useState<string | null>(null);
+  const [submitting, setSubmitting]     = useState(false);
+  const [formError, setFormError]       = useState<string | null>(null);
 
-  // Smooth scrolling animations - Constance style
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
+  // Form
+  const [form, setForm]             = useState({ ...BLANK });
+  const [photoPreview, setPreview]  = useState<string | null>(null);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          // Use requestAnimationFrame for smoother class addition
-          window.requestAnimationFrame(() => {
-            entry.target.classList.add('animate');
-            
-            // Add staggered animations for child elements
-            const children = entry.target.querySelectorAll('.timeline-item, .filter-btn, .timeline-event-card');
-            children.forEach((child, index) => {
-              // Use CSS custom properties for delay instead of setTimeout if possible, 
-              // but keeping setTimeout for now as it's logic-based. 
-              // Optimized to batch if needed, but simple timeout is okay for small lists.
-              setTimeout(() => {
-                child.classList.add('animate');
-              }, index * 50); // Reduced delay for snappier feel
-            });
-          });
-          
-          // Stop observing once animated
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
+  useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
-    // Add animation classes to sections
-    const animateElements = document.querySelectorAll('.timeline-hero, .timeline-filters, .timeline-content-section');
-    
-    animateElements.forEach((el, index) => {
-      el.classList.add('animate-on-scroll');
-      el.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
-      observer.observe(el);
+  const canManage = !!(isAuthenticated && user && hasPermission('manage_timeline'));
+
+  // ── Derived data ────────────────────────────────────────────────────────────
+  const filtered = useMemo(() => {
+    const base = filter === 'all' ? events : events.filter(e => e.category === filter);
+    return [...base].sort((a, b) => {
+      const d = new Date(a.date).getTime() - new Date(b.date).getTime();
+      return sortDir === 'desc' ? -d : d;
     });
+  }, [events, filter, sortDir]);
 
-    return () => observer.disconnect();
-  }, []);
+  // Year groups with global alternating index pre-computed
+  const yearGroups = useMemo(() => {
+    let gi = 0;
+    const map = new Map<string, (TimelineEvent & { _left: boolean })[]>();
+    filtered.forEach(ev => {
+      const yr = safeFormat(ev.date, 'yyyy');
+      if (!map.has(yr)) map.set(yr, []);
+      map.get(yr)!.push({ ...ev, _left: gi++ % 2 === 0 });
+    });
+    return Array.from(map.entries()).map(([year, evs]) => ({ year, events: evs }));
+  }, [filtered]);
 
-  const categories = [
-    { id: 'performances', label: 'Performances', icon: 'fas fa-music' },
-    { id: 'homework', label: 'Homework Help', icon: 'fas fa-graduation-cap' },
-    { id: 'charity', label: 'Charity Events', icon: 'fas fa-heart' }
-  ];
+  const stats = useMemo(() => ({
+    total:        events.length,
+    performances: events.filter(e => e.category === 'performances').length,
+    homework:     events.filter(e => e.category === 'homework').length,
+    charity:      events.filter(e => e.category === 'charity').length,
+  }), [events]);
 
-  const currentEvents = React.useMemo(() => getEventsByCategory(activeTab), [activeTab, getEventsByCategory]);
-
-  // Debug: Log current events being displayed
-  console.log('Current events for category', activeTab, ':', currentEvents);
-  console.log('Total events in store:', events.length);
-
-  const handleTabChange = (category: typeof activeTab) => {
-    setActiveTab(category);
+  // ── Modal helpers ───────────────────────────────────────────────────────────
+  const openAdd = () => {
+    setForm({ ...BLANK });
+    setPreview(null);
+    setFormError(null);
+    setShowAdd(true);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const openEdit = (ev: TimelineEvent) => {
+    setForm({
+      name: ev.name, date: ev.date, category: ev.category,
+      location: ev.location ?? '', time: ev.time ?? '',
+      attendees: ev.attendees ?? '', performers: ev.performers ?? '',
+      duration: ev.duration ?? '', description: ev.description ?? '',
+      photo: null,
+    });
+    setPreview(ev.photo ?? null);
+    setFormError(null);
+    setEditing(ev);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const closeModal = () => {
+    setShowAdd(false);
+    setEditing(null);
+    setFormError(null);
+    setSubmitting(false);
+  };
+
+  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setForm(p => ({ ...p, photo: file }));
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
-    const createEvent = async () => {
-      try {
-        let photoUrls: string[] = [];
-
-        // Upload photos to Firebase Storage if present
-        if (formData.photos.length > 0) {
-          console.log('Uploading photos to Firebase Storage...', formData.photos.length, 'files');
-          for (const photo of formData.photos) {
-            const response = await apiService.uploadImage(photo);
-            if (response.success && response.data) {
-              photoUrls.push(response.data.filePath);
-              console.log('Photo uploaded successfully:', response.data.filename);
-            } else {
-              console.error('Failed to upload photo:', response.error);
-            }
-          }
-          console.log('Photos uploaded successfully:', photoUrls.length, 'photos');
-        }
-
-        const newEvent = await addEvent({
-          ...formData,
-          photo: photoUrls[0] || null, // Keep first photo as main photo for now
-          photos: photoUrls, // Store all photo URLs
-          createdBy: user.id
-        });
-
-        console.log('Event created with photos:', newEvent?.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
-
-        setShowAddModal(false);
-        setFormData({
-          name: '',
-          date: '',
-          category: 'performances',
-          location: '',
-          time: '',
-          attendees: '',
-          performers: '',
-          duration: '',
-          description: '',
-          photos: []
-        });
-      } catch (error) {
-        console.error('Error creating event:', error);
-        alert('Failed to create event');
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      let photoUrl: string | null = editing?.photo ?? null;
+      if (form.photo) {
+        const res = await apiService.uploadImage(form.photo);
+        if (res.success && res.data) photoUrl = res.data.filePath;
+        else setFormError('Photo upload failed — event saved without new photo.');
       }
-    };
 
-    createEvent();
-  };
+      const payload = {
+        name: form.name, date: form.date, category: form.category,
+        location:    form.location    || undefined,
+        time:        form.time        || undefined,
+        attendees:   form.attendees   || undefined,
+        performers:  form.performers  || undefined,
+        duration:    form.duration    || undefined,
+        description: form.description || undefined,
+        photo: photoUrl,
+        createdBy: user.id,
+      };
 
+      if (editing) await updateEvent(editing.id, payload);
+      else          await addEvent(payload);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
-      setFormData(prev => ({
-        ...prev,
-        photos: fileArray
-      }));
+      closeModal();
+    } catch (err: any) {
+      setFormError(err.message ?? 'Something went wrong');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleDelete = async (eventId: string) => {
-    await removeEvent(eventId);
-    setShowConfirmDelete(null);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    await removeEvent(deleteId);
+    if (expandedId === deleteId) setExpand(null);
+    setDeleteId(null);
   };
 
-  const canManageEvents = isAuthenticated && user && hasPermission('manage_timeline');
-
-  // Debug logging
-  console.log('Timeline Debug:', {
-    isAuthenticated,
-    user: user?.username,
-    userRole: user?.role,
-    hasPermission: hasPermission('manage_timeline'),
-    canManageEvents,
-    showAddModal,
-    formDataPhotos: formData.photos.length
-  });
-
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[45vh] min-h-[380px] flex items-center justify-center overflow-hidden bg-stone-50">
-        <div className="absolute inset-0 z-0 opacity-30">
-          <Slideshow 
-            images={heroImages} 
-            interval={5000} 
-            overlay={true} 
-          />
-        </div>
-        
-        {/* Subtle decorative elements */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-earth-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-sage-200/30 rounded-full blur-3xl"></div>
-        
-        <div className="container relative z-10 text-center">
-          <motion.h1 
-            className="mb-4 text-4xl font-bold text-surface-900 md:text-6xl"
-            initial={{ opacity: 0, y: 20 }}
+    <div className="min-h-screen bg-stone-900">
+
+      {/* ── Hero ── */}
+      <section className="hero-section">
+        <motion.div className="hero-section__media">
+          <Slideshow images={heroImages} interval={5500} overlay={false} />
+        </motion.div>
+        <div className="hero-section__scrim" aria-hidden />
+        <div className="hero-section__content container">
+          <motion.div
+            className="hero-section__panel"
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.9, delay: 0.15 }}
           >
-            text
-          </motion.h1>
-          <motion.p 
-            className="max-w-2xl mx-auto text-lg leading-relaxed text-surface-700"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            text
-          </motion.p>
+            <p className="hero-section__eyebrow">Our Chronicle</p>
+            <h1 className="hero-section__title">
+              Every Moment,<br />
+              <em className="hero-section__accent">Remembered</em>
+            </h1>
+            <p className="hero-section__subtitle">
+              A living record of every performance, tutoring session, and act of service —
+              the story of OneKey told through the moments that shaped us.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* Timeline Filters Section */}
-      <section className="sticky z-40 py-4 bg-white/80 backdrop-blur-md border-b border-surface-200/60 top-20">
-        <div className="container">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex w-full gap-2 pb-2 overflow-x-auto md:pb-0 md:w-auto">
-              {categories.map(category => (
-                <motion.button
-                  key={category.id}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap border-2 ${
-                    activeTab === category.id 
-                      ? 'bg-earth-600 border-earth-700 text-white shadow-lg' 
-                      : 'bg-white border-stone-200 text-stone-700 hover:border-earth-400 hover:bg-earth-50'
-                  }`}
-                  onClick={() => handleTabChange(category.id as typeof activeTab)}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <i className={`${category.icon} mr-2`}></i>
-                  {category.label}
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Admin Controls */}
-            {canManageEvents && (
-              <motion.button 
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-earth-600 text-white rounded-xl border-2 border-earth-700 shadow-lg hover:bg-earth-700"
-                onClick={() => setShowAddModal(true)}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      {/* ── Stats strip ── */}
+      <div className="border-b border-white/8 bg-stone-900/80 backdrop-blur-sm">
+        <div className="container py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { label: 'Total Events',       value: stats.total,        color: 'text-white' },
+              { label: 'Performances',        value: stats.performances, color: 'text-earth-400' },
+              { label: 'Tutoring Sessions',   value: stats.homework,     color: 'text-sage-400' },
+              { label: 'Charity Events',      value: stats.charity,      color: 'text-rose-400' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
               >
-                <i className="fas fa-plus"></i>
+                <div className={`text-4xl font-bold font-display ${s.color}`}>{s.value}</div>
+                <div className="mt-1 text-[11px] font-semibold tracking-widest uppercase text-stone-500">{s.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Sticky filter bar ── */}
+      <div className="sticky top-[4.4rem] z-30 bg-stone-900/92 backdrop-blur-md border-b border-white/8">
+        <div className="container py-3 flex flex-wrap items-center gap-2 justify-between">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2">
+            {(['all', 'performances', 'homework', 'charity'] as const).map(cat => {
+              const active = filter === cat;
+              const meta = cat !== 'all' ? CAT[cat] : null;
+              return (
+                <motion.button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border ${
+                    active
+                      ? meta
+                        ? `${meta.bg} ${meta.color} ${meta.border}`
+                        : 'bg-white/12 text-white border-white/25'
+                      : 'bg-transparent text-stone-500 border-white/10 hover:text-stone-300 hover:border-white/20'
+                  }`}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  {cat === 'all' ? 'All Events' : meta!.label}
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Right controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-stone-500 border border-white/10 hover:text-stone-300 hover:border-white/20 transition-all"
+            >
+              <i className={`fas fa-sort-amount-${sortDir === 'desc' ? 'down' : 'up'}`} />
+              {sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
+            </button>
+            {canManage && (
+              <motion.button
+                onClick={openAdd}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-earth-600 hover:bg-earth-500 text-white transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <i className="fas fa-plus" />
                 Add Event
               </motion.button>
             )}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Timeline Content Section */}
-      <section className="py-12 bg-stone-50">
-        <div className="container max-w-5xl">
-          {currentEvents.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 text-2xl rounded-2xl bg-earth-100 text-earth-600 shadow-lg">
-                <i className={categories.find(c => c.id === activeTab)?.icon}></i>
-              </div>
-              <h3 className="mb-2 text-2xl font-bold text-stone-900">More Moments Coming</h3>
-              <p className="text-stone-600">We're collecting memories from {categories.find(c => c.id === activeTab)?.label.toLowerCase()}</p>
-            </div>
-          ) : (
-            <div className="relative space-y-10 md:space-y-12 before:absolute before:left-8 md:before:left-1/2 before:top-0 before:bottom-0 before:w-0.5 before:bg-earth-300">
-              {currentEvents.map((event, index) => (
-                <motion.div 
-                  key={event.id} 
-                  className={`flex flex-col md:flex-row gap-6 relative ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+      {/* ── Timeline body ── */}
+      <section className="container max-w-5xl py-16">
+
+        {/* Loading */}
+        {isLoading && filtered.length === 0 && (
+          <div className="py-24 flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-white/20 border-t-earth-400 rounded-full animate-spin" />
+            <p className="text-sm text-stone-500">Loading chronicle…</p>
+          </div>
+        )}
+
+        {/* Empty */}
+        {!isLoading && filtered.length === 0 && (
+          <motion.div className="py-24 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="text-7xl mb-5 opacity-20 font-display">◎</div>
+            <h3 className="text-xl font-semibold text-stone-300 mb-2">No events yet</h3>
+            <p className="text-sm text-stone-500">
+              {canManage
+                ? 'Add the first event to start building the chronicle.'
+                : 'The story is just beginning — check back soon.'}
+            </p>
+            {canManage && (
+              <motion.button
+                onClick={openAdd}
+                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-earth-600 hover:bg-earth-500 text-white transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <i className="fas fa-plus" /> Add first event
+              </motion.button>
+            )}
+          </motion.div>
+        )}
+
+        {/* The actual timeline */}
+        {filtered.length > 0 && (
+          <div className="relative">
+            {/* Vertical spine */}
+            <div
+              className="absolute left-[1.1rem] md:left-1/2 top-0 bottom-0 w-px"
+              style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1) 5%, rgba(255,255,255,0.1) 95%, transparent)' }}
+            />
+
+            {yearGroups.map((group) => (
+              <div key={group.year}>
+                {/* Year pill */}
+                <motion.div
+                  className="relative flex items-center mb-6 mt-2"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  {/* Date Bubble - More organic look */}
-                  <div className="absolute z-10 w-4 h-4 mt-4 transform -translate-x-1/2 border-3 border-white rounded-full shadow-lg left-8 md:left-1/2 bg-earth-500"></div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 ml-16 md:ml-0">
-                    <motion.div 
-                      className="p-5 bg-white border-2 border-stone-200 rounded-2xl shadow-lg hover:shadow-xl hover:border-earth-300 backdrop-blur-sm"
-                      whileHover={{ 
-                        y: -6, 
-                        scale: 1.02,
-                        rotate: index % 2 === 0 ? 1 : -1
-                      }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <span className="inline-block px-2.5 py-0.5 mb-2 text-xs font-semibold text-earth-700 bg-earth-100 rounded-full border border-earth-200">
-                            {format(new Date(event.date), 'MMMM d, yyyy')}
-                          </span>
-                          <h3 className="text-xl font-bold text-stone-900 leading-tight">{event.name}</h3>
-                        </div>
-                        {canManageEvents && (
-                          <button 
-                            className="transition-colors text-surface-400 hover:text-red-500"
-                            onClick={() => setShowConfirmDelete(event.id)}
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        )}
-                      </div>
-
-                      {event.photo && (
-                        <div className="mb-4 overflow-hidden border-2 rounded-xl bg-stone-50 border-stone-200 shadow-md">
-                          <motion.img 
-                            src={event.photo} 
-                            alt={event.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-auto max-h-[280px] object-cover"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            onError={(e) => {
-                              const container = e.currentTarget.parentElement;
-                              if (container) container.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 mb-3 text-xs">
-                        {event.location && (
-                          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-earth-50 text-earth-700 rounded-full border border-earth-200">
-                            <i className="fas fa-map-marker-alt"></i> 
-                            {event.location}
-                          </span>
-                        )}
-                        {event.time && (
-                          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-sage-50 text-sage-700 rounded-full border border-sage-200">
-                            <i className="fas fa-clock"></i> 
-                            {event.time}
-                          </span>
-                        )}
-                      </div>
-
-                      {event.description && (
-                        <p className="mb-3 text-sm leading-relaxed text-stone-700">{event.description}</p>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 pt-3 border-t-2 border-surface-100">
-                        {event.category !== 'homework' && event.attendees && (
-                          <span className="flex items-center gap-1.5 text-xs font-medium text-surface-700 bg-surface-50 px-2.5 py-1 rounded-full">
-                            <i className="fas fa-users text-earth-500"></i> 
-                            {event.attendees} attended
-                          </span>
-                        )}
-                        {event.category !== 'homework' && event.performers && (
-                          <span className="flex items-center gap-1.5 text-xs font-medium text-surface-700 bg-surface-50 px-2.5 py-1 rounded-full">
-                            <i className="fas fa-music text-earth-500"></i> 
-                            {event.performers}
-                          </span>
-                        )}
-                      </div>
-                    </motion.div>
+                  {/* Year ring on spine */}
+                  <div className="absolute left-[1.1rem] md:left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-white/30 ring-4 ring-stone-900 z-10" />
+                  {/* Year label — centered desktop, offset mobile */}
+                  <div className="ml-10 md:ml-0 md:w-full md:flex md:justify-center">
+                    <span className="inline-block px-4 py-0.5 text-xs font-bold font-display text-stone-300 bg-stone-800 border border-white/15 rounded-full tracking-widest">
+                      {group.year}
+                    </span>
                   </div>
-                  
-                  {/* Empty space for the other side */}
-                  <div className="flex-1 hidden md:block"></div>
                 </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
+
+                {/* Events */}
+                {group.events.map((event, ei) => {
+                  const meta      = CAT[event.category];
+                  const isLeft    = event._left;
+                  const isExpanded = expandedId === event.id;
+
+                  return (
+                    <motion.div
+                      key={event.id}
+                      className="relative flex mb-10"
+                      initial={{ opacity: 0, y: 28 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-60px' }}
+                      transition={{ duration: 0.5, delay: Math.min(ei * 0.07, 0.35) }}
+                    >
+                      {/* Dot on spine */}
+                      <div
+                        className={`absolute left-[1.1rem] md:left-1/2 top-5 z-10 w-3 h-3 -translate-x-1/2 rounded-full ring-4 ring-stone-900 shadow-lg ${meta.dot} ${meta.glow}`}
+                      />
+
+                      {/* Mobile: all cards offset to the right of spine */}
+                      {/* Desktop: alternate left / right of spine */}
+
+                      {/* Left spacer (desktop only, for right-side cards) */}
+                      {!isLeft && <div className="hidden md:block flex-1" />}
+
+                      {/* Card wrapper */}
+                      <div className={`
+                        flex-1 pl-10 md:pl-0 md:flex-none md:w-[calc(50%-2.5rem)]
+                        ${isLeft ? 'md:mr-auto md:pr-0' : 'md:ml-auto md:pl-0'}
+                      `}>
+                        <motion.article
+                          className="group bg-stone-800/55 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
+                          whileHover={{ y: -5, boxShadow: '0 20px 40px rgba(0,0,0,0.35)' }}
+                          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                          onClick={() => setExpand(isExpanded ? null : event.id)}
+                        >
+                          {/* Cover photo */}
+                          {event.photo && (
+                            <div className="aspect-[16/7] overflow-hidden">
+                              <motion.img
+                                src={event.photo}
+                                alt={event.name}
+                                className="w-full h-full object-cover"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.7 }}
+                                loading="lazy"
+                                onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                              />
+                            </div>
+                          )}
+
+                          <div className="p-5">
+                            {/* Top row: category + date + admin actions */}
+                            <div className="flex items-start justify-between gap-2 mb-2.5">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${meta.bg} ${meta.color} ${meta.border}`}>
+                                  <i className={`${meta.icon} text-[9px]`} />
+                                  {meta.label}
+                                </span>
+                                <time className="text-[11px] text-stone-500">
+                                  {safeFormat(event.date, 'MMMM d, yyyy')}
+                                </time>
+                              </div>
+
+                              {/* Admin controls — visible on hover */}
+                              {canManage && (
+                                <div className="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={e => { e.stopPropagation(); openEdit(event); }}
+                                    className="p-1.5 rounded-lg text-stone-500 hover:text-earth-300 hover:bg-earth-500/15 transition-all"
+                                    title="Edit event"
+                                  >
+                                    <i className="fas fa-pencil-alt text-xs" />
+                                  </button>
+                                  <button
+                                    onClick={e => { e.stopPropagation(); setDeleteId(event.id); }}
+                                    className="p-1.5 rounded-lg text-stone-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                    title="Delete event"
+                                  >
+                                    <i className="fas fa-trash-alt text-xs" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="text-[1.05rem] font-bold text-white leading-snug mb-3">{event.name}</h3>
+
+                            {/* Quick-info chips */}
+                            {(event.location || event.time || event.duration) && (
+                              <div className="flex flex-wrap gap-1.5 mb-3">
+                                {event.location && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
+                                    <i className="fas fa-map-marker-alt text-[9px] text-earth-400" />
+                                    {event.location}
+                                  </span>
+                                )}
+                                {event.time && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
+                                    <i className="fas fa-clock text-[9px] text-stone-500" />
+                                    {event.time}
+                                  </span>
+                                )}
+                                {event.duration && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] text-stone-400 bg-white/5 border border-white/8">
+                                    <i className="fas fa-hourglass-half text-[9px] text-stone-500" />
+                                    {event.duration}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Description preview (collapsed) */}
+                            {event.description && !isExpanded && (
+                              <p className="text-sm text-stone-400 leading-relaxed line-clamp-2 mb-1">
+                                {event.description}
+                              </p>
+                            )}
+
+                            {/* Expanded content */}
+                            <AnimatePresence>
+                              {isExpanded && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                  style={{ overflow: 'hidden' }}
+                                >
+                                  {event.description && (
+                                    <p className="text-sm text-stone-300 leading-relaxed whitespace-pre-wrap mb-4">
+                                      {event.description}
+                                    </p>
+                                  )}
+                                  {(event.attendees || event.performers) && (
+                                    <div className="flex flex-wrap gap-4 pt-3 border-t border-white/10">
+                                      {event.attendees && (
+                                        <div className="flex items-center gap-1.5 text-xs text-stone-400">
+                                          <i className="fas fa-users text-earth-400" />
+                                          <span>{event.attendees} attendees</span>
+                                        </div>
+                                      )}
+                                      {event.performers && (
+                                        <div className="flex items-center gap-1.5 text-xs text-stone-400">
+                                          <i className="fas fa-music text-earth-400" />
+                                          <span>{event.performers} performers</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+
+                            {/* Expand toggle */}
+                            {(event.description || event.attendees || event.performers) && (
+                              <div className="mt-3 flex items-center gap-1 text-[11px] text-stone-600 hover:text-stone-400 transition-colors select-none">
+                                <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'} text-[8px]`} />
+                                {isExpanded ? 'Collapse' : 'Read more'}
+                              </div>
+                            )}
+                          </div>
+                        </motion.article>
+                      </div>
+
+                      {/* Right spacer (desktop, for left-side cards) */}
+                      {isLeft && <div className="hidden md:block flex-1" />}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Add Event Modal */}
-      {showAddModal && (
-        <div className="modal-overlay active">
-          <div className="modal-content timeline-modal">
-            <div className="modal-header">
-              <h2>Add New Event</h2>
-              <button 
-                className="close-modal"
-                onClick={() => setShowAddModal(false)}
-              >
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="timeline-form">
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="name">Event Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleFormChange}
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="category">Category</label>
-                  <select
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleFormChange}
-                    required
-                  >
-                    <option value="performances">Performances</option>
-                    <option value="homework">Homework Help</option>
-                    <option value="charity">Charity Events</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="date">Date</label>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleFormChange}
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="time">Time</label>
-                  <input
-                    type="time"
-                    id="time"
-                    name="time"
-                    value={formData.time}
-                    onChange={handleFormChange}
-                  />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="location">Location</label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleFormChange}
-                />
-              </div>
-              
-              {formData.category !== 'homework' && (
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="attendees">Expected Attendees</label>
-                    <input
-                      type="number"
-                      id="attendees"
-                      name="attendees"
-                      value={formData.attendees}
-                      onChange={handleFormChange}
-                      min="0"
-                      placeholder="Enter number of attendees"
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label htmlFor="performers">Performers</label>
-                    <input
-                      type="number"
-                      id="performers"
-                      name="performers"
-                      value={formData.performers}
-                      onChange={handleFormChange}
-                      min="0"
-                      placeholder="Enter number of performers"
-                    />
-                  </div>
-                </div>
-              )}
-              
-              <div className="form-group">
-                <label htmlFor="description">Description</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  rows={4}
-                />
-              </div>
-              
-              {/* Photo Upload Section */}
-              <div className="form-group" style={{ marginTop: '1.5rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', border: '2px solid #c4ae7b' }}>
-                <label htmlFor="photo" style={{ fontWeight: '600', color: '#333', fontSize: '1rem', marginBottom: '0.5rem', display: 'block' }}>
-                  EVENT PHOTO(S)
-                </label>
-                <div style={{
-                  border: '2px dashed #c4ae7b',
-                  borderRadius: '8px',
-                  padding: '1.5rem',
-                  textAlign: 'center',
-                  background: '#ffffff',
-                  marginTop: '0.5rem'
-                }}>
-                  <input
-                    type="file"
-                    id="photo"
-                    name="photo"
-                    accept="image/*"
-                    multiple
-                    onChange={handlePhotoChange}
-                    style={{ 
-                      display: 'none'
-                    }}
-                  />
-                  <label 
-                    htmlFor="photo"
-                    style={{
-                      display: 'inline-block',
-                      padding: '0.75rem 1.5rem',
-                      background: '#c4ae7b',
-                      color: 'white',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      border: 'none',
-                      transition: 'all 0.2s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background = '#b39a6a';
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                      e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background = '#c4ae7b';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                    }}
-                  >
-                    Choose Files
-                  </label>
-                  <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.85rem', color: '#666' }}>
-                    Select image files (JPG, PNG, GIF) - Multiple files allowed
-                  </p>
-                </div>
-                {formData.photos.length > 0 && (
-                  <div className="photo-preview" style={{
-                    marginTop: '1rem',
-                    padding: '1rem',
-                    background: '#ffffff',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                  }}>
-                    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: '#666' }}>
-                      Photo Preview ({formData.photos.length} file{formData.photos.length > 1 ? 's' : ''} selected):
-                    </p>
-                    <img 
-                      src={URL.createObjectURL(formData.photos[0])} 
-                      alt="Preview" 
-                      style={{ 
-                        maxWidth: '250px', 
-                        maxHeight: '180px',
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                      }}
-                    />
-                    {formData.photos.length > 1 && (
-                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: '#666' }}>
-                        +{formData.photos.length - 1} more photo{formData.photos.length > 2 ? 's' : ''}
-                      </p>
-                    )}
-                  </div>
-                )}
-                <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.5rem', display: 'block', textAlign: 'center' }}>
-                  Adding a photo helps make your event more engaging
-                </small>
-              </div>
-
-              <button type="submit" className="timeline-submit-btn">
-                <i className="fas fa-plus"></i>
-                Add Event
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showConfirmDelete && (
-        <div className="modal-overlay active">
-          <div className="modal-content timeline-modal">
-            <div className="modal-header">
-              <h2>Confirm Delete</h2>
-              <button 
-                className="close-modal"
-                onClick={() => setShowConfirmDelete(null)}
-              >
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <div className="modal-body">
-              <p>Are you sure you want to delete this event? This action cannot be undone.</p>
-            </div>
-            
-            <div className="modal-actions">
-              <button 
-                className="btn-cancel"
-                onClick={() => setShowConfirmDelete(null)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn-delete"
-                onClick={() => handleDelete(showConfirmDelete)}
-              >
-                Delete Event
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photos Link */}
-      <section className="timeline-photos-link" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
-        <div className="container" style={{ textAlign: 'center' }}>
+      {/* ── Photo archive link ── */}
+      <div className="border-t border-white/8 py-8">
+        <div className="container text-center">
           <a
             href="https://drive.google.com/drive/u/0/folders/1SASLgBECg8h7-37JtEGAVDpu0_5hwyHZ"
             target="_blank"
             rel="noopener noreferrer"
-            className="photos-access-link"
-            style={{ fontSize: '1.15rem', fontWeight: 700, textDecoration: 'underline', color: '#2b2b2b' }}
-            aria-label="Open photos in Google Drive (opens in a new tab)"
+            className="inline-flex items-center gap-2 text-sm text-stone-500 hover:text-earth-300 transition-colors"
           >
-            Click here to access photos!!
+            <i className="fab fa-google-drive" />
+            View full photo archive on Google Drive
           </a>
         </div>
-      </section>
+      </div>
+
+      {/* ── Add / Edit modal ── */}
+      <AnimatePresence>
+        {(showAdd || editing) && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+          >
+            <motion.div
+              className="w-full max-w-2xl bg-stone-900 border border-white/12 rounded-2xl shadow-2xl"
+              initial={{ opacity: 0, y: 28, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 14, scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 340, damping: 30 }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                <h2 className="text-sm font-bold text-white font-display uppercase tracking-widest">
+                  {editing ? 'Edit Event' : 'Add New Event'}
+                </h2>
+                <button onClick={closeModal} className="p-1.5 rounded-lg text-stone-500 hover:text-white hover:bg-white/10 transition-all">
+                  <i className="fas fa-times" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[78vh]">
+                <div className="space-y-4">
+                  {formError && (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-400/30 text-sm text-red-300">
+                      {formError}
+                    </div>
+                  )}
+
+                  {/* Name + Category */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="tlm-label">Event Name *</label>
+                      <TInput
+                        type="text"
+                        value={form.name}
+                        onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+                        placeholder="e.g. Spring Concert at Sunrise Manor"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="tlm-label">Category *</label>
+                      <TSelect
+                        value={form.category}
+                        onChange={e => setForm(p => ({ ...p, category: e.target.value as CatKey }))}
+                        required
+                      >
+                        <option value="performances">Performances</option>
+                        <option value="homework">Homework Help</option>
+                        <option value="charity">Charity Events</option>
+                      </TSelect>
+                    </div>
+                  </div>
+
+                  {/* Date + Time */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="tlm-label">Date *</label>
+                      <TInput
+                        type="date"
+                        value={form.date}
+                        onChange={e => setForm(p => ({ ...p, date: e.target.value }))}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="tlm-label">Time</label>
+                      <TInput
+                        type="time"
+                        value={form.time}
+                        onChange={e => setForm(p => ({ ...p, time: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Location + Duration */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="tlm-label">Location</label>
+                      <TInput
+                        type="text"
+                        value={form.location}
+                        onChange={e => setForm(p => ({ ...p, location: e.target.value }))}
+                        placeholder="e.g. Sunrise Manor, Room 4"
+                      />
+                    </div>
+                    <div>
+                      <label className="tlm-label">Duration</label>
+                      <TInput
+                        type="text"
+                        value={form.duration}
+                        onChange={e => setForm(p => ({ ...p, duration: e.target.value }))}
+                        placeholder="e.g. 2 hours"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Attendees + Performers */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="tlm-label">Attendees</label>
+                      <TInput
+                        type="text"
+                        value={form.attendees}
+                        onChange={e => setForm(p => ({ ...p, attendees: e.target.value }))}
+                        placeholder="e.g. 45 seniors"
+                      />
+                    </div>
+                    <div>
+                      <label className="tlm-label">Performers / Volunteers</label>
+                      <TInput
+                        type="text"
+                        value={form.performers}
+                        onChange={e => setForm(p => ({ ...p, performers: e.target.value }))}
+                        placeholder="e.g. 8 student volunteers"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="tlm-label">Description</label>
+                    <TTextarea
+                      rows={6}
+                      value={form.description}
+                      onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+                      placeholder="Tell the story of this event — what happened, who was there, what made it meaningful…"
+                    />
+                  </div>
+
+                  {/* Photo upload */}
+                  <div>
+                    <label className="tlm-label">Cover Photo</label>
+                    <label className="block cursor-pointer">
+                      <div className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed border-white/12 rounded-xl overflow-hidden transition-all hover:border-earth-400/40 hover:bg-earth-500/5 ${photoPreview ? 'h-44' : 'h-28'}`}>
+                        {photoPreview ? (
+                          <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <i className="fas fa-cloud-upload-alt text-2xl text-stone-600" />
+                            <span className="text-xs text-stone-500">Click to choose a cover photo</span>
+                          </>
+                        )}
+                      </div>
+                      <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
+                    </label>
+                    {photoPreview && (
+                      <button
+                        type="button"
+                        onClick={() => { setPreview(null); setForm(p => ({ ...p, photo: null })); }}
+                        className="mt-1.5 text-xs text-stone-500 hover:text-stone-300 transition-colors"
+                      >
+                        Remove photo
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex justify-end gap-3 pt-2 border-t border-white/10">
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="px-4 py-2 text-sm text-stone-400 hover:text-white transition-colors"
+                      disabled={submitting}
+                    >
+                      Cancel
+                    </button>
+                    <motion.button
+                      type="submit"
+                      className="px-5 py-2 text-sm font-semibold bg-earth-600 hover:bg-earth-500 text-white rounded-xl transition-all disabled:opacity-50 flex items-center gap-2"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      disabled={submitting}
+                    >
+                      {submitting
+                        ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving…</>
+                        : editing ? 'Update Event' : 'Add Event'
+                      }
+                    </motion.button>
+                  </div>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Delete confirmation ── */}
+      <AnimatePresence>
+        {deleteId && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDeleteId(null)}
+          >
+            <motion.div
+              className="w-full max-w-sm bg-stone-900 border border-white/12 rounded-2xl shadow-2xl p-6"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 340, damping: 30 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-400/25 flex items-center justify-center mb-4">
+                <i className="fas fa-trash-alt text-red-400" />
+              </div>
+              <h3 className="text-base font-bold text-white mb-1">Delete this event?</h3>
+              <p className="text-sm text-stone-400 mb-6">This cannot be undone. The event will be permanently removed from the chronicle.</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setDeleteId(null)}
+                  className="px-4 py-2 text-sm text-stone-400 hover:text-white transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 text-sm font-semibold bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-export default Timeline; 
+export default Timeline;
