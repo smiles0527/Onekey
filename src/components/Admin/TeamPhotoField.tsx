@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { apiService } from '../../services/api';
+import { apiService } from '../../services/firebaseService';
 import { resolveTeamImageSrc } from '../../utils/teamImageUrl';
 
 const VIEWPORT = 260;   // px — square cropper viewport
@@ -10,6 +10,7 @@ interface Props {
   label?: string;
   value: string;
   onChange: (path: string) => void;
+  onSave?: (path: string) => Promise<void>;
   required?: boolean;
 }
 
@@ -41,12 +42,13 @@ async function urlToDataUrl(src: string): Promise<string> {
 // ────────────────────────────────────────────────────────────
 
 const TeamPhotoField: React.FC<Props> = ({
-  id, label = 'Photo', value, onChange, required = false,
+  id, label = 'Photo', value, onChange, onSave, required = false,
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const canvasRef    = useRef<HTMLCanvasElement>(null);
-  const imgRef       = useRef<HTMLImageElement | null>(null);
-  const dragRef      = useRef<{ sx: number; sy: number; cx: number; cy: number } | null>(null);
+  const fileInputRef       = useRef<HTMLInputElement>(null);
+  const canvasRef          = useRef<HTMLCanvasElement>(null);
+  const imgRef             = useRef<HTMLImageElement | null>(null);
+  const dragRef            = useRef<{ sx: number; sy: number; cx: number; cy: number } | null>(null);
+  const originalDataUrlRef = useRef<string | null>(null);
 
   const [sourceDataUrl, setSourceDataUrl] = useState<string | null>(null);
   const [crop,    setCrop]    = useState({ x: 0, y: 0 });
@@ -102,7 +104,10 @@ const TeamPhotoField: React.FC<Props> = ({
     setError(null);
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === 'string') openCropper(reader.result);
+      if (typeof reader.result === 'string') {
+        originalDataUrlRef.current = reader.result;
+        openCropper(reader.result);
+      }
     };
     reader.readAsDataURL(file);
     e.target.value = '';
@@ -111,13 +116,17 @@ const TeamPhotoField: React.FC<Props> = ({
   // ── Adjust-crop existing photo ─────────────────────────────
   const handleAdjustExisting = async () => {
     if (!previewSrc) return;
+    if (originalDataUrlRef.current) {
+      openCropper(originalDataUrlRef.current);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
       const dataUrl = await urlToDataUrl(previewSrc);
       openCropper(dataUrl);
     } catch {
-      setError('Cannot load this photo for cropping. Upload the original file instead.');
+      setError('Cannot re-crop this photo — upload the original file again to adjust.');
     } finally {
       setLoading(false);
     }
@@ -191,6 +200,7 @@ const TeamPhotoField: React.FC<Props> = ({
 
       if (result.success && result.data) {
         onChange(result.data.filePath);
+        if (onSave) await onSave(result.data.filePath);
         setSourceDataUrl(null);
         imgRef.current = null;
       } else {
