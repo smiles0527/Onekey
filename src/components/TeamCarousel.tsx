@@ -7,10 +7,9 @@ import TeamMemberCard from './TeamMemberCard';
 interface Props {
   members: TeamMember[];
   compact?: boolean;
-  displaySection?: TeamMember['section'];
 }
 
-const TeamCarousel: React.FC<Props> = ({ members, compact, displaySection }) => {
+const TeamCarousel: React.FC<Props> = ({ members, compact }) => {
   const trackRef  = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -57,7 +56,7 @@ const TeamCarousel: React.FC<Props> = ({ members, compact, displaySection }) => 
       <div ref={trackRef} className="tc__track">
         {members.map((m) => (
           <div key={m.id} className="tc__item">
-            <TeamMemberCard member={m} compact={compact} displaySection={displaySection} />
+            <TeamMemberCard member={m} compact={compact} />
           </div>
         ))}
       </div>

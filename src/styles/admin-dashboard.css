@@ -169,6 +169,42 @@
   color: #f87171;
 }
 
+/* ── Sections checklist (team member form) ── */
+.sections-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.section-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  cursor: pointer;
+  font-size: 13px;
+  color: #c8c0d8;
+  transition: background 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.section-check-item:hover {
+  background: rgba(196, 167, 255, 0.08);
+  border-color: rgba(196, 167, 255, 0.2);
+}
+
+.section-check-item input[type="checkbox"] {
+  accent-color: #c4a7ff;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
 .sidebar-item.active {
   background: rgba(155, 114, 239, 0.12);
   color: #c4a7ff;
@@ -748,4 +784,69 @@
   caret-color: #9b72ef;
   padding: 0;
   line-height: 1.6;
+}
+
+/* ── Extra roles tag input ── */
+.extra-roles-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  min-height: 0;
+}
+
+.extra-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(155, 114, 239, 0.15);
+  border: 1px solid rgba(155, 114, 239, 0.35);
+  color: #c9b8f8;
+  font-size: 12px;
+  padding: 0.2rem 0.5rem 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-family: inherit;
+}
+
+.extra-role-tag button {
+  background: none;
+  border: none;
+  color: #9b72ef;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.1s;
+}
+
+.extra-role-tag button:hover { opacity: 1; }
+
+.extra-roles-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.extra-roles-input-row input {
+  flex: 1;
+}
+
+.btn-add-role {
+  padding: 0.45rem 0.875rem;
+  background: rgba(155, 114, 239, 0.15);
+  border: 1px solid rgba(155, 114, 239, 0.35);
+  color: #c9b8f8;
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.btn-add-role:hover {
+  background: rgba(155, 114, 239, 0.28);
+  border-color: rgba(155, 114, 239, 0.6);
 }

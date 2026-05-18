@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuthStore } from '../../store/authStore';
-import { useTeamStore, TeamMember } from '../../store/teamStore';
+import { useTeamStore, TeamMember, SectionKey } from '../../store/teamStore';
 import { useTimelineStore } from '../../store/timelineStore';
 
 type LineType = 'input' | 'output' | 'success' | 'error' | 'info' | 'header' | 'dim' | 'warn';
@@ -24,7 +24,7 @@ function parseArgs(input: string): string[] {
   return args;
 }
 
-const SECTIONS: TeamMember['section'][] =
+const SECTIONS: SectionKey[] =
   ['leadership','communications','coordinators','finance','concertmasters','techdesign','alumni'];
 
 const BANNER: Line[] = [
@@ -49,12 +49,12 @@ const WIZARD_STEPS: WizardStep[] = [
   { key: 'name',     label: 'Full name' },
   { key: 'role',     label: 'Title/position (e.g. Co-Founder, Violin)' },
   { key: 'school',   label: 'School/university' },
-  { key: 'section',  label: `Section (${SECTIONS.join('|')})`, options: SECTIONS },
+  { key: 'sections', label: `Sections — comma-separated (${SECTIONS.join('|')})` },
   { key: 'group',    label: 'Group (onekey|vanstring)', optional: true, options: ['onekey','vanstring'],
-    skipIf: d => d.section !== 'leadership' && d.section !== 'communications' },
+    skipIf: d => !d.sections?.includes('leadership') && !d.sections?.includes('communications') },
   { key: 'cm_type',  label: 'Concertmaster type (concertmaster|associate|principal_second)', optional: true,
     options: ['concertmaster','associate','principal_second'],
-    skipIf: d => d.section !== 'concertmasters' },
+    skipIf: d => !d.sections?.includes('concertmasters') },
   { key: 'bio',      label: 'Bio (wrap in quotes if it has spaces, or just type freely)' },
   { key: 'instagram',label: 'Instagram URL', optional: true },
 ];
@@ -132,6 +132,7 @@ const AdminTerminal: React.FC = () => {
       // All steps done — create member
       setMode({ type: 'normal' });
       push(L('', 'output'), L('creating member…', 'dim'));
+      const parsedSections = (data.sections ?? '').split(',').map(s => s.trim()).filter(s => SECTIONS.includes(s as SectionKey)) as SectionKey[];
       const payload: Partial<TeamMember> = {
         name: data.name,
         role: data.role,
@@ -139,12 +140,9 @@ const AdminTerminal: React.FC = () => {
         bio: data.bio || '',
         instagram: data.instagram || '',
         image: '',
-        section: (data.section as TeamMember['section']) || 'leadership',
+        sections: parsedSections.length ? parsedSections : ['leadership'],
         group: (data.group as 'onekey' | 'vanstring' | undefined) || undefined,
         concertmasterType: (data.cm_type as TeamMember['concertmasterType']) || undefined,
-        extraSections: [],
-        extraSectionsGroups: {},
-        extraSectionsConcertmasterTypes: {},
         isActive: true,
       };
       const result = await useTeamStore.getState().addTeamMember(payload as any);
@@ -198,12 +196,11 @@ const AdminTerminal: React.FC = () => {
         L('  set school <name> <school>           change school', 'output'),
         L('  set bio <name> "<bio text>"          update bio', 'output'),
         L('  set instagram <name> <url>           set instagram url', 'output'),
-        L('  set section <name> <section>         move to section', 'output'),
+        L('  set section <name> <section>         replace sections with one section', 'output'),
+        L('  add section <name> <section>         add to sections list', 'output'),
+        L('  rm section <name> <section>          remove from sections list', 'output'),
         L('  set group <name> <onekey|vanstring>  set group', 'output'),
         L('  set cm-type <name> <type>            set concertmaster type', 'output'),
-        L('  add section <name> <section> [grp]  add extra section', 'output'),
-        L('  rm section <name> <section>          remove extra section', 'output'),
-        L('  set extra-cm-type <name> <sec> <tp> concertmaster type for extra section', 'output'),
         L('  hide <name>                          hide from site', 'output'),
         L('  show <name>                          unhide', 'output'),
         L('  delete member <name>                 permanently delete', 'output'),
@@ -267,7 +264,7 @@ const AdminTerminal: React.FC = () => {
         L(`NAME       : ${m.name}`, 'output'),
         L(`TITLE      : ${m.role}`, 'output'),
         L(`SCHOOL     : ${m.school}`, 'output'),
-        L(`SECTION    : ${m.section}`, 'output'),
+        L(`SECTIONS   : ${(m.sections ?? []).join(', ')}`, 'output'),
         L(`GROUP      : ${m.group ?? '—'}`, 'output'),
         L(`CM TYPE    : ${m.concertmasterType ?? '—'}`, 'output'),
         L(`VISIBLE    : ${m.isActive ? 'yes' : 'no'}`, m.isActive ? 'output' : 'warn'),
@@ -275,11 +272,6 @@ const AdminTerminal: React.FC = () => {
         L(`ID         : ${m.id}`, 'dim'),
         L(`BIO        :`, 'output'),
         ...(m.bio ? m.bio.match(/.{1,60}/g)?.map(chunk => L(`  ${chunk}`, 'output')) ?? [] : [L('  —', 'dim')]),
-        ...(m.extraSections?.length
-          ? [L(`EXTRA SECTIONS:`, 'output'), ...m.extraSections.map(s =>
-              L(`  ${s}${m.extraSectionsGroups?.[s] ? ` (${m.extraSectionsGroups[s]})` : ''}${m.extraSectionsConcertmasterTypes?.[s] ? ` [${m.extraSectionsConcertmasterTypes[s]}]` : ''}`, 'dim')
-            )]
-          : [L('EXTRA SECTIONS: none', 'dim')]),
         L(sep, 'dim'),
         L('', 'output'),
       );
@@ -299,14 +291,14 @@ const AdminTerminal: React.FC = () => {
         let list = teamMembers;
         if (showHidden) list = list.filter(m => !m.isActive);
         else if (!showAll) list = list.filter(m => m.isActive);
-        if (sectionArg && SECTIONS.includes(sectionArg as any)) list = list.filter(m => m.section === sectionArg);
+        if (sectionArg && SECTIONS.includes(sectionArg as SectionKey)) list = list.filter(m => m.sections?.includes(sectionArg as SectionKey));
         if (!list.length) { push(L('no members found', 'warn')); return; }
         push(
           L('', 'output'),
-          L(`${'NAME'.padEnd(24)}${'SECTION'.padEnd(16)}${'GROUP'.padEnd(12)}${'VISIBLE'.padEnd(9)}TITLE`, 'header'),
-          L('─'.repeat(78), 'dim'),
+          L(`${'NAME'.padEnd(24)}${'SECTIONS'.padEnd(22)}${'GROUP'.padEnd(12)}${'VISIBLE'.padEnd(9)}TITLE`, 'header'),
+          L('─'.repeat(84), 'dim'),
           ...list.map(m => L(
-            `${m.name.padEnd(24)}${m.section.padEnd(16)}${(m.group ?? '—').padEnd(12)}${(m.isActive ? 'yes' : 'no').padEnd(9)}${m.role}`,
+            `${m.name.padEnd(24)}${(m.sections ?? []).join(',').padEnd(22)}${(m.group ?? '—').padEnd(12)}${(m.isActive ? 'yes' : 'no').padEnd(9)}${m.role}`,
             m.isActive ? 'output' : 'dim',
           )),
           L('', 'output'),
@@ -367,9 +359,23 @@ const AdminTerminal: React.FC = () => {
       // Team member field setters — args: set <field> <name-query> <value...>
       const TEAM_FIELDS: Record<string, string> = {
         name: 'name', title: 'role', school: 'school', bio: 'bio',
-        instagram: 'instagram', section: 'section', group: 'group',
+        instagram: 'instagram', group: 'group',
         'cm-type': 'concertmasterType',
       };
+
+      // set section <name> <section> — replaces sections[] with a single section
+      if (field === 'section' || field === 'sections') {
+        const query = args[2];
+        const value = args[3] as SectionKey;
+        if (!query || !value) { push(L('usage: set section <name> <section>', 'error')); return; }
+        if (!SECTIONS.includes(value)) { push(L(`invalid section. options: ${SECTIONS.join(' | ')}`, 'error')); return; }
+        const m = findMember(query);
+        if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
+        push(L(`updating ${m.name}…`, 'dim'));
+        const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections: [value] } as any);
+        push(ok ? L(`✓ ${m.name}: sections → [${value}]`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
+        return;
+      }
 
       if (field && field in TEAM_FIELDS) {
         const query = args[2];
@@ -378,10 +384,6 @@ const AdminTerminal: React.FC = () => {
         const m = findMember(query);
         if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
 
-        // Validate section / group / cm-type
-        if (field === 'section' && !SECTIONS.includes(value as any)) {
-          push(L(`invalid section. options: ${SECTIONS.join(' | ')}`, 'error')); return;
-        }
         if (field === 'group' && !['onekey', 'vanstring'].includes(value)) {
           push(L('group must be onekey or vanstring', 'error')); return;
         }
@@ -396,54 +398,32 @@ const AdminTerminal: React.FC = () => {
         return;
       }
 
-      // set extra-cm-type <name> <section> <type>
-      if (field === 'extra-cm-type') {
-        const query = args[2], section = args[3], cmType = args[4];
-        if (!query || !section || !cmType) {
-          push(L('usage: set extra-cm-type <name> <section> <concertmaster|associate|principal_second>', 'error')); return;
-        }
-        const m = findMember(query);
-        if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
-        if (!['concertmaster','associate','principal_second'].includes(cmType)) {
-          push(L('type must be concertmaster | associate | principal_second', 'error')); return;
-        }
-        const updated = { ...m.extraSectionsConcertmasterTypes, [section]: cmType };
-        const ok = await useTeamStore.getState().updateTeamMember(m.id, { extraSectionsConcertmasterTypes: updated } as any);
-        push(ok ? L(`✓ ${m.name}: extra cm-type for ${section} → ${cmType}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
-        return;
-      }
-
       push(L(`unknown field: ${field}. type "help" for set commands`, 'error'));
       return;
     }
 
     // ── add section ────────────────────────────────────────────────────────
     if (verb === 'add' && args[1]?.toLowerCase() === 'section') {
-      const query = args[2], section = args[3] as TeamMember['section'], group = args[4] as 'onekey'|'vanstring'|undefined;
-      if (!query || !section) { push(L('usage: add section <name> <section> [onekey|vanstring]', 'error')); return; }
+      const query = args[2], section = args[3] as SectionKey;
+      if (!query || !section) { push(L('usage: add section <name> <section>', 'error')); return; }
       if (!SECTIONS.includes(section)) { push(L(`invalid section. options: ${SECTIONS.join(' | ')}`, 'error')); return; }
       const m = findMember(query);
       if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
-      const extras = Array.from(new Set([...(m.extraSections ?? []), section]));
-      const extraGroups = { ...(m.extraSectionsGroups ?? {}) };
-      if (group) extraGroups[section] = group;
-      const ok = await useTeamStore.getState().updateTeamMember(m.id, { extraSections: extras, extraSectionsGroups: extraGroups } as any);
-      push(ok ? L(`✓ ${m.name}: added to ${section}${group ? ` (${group})` : ''}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
+      const sections = Array.from(new Set([...(m.sections ?? []), section]));
+      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as any);
+      push(ok ? L(`✓ ${m.name}: added to ${section}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
       return;
     }
 
     // ── rm section ─────────────────────────────────────────────────────────
     if (verb === 'rm' && args[1]?.toLowerCase() === 'section') {
-      const query = args[2], section = args[3];
+      const query = args[2], section = args[3] as SectionKey;
       if (!query || !section) { push(L('usage: rm section <name> <section>', 'error')); return; }
       const m = findMember(query);
       if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
-      const extras = (m.extraSections ?? []).filter(s => s !== section);
-      const extraGroups = { ...(m.extraSectionsGroups ?? {}) };
-      delete extraGroups[section as TeamMember['section']];
-      const extraCmTypes = { ...(m.extraSectionsConcertmasterTypes ?? {}) };
-      delete extraCmTypes[section as TeamMember['section']];
-      const ok = await useTeamStore.getState().updateTeamMember(m.id, { extraSections: extras, extraSectionsGroups: extraGroups, extraSectionsConcertmasterTypes: extraCmTypes } as any);
+      const sections = (m.sections ?? []).filter(s => s !== section);
+      if (!sections.length) { push(L('cannot remove last section — member must belong to at least one', 'error')); return; }
+      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as any);
       push(ok ? L(`✓ ${m.name}: removed from ${section}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
       return;
     }

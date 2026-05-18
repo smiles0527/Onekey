@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { apiService } from '../services/firebaseService';
 
+export type SectionKey = 'leadership' | 'communications' | 'coordinators' | 'finance' | 'concertmasters' | 'techdesign' | 'alumni';
+
 export interface TeamMember {
   id: string;
   name: string;
@@ -9,12 +11,9 @@ export interface TeamMember {
   bio: string;
   instagram: string;
   image: string;
-  section: 'leadership' | 'communications' | 'coordinators' | 'finance' | 'concertmasters' | 'techdesign' | 'alumni';
-  extraSections?: Array<'leadership' | 'communications' | 'coordinators' | 'finance' | 'concertmasters' | 'techdesign' | 'alumni'>;
-  extraSectionsGroups?: Partial<Record<TeamMember['section'], 'onekey' | 'vanstring'>>;
+  sections: SectionKey[];
   group?: 'onekey' | 'vanstring';
   concertmasterType?: 'concertmaster' | 'associate' | 'principal_second';
-  extraSectionsConcertmasterTypes?: Partial<Record<TeamMember['section'], NonNullable<TeamMember['concertmasterType']>>>;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -24,60 +23,64 @@ export interface TeamMember {
 const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
   {
     name: 'Alex Zhang',
-    role: 'Vanstrings / Onekey Manager',
+    role: 'General Manager',
     school: 'Fraser Heights Secondary',
     bio: 'Currently a senior at Fraser Heights Secondary School, Alex Zhang is honored to serve as the General Manager of Vanstring and as the Principal Second Violinist. Outside of music, Alex enjoys playing volleyball and basketball, spending time in nature, and reading a wide range of literature. With a strong interest in the sciences, Alex aspires to study biomedicine with the goal of pursuing a career in medicine.',
     instagram: 'https://www.instagram.com/alexzhang_05/',
     image: '/pics/alexzhang.jpg',
-    section: 'leadership',
+    sections: ['leadership'],
+    group: 'vanstring',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Curtis Wei',
-    role: 'Vanstrings / Onekey Manager',
+    role: 'General Manager',
     school: 'Collingwood School',
     bio: "I'm Curtis, a grade 10 student at Collingwood Secondary School. I'm grateful to be serving as one of the founders of Onekey as well as the General Manager of Vanstring. I have a passion for sciences and I waste much of my time preparing for the international science olympiads. In my spare time, I play the piano and conduct research on group theory as well as doing my little engineering projects.",
     instagram: 'https://www.instagram.com/icyz_wx/',
     image: '/pics/curtiswei.jpg',
-    section: 'leadership',
+    sections: ['leadership'],
+    group: 'onekey',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Jessica Yu',
-    role: 'Communications Team',
+    role: 'Communications Coordinator',
     school: 'R.C. Palmer Secondary School',
     bio: "Hi, I'm Jessica! I'm super passionate about music and spreading joy through music. As part of the communications team, I help young musicians gain more experience through performances in senior homes. In my spare time, I love to crochet and listen to music!",
     instagram: 'https://www.instagram.com/j.1ca0/',
     image: '/pics/jessicayu.jpg',
-    section: 'communications',
+    sections: ['communications'],
+    group: 'onekey',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Gabrielle Liu',
-    role: 'Communications Team',
+    role: 'Communications Coordinator',
     school: 'Lord Byng Secondary School',
     bio: 'Gabrielle is a grade 11 student at Lord Byng Secondary School, where she is part of the Byng Arts mini school program for music. Her musical journey began when she was five, and since then, she has competed in, and won numerous music competitions. In addition to performing, Gabrielle shares her passion by teaching violin and piano to students of all ages. She has a strong passion for the arts, especially singing and painting. Alongside her artistic interests, Gabrielle is passionate about science and aspires to pursue a career in dermatology.',
     instagram: 'https://www.instagram.com/gabriel_w.le/',
     image: '/pics/gabbyliu.jpg',
-    section: 'communications',
+    sections: ['communications'],
+    group: 'onekey',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Ethan Xie',
-    role: 'Technology Coordinator',
+    role: 'Tech & Design',
     school: 'West Point Grey Academy',
     bio: "Hi there! I'm a student entering grade 10, and I'm passionate about music, technology, and engineering. I enjoy creating projects such as building drones. At OneKey, I've volunteered through music, and this year, I've been one of the main developers of this site. I look forward to working with OneKey in the future!",
     instagram: 'https://www.instagram.com/ethanx421/',
     image: '/pics/ethanxie.jpg',
-    section: 'coordinators',
+    sections: ['techdesign'],
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
@@ -89,7 +92,7 @@ const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
     bio: 'Shane is a student entering Grade 10 who is passionate about science, outdoor activities, and history. He also has ample volunteering and tutoring experience. For two years, he has tutored Math and English to younger students both with and outside of Onekey. This year, he took on the role of helping coordinate homework help at Onekey. He has also volunteered with ski school at Grouse Mountain, helping classes of various age groups and abilities. He hopes to further develop his leadership abilities by continuing to participate in the Onekey team.',
     instagram: 'https://www.instagram.com/shanezhang021/',
     image: '/pics/shanezhang.jpg',
-    section: 'coordinators',
+    sections: ['coordinators'],
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
@@ -101,82 +104,44 @@ const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
     bio: "Selena is a Grade 9 student at Crofton House school. She is a part of the executive of Vankey Onekey and serves as the concertmaster of Vanstring, as well as playing as a first violinist of her school's orchestra. Selena loves playing badminton and skiing in the winter.",
     instagram: 'https://www.instagram.com/selena.yxy/',
     image: '/pics/selenayu.jpg',
-    section: 'coordinators',
+    sections: ['coordinators', 'concertmasters'],
+    concertmasterType: 'concertmaster',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Eliza Sun',
-    role: 'Alumni',
+    role: 'Co-Founder',
     school: 'Haverford University',
     bio: "Eliza is one of the co-founders and co-managers at Onekey. She is currently attending university in Philadelphia at Haverford University. One fun fact about her is that she has an extensive collection of stuffed animals, most of which are… jellycat pigs. When she's not performing at senior homes, Eliza enjoys spending her free time participating in robotics and making pottery.",
     instagram: 'https://www.instagram.com/elizasun530/',
     image: '/pics/elizasun.jpg',
-    section: 'alumni',
+    sections: ['alumni'],
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Grace Xu',
-    role: 'Alumni',
+    role: 'Co-Founder',
     school: 'University Name',
     bio: 'Grace is a passionate musician and one of the co-founders of OneKey. With an ARCT-level piano background and a love for community, Grace helped create OneKey to connect music students and let others see the joy of sharing music and knowledge. She finds fulfillment in sharing joy through student-led concerts and tutoring to create a meaningful impact. Grace is dedicated to fostering supportive, inspiring spaces where young musicians can grow and support one another.',
     instagram: 'https://www.instagram.com/joyleaf7/',
     image: '/pics/grace.jpg',
-    section: 'alumni',
+    sections: ['alumni'],
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Jack Wang',
-    role: 'Alumni',
+    role: 'Co-Founder',
     school: 'Pomona College',
     bio: "Jack is an undergraduate student at Pomona College studying International Relations. He's greatly enjoyed working with the Onekey team and sharing his love for music with seniors and young performers.",
     instagram: 'https://www.instagram.com/jiawei_wang_06/',
     image: '/pics/jiaweiwang.jpg',
-    section: 'alumni',
-    isActive: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
-    name: 'Vanstring Comms 1',
-    role: 'Vanstring Communications',
-    school: '',
-    bio: '',
-    instagram: '',
-    image: '',
-    section: 'communications',
-    group: 'vanstring',
-    isActive: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
-    name: 'Vanstring Comms 2',
-    role: 'Vanstring Communications',
-    school: '',
-    bio: '',
-    instagram: '',
-    image: '',
-    section: 'communications',
-    group: 'vanstring',
-    isActive: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
-    name: 'Vanstring Comms 3',
-    role: 'Vanstring Communications',
-    school: '',
-    bio: '',
-    instagram: '',
-    image: '',
-    section: 'communications',
-    group: 'vanstring',
+    sections: ['alumni'],
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
@@ -188,32 +153,21 @@ const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
     bio: "Hi, I'm Rachel, a grade 10 student at Collingwood school. Ever since beginning my musical journey at the age of 9 with the piano and violin, it has become an integral part of my life that I cannot live without. I am thrilled to be given the opportunity to be the concertmaster of Vanstring and coordinate with senior homes as the communications exec, allowing me to share my passion for the arts to others. In my free time, I enjoy travelling the world, reading new novels, and exploring new fields in both the tech world and biology.",
     instagram: '',
     image: '',
-    section: 'concertmasters',
+    sections: ['concertmasters', 'communications'],
     group: 'vanstring',
-    isActive: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
-    name: 'Concertmaster 2',
-    role: 'Concertmaster',
-    school: '',
-    bio: '',
-    instagram: '',
-    image: '',
-    section: 'concertmasters',
+    concertmasterType: 'concertmaster',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     name: 'Johnny Yang',
-    role: 'Vanstring General Manager',
+    role: 'General Manager',
     school: 'Fraser Heights Secondary School',
     bio: "Johnny is a grade 9 student at Fraser Heights Secondary School. He is extremely passionate about music and technology, and enjoys challenging himself through math and science competitions. Johnny wishes to gain leadership experience as a general manager of Vanstring and to help fellow students share their passion for music by coordinating weekly performances with senior homes. Using these skills, his goal is to pursue a career in engineering, where he will be able to bring his ideas into reality. Johnny also enjoys reading in his free time.",
     instagram: '',
     image: '',
-    section: 'leadership',
+    sections: ['leadership'],
     group: 'vanstring',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
@@ -229,8 +183,8 @@ interface TeamState {
   addTeamMember: (data: Omit<TeamMember, 'id' | 'createdAt' | 'updatedAt' | 'isActive'>) => Promise<TeamMember | null>;
   updateTeamMember: (id: string, updates: Partial<Omit<TeamMember, 'id' | 'createdAt'>>) => Promise<boolean>;
   removeTeamMember: (id: string) => Promise<boolean>;
-  getTeamMembersBySection: (section: TeamMember['section']) => TeamMember[];
-  getTeamMembersBySectionAndGroup: (section: TeamMember['section'], group: 'onekey' | 'vanstring') => TeamMember[];
+  getTeamMembersBySection: (section: SectionKey) => TeamMember[];
+  getTeamMembersBySectionAndGroup: (section: SectionKey, group: 'onekey' | 'vanstring') => TeamMember[];
 }
 
 export const useTeamStore = create<TeamState>()((set, get) => ({
@@ -247,16 +201,35 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
         return;
       }
 
-      let members = res.data.members as TeamMember[];
+      let members = res.data.members as any[];
 
       // Seed Firestore only on first run (empty collection)
       if (members.length === 0) {
         await Promise.all(SEED_MEMBERS.map(m => apiService.createTeamMember(m)));
         const refreshed = await apiService.getTeamMembers();
-        members = (refreshed.data?.members ?? []) as TeamMember[];
+        members = (refreshed.data?.members ?? []) as any[];
       }
 
-      set({ teamMembers: members.filter(m => m.isActive !== false), isLoading: false });
+      // Migrate old schema (section + extraSections) → sections[]
+      const toMigrate = members.filter(m => !Array.isArray(m.sections) && m.section);
+      if (toMigrate.length > 0) {
+        await Promise.all(toMigrate.map(m => {
+          const sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
+          return apiService.updateTeamMember(m.id, {
+            sections,
+            section: undefined as any,
+            extraSections: undefined as any,
+            extraSectionsGroups: undefined as any,
+            extraSectionsConcertmasterTypes: undefined as any,
+            extraRoles: undefined as any,
+          });
+        }));
+        toMigrate.forEach(m => {
+          m.sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
+        });
+      }
+
+      set({ teamMembers: (members as TeamMember[]).filter(m => m.isActive !== false), isLoading: false });
     } catch (err: any) {
       set({ isLoading: false, error: err.message });
     }
@@ -315,24 +288,17 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       concertmaster: 0, associate: 1, principal_second: 2,
     };
     return get().teamMembers
-      .filter(m => m.isActive !== false && (m.section === section || m.extraSections?.includes(section)))
+      .filter(m => m.isActive !== false && m.sections?.includes(section))
       .sort((a, b) => {
         if (section !== 'concertmasters') return 0;
-        const typeA = a.section === 'concertmasters' ? a.concertmasterType : a.extraSectionsConcertmasterTypes?.['concertmasters'];
-        const typeB = b.section === 'concertmasters' ? b.concertmasterType : b.extraSectionsConcertmasterTypes?.['concertmasters'];
-        return (CONCERTMASTER_RANK[typeA ?? ''] ?? 99) - (CONCERTMASTER_RANK[typeB ?? ''] ?? 99);
+        return (CONCERTMASTER_RANK[a.concertmasterType ?? ''] ?? 99) - (CONCERTMASTER_RANK[b.concertmasterType ?? ''] ?? 99);
       });
   },
 
   getTeamMembersBySectionAndGroup: (section, group) =>
     get().teamMembers.filter(m => {
-      if (m.isActive === false) return false;
-      const isPrimary = m.section === section;
-      const isCrossListed = m.extraSections?.includes(section) ?? false;
-      if (!isPrimary && !isCrossListed) return false;
-      const effectiveGroup = isPrimary
-        ? (m.group ?? 'onekey')
-        : (m.extraSectionsGroups?.[section] ?? m.group ?? 'onekey');
-      return group === 'onekey' ? effectiveGroup === 'onekey' : effectiveGroup === 'vanstring';
+      if (m.isActive === false || !m.sections?.includes(section)) return false;
+      const g = m.group ?? 'onekey';
+      return group === 'onekey' ? g === 'onekey' : g === 'vanstring';
     }),
 }));
