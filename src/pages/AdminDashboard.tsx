@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
@@ -649,6 +650,14 @@ const AdminDashboard: React.FC = () => {
 
         {/* Content Area */}
         <div className="admin-content">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16 }}
+            >
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <>
@@ -1112,6 +1121,8 @@ const AdminDashboard: React.FC = () => {
               </table>
             </>
           )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
