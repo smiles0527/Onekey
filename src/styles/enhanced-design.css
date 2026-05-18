@@ -532,7 +532,7 @@
 }
 
 .team-page .container {
-  max-width: 72rem;
+  max-width: 100rem; /* wide enough for 4 × 360px cards + gaps */
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.25rem;
@@ -624,25 +624,19 @@
   text-align: center;
 }
 
-/* Carousel fills column height so cards sync across both sides */
+/* Carousel stretches to fill its column */
 .leadership-split .tc {
   flex: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  align-self: stretch;
 }
 
 .leadership-split .tc__track {
   flex: 1;
 }
 
-/* Fit mode: fixed-width cards, track shrinks to content, column aligns them to the divider */
-.leadership-split--fit .tc__item {
-  width: 360px;
-}
-
-.leadership-split--fit .tc__track {
-  width: auto;
-}
 
 
 .team-section__desc {
@@ -665,6 +659,11 @@
 }
 
 .team-grid > .team-card {
+  flex: 0 0 360px;
+  width: 360px;
+}
+
+.team-grid--compact > .team-card {
   flex: 1 1 9.5rem;
   width: min(100%, 11.5rem);
   max-width: 11.5rem;
@@ -678,6 +677,7 @@
 .tc__track {
   display: flex;
   align-items: stretch;
+  justify-content: safe center;
   gap: 1.25rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -692,7 +692,7 @@
 .tc__item {
   scroll-snap-align: start;
   flex-shrink: 0;
-  width: min(360px, calc((100% - (var(--card-count, 1) - 1) * 1.25rem) / var(--card-count, 1)));
+  width: 360px;
   display: flex;
   align-self: stretch;
 }
@@ -724,8 +724,8 @@
 .tc__arrow--next { right: 0.5rem; }
 
 .tc__arrow:disabled {
-  opacity: 0.2;
-  cursor: default;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tc__arrow:not(:disabled):hover {
@@ -733,9 +733,6 @@
   border-color: rgba(255,255,255,0.25);
 }
 
-.team-grid--compact > .team-card {
-  max-width: 11.5rem;
-}
 
 /* Simple member card */
 .team-card {
@@ -814,6 +811,15 @@
 
 .team-card--compact .team-card__name {
   font-size: 1.05rem;
+}
+
+.team-card__also-in {
+  margin: 0 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #78716c;
+  text-transform: uppercase;
 }
 
 .team-card__bio {
