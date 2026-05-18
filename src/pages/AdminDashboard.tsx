@@ -6,6 +6,7 @@ import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
 import { apiService, OWNER_EMAIL } from '../services/firebaseService';
 import TeamPhotoField from '../components/Admin/TeamPhotoField';
+import AdminTerminal from '../components/Admin/AdminTerminal';
 import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
 const AdminDashboard: React.FC = () => {
@@ -645,6 +646,14 @@ const AdminDashboard: React.FC = () => {
               <i className="fas fa-calendar"></i>
               Timeline
             </button>
+
+            <button
+              className={`sidebar-item ${activeTab === 'terminal' ? 'active' : ''}`}
+              onClick={() => setActiveTab('terminal')}
+            >
+              <i className="fas fa-terminal"></i>
+              Terminal
+            </button>
           </nav>
         </aside>
 
@@ -1119,6 +1128,17 @@ const AdminDashboard: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </>
+          )}
+
+          {/* Terminal Tab */}
+          {activeTab === 'terminal' && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Terminal</h2>
+                <span style={{ fontSize: 12, color: '#5c5870' }}>type "help" for commands</span>
+              </div>
+              <AdminTerminal />
             </>
           )}
             </motion.div>
