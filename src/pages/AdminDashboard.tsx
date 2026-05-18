@@ -37,7 +37,7 @@ const AdminDashboard: React.FC = () => {
     fetchEvents,
     isLoading: timelineLoading
   } = useTimelineStore();
-  const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, toggleTeamMemberStatus } = useTeamStore();
+  const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, fetchTeamMembers } = useTeamStore();
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
@@ -92,13 +92,13 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      // Fetch data from backend only when authenticated
       console.log('[AdminDashboard] Fetching initial data');
       fetchUsers();
       fetchEvents();
+      fetchTeamMembers();
       fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter);
     }
-  }, [isAuthenticated, user, fetchUsers, fetchEvents, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
+  }, [isAuthenticated, user, fetchUsers, fetchEvents, fetchTeamMembers, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
 
   // Remove the redirect effect
   
@@ -475,17 +475,11 @@ const AdminDashboard: React.FC = () => {
     }));
   };
 
-  const handleCreateTeamMember = (e: React.FormEvent) => {
+  const handleCreateTeamMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const newMember = addTeamMember(newTeamData);
-      
-      // Log the team member creation
-      // if (user) {
-      //   logActivity(user.id, 'add_team_member', `Added team member: ${newMember.name} (${newMember.section})`);
-      // }
-      
+      await addTeamMember(newTeamData);
       setShowCreateTeamModal(false);
       setNewTeamData({
         name: '',
@@ -516,12 +510,12 @@ const AdminDashboard: React.FC = () => {
     setShowEditTeamModal(true);
   };
 
-  const handleUpdateTeamMember = (e: React.FormEvent) => {
+  const handleUpdateTeamMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTeamMember) return;
 
     try {
-      updateTeamMember(editingTeamMember.id, newTeamData);
+      await updateTeamMember(editingTeamMember.id, newTeamData);
       setShowEditTeamModal(false);
       setEditingTeamMember(null);
       setNewTeamData({
@@ -539,15 +533,9 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteTeamMember = (memberId: string) => {
+  const handleDeleteTeamMember = async (memberId: string) => {
     if (window.confirm('Are you sure you want to delete this team member?')) {
-      const member = teamMembers.find(m => m.id === memberId);
-      removeTeamMember(memberId);
-      
-      // Log the team member deletion
-      // if (user && member) {
-      //   logActivity(user.id, 'remove_team_member', `Removed team member: ${member.name} (${member.section})`);
-      // }
+      await removeTeamMember(memberId);
     }
   };
 
@@ -1150,9 +1138,9 @@ const AdminDashboard: React.FC = () => {
                           >
                             <i className="fas fa-edit"></i>
                           </button>
-                          <button 
+                          <button
                             className="btn btn-sm btn-icon btn-warning"
-                            onClick={() => toggleTeamMemberStatus(member.id)}
+                            onClick={() => updateTeamMember(member.id, { isActive: !member.isActive })}
                           >
                             <i className={`fas ${member.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                           </button>

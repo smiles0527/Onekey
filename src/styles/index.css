@@ -13240,12 +13240,6 @@ body {
 
 /* Team Hero Section */
 .team-hero {
-  height: 35vh;
-  position: relative;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-top: 90px;
 }
 

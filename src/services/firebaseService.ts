@@ -344,6 +344,50 @@ export class FirebaseService {
     }
   }
 
+  // Team Members
+  async getTeamMembers(): Promise<ApiResponse<{ members: Record<string, any>[] }>> {
+    try {
+      const q = query(collection(db, 'teamMembers'));
+      const snap = await getDocs(q);
+      const members: Record<string, any>[] = [];
+      snap.forEach(d => members.push({ id: d.id, ...d.data() }));
+      return { success: true, data: { members } };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async createTeamMember(data: Record<string, any>): Promise<ApiResponse<{ id: string }>> {
+    try {
+      const docRef = await addDoc(collection(db, 'teamMembers'), {
+        ...data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      return { success: true, data: { id: docRef.id } };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async updateTeamMember(id: string, data: Record<string, any>): Promise<ApiResponse<{ message: string }>> {
+    try {
+      await updateDoc(doc(db, 'teamMembers', id), { ...data, updatedAt: new Date().toISOString() });
+      return { success: true, data: { message: 'Updated' } };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async deleteTeamMember(id: string): Promise<ApiResponse<{ message: string }>> {
+    try {
+      await deleteDoc(doc(db, 'teamMembers', id));
+      return { success: true, data: { message: 'Deleted' } };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
   // Health Check
   async healthCheck(): Promise<ApiResponse<{ status: string; timestamp: string }>> {
     return {

@@ -84,7 +84,7 @@ const Navbar = () => {
           {/* About dropdown */}
           <div
             ref={aboutRef}
-            className="relative"
+            className="relative w-fit"
             onMouseEnter={() => setAboutOpen(true)}
             onMouseLeave={() => setAboutOpen(false)}
           >
