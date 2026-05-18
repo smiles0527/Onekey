@@ -96,9 +96,28 @@ npm run test:integration # Integration tests
 About · Timeline · Team · Vanstring
 
 ### Team page structure
-- **Leadership, Communications, Homework Help Coordinators** — `TeamCarousel` (horizontal scroll, 360px cards, equal height per row)
+Sections in order: Leadership (split) · Communications (split) · Homework Help Coordinators · Financial Managers · Concertmasters · Tech & Design · Alumni
+
+- **Leadership, Communications** — `SplitSection`: left = OneKey, right = Vanstring, each side is a `TeamCarousel` (360px cards)
+- **Coordinators, Finance, Concertmasters, Tech & Design** — `TeamSection` with `TeamCarousel`; Concertmasters uses `grid` prop instead
 - **Alumni** — flat `team-grid` (flex-wrap centered, compact cards)
-- The right half of each non-alumni section is intentionally empty (reserved for future Vanstring member additions)
+- All carousel cards are 360px fixed width; single cards center via `justify-content: center` on `.tc__track`
+
+### TeamMember cross-section fields
+Every `TeamMember` in Firestore (`teamMembers` collection) can appear in multiple sections:
+- `section` — primary section (determines default `group`)
+- `group?: 'onekey' | 'vanstring'` — which side of a split section (Leadership/Communications)
+- `extraSections?: section[]` — additional sections this member appears in
+- `extraSectionsGroups?: Partial<Record<section, 'onekey'|'vanstring'>>` — group override per cross-listed split section
+- `concertmasterType?: 'concertmaster' | 'associate' | 'principal_second'` — rank within Concertmasters; drives card title and sort order (Concertmaster → Associate → Principal Second Violin)
+- `extraSectionsConcertmasterTypes?: Partial<Record<section, concertmasterType>>` — concertmaster type for when a member is cross-listed **into** Concertmasters from another section
+- `isActive: boolean` — false hides the member site-wide
+
+`TeamMemberCard` derives the displayed role from `concertmasterType` / `extraSectionsConcertmasterTypes` / `extraSections` context, then falls back to `member.role`.
+
+Admin panel shows contextual sub-selectors inline:
+- OneKey/Vanstring dropdown appears when primary section or cross-listed section is Leadership or Communications
+- Concertmaster Type dropdown appears when primary section or cross-listed section is Concertmasters
 
 ## Environment Variables (backend `.env`)
 ```
