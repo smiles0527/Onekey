@@ -24,6 +24,7 @@ const AdminDashboard: React.FC = () => {
     updateUserStatus,
     changePassword,
     fetchUsers,
+    logout,
   } = useAuthStore();
 
   // DEBUG LOGS
@@ -655,6 +656,17 @@ const AdminDashboard: React.FC = () => {
               Terminal
             </button>
           </nav>
+
+          <div className="sidebar-footer">
+            <div className="sidebar-user-info">
+              <span className="sidebar-user-email">{user?.email}</span>
+              <span className="sidebar-user-role">{user?.role}</span>
+            </div>
+            <button className="sidebar-logout" onClick={() => logout()}>
+              <i className="fas fa-sign-out-alt"></i>
+              Sign Out
+            </button>
+          </div>
         </aside>
 
         {/* Content Area */}
