@@ -50,8 +50,9 @@ const Navbar = () => {
   }, []);
 
   const flatLinks = [
-    { name: 'Timeline', path: '/timeline' },
-    { name: 'Team',     path: '/team' },
+    { name: 'Timeline',    path: '/timeline' },
+    { name: 'Fundraisers', path: '/fundraisers' },
+    { name: 'Team',        path: '/team' },
   ];
 
   const isAboutActive = ABOUT_ITEMS.some(i => i.path === location.pathname);
