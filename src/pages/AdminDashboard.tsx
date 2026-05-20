@@ -27,9 +27,6 @@ const AdminDashboard: React.FC = () => {
     logout,
   } = useAuthStore();
 
-  // DEBUG LOGS
-  console.log('[AdminDashboard] Render', { isAuthenticated, user: user?.username, authLoading });
-
   const { 
     events, 
     addEvent, 
@@ -95,7 +92,6 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      console.log('[AdminDashboard] Fetching initial data');
       fetchUsers();
       fetchEvents();
       fetchTeamMembers();
@@ -106,12 +102,10 @@ const AdminDashboard: React.FC = () => {
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[AdminDashboard] Attempting login', loginData.username);
     await login(loginData.username, loginData.password);
   };
 
   if (!isAuthenticated || !user) {
-    console.log('[AdminDashboard] Showing login form. Auth:', isAuthenticated, 'User:', user);
     return (
       <div className="flex items-center justify-center min-h-screen px-4 bg-surface-50">
         <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
@@ -267,11 +261,10 @@ const AdminDashboard: React.FC = () => {
             if (uploadResult.success && uploadResult.data) {
               photoUrls.push(uploadResult.data.filePath);
             } else {
-              console.error('Failed to upload photo:', uploadResult.error);
               alert(`Failed to upload photo: ${photo.name}`);
             }
-          } catch (error) {
-            console.error('Error uploading photo:', error);
+          } catch {
+            // photo upload failed; user already notified via alert above
           }
         }
       }
@@ -303,11 +296,7 @@ const AdminDashboard: React.FC = () => {
         photos: []
       });
       
-      console.log('Event created:', newEvent);
-      
-      console.log('Event created:', newEvent);
     } catch (error) {
-      console.error('Error creating event:', error);
       alert('Failed to create event');
     }
   };
@@ -378,11 +367,10 @@ const AdminDashboard: React.FC = () => {
             if (uploadResult.success && uploadResult.data) {
               photoUrls.push(uploadResult.data.filePath);
             } else {
-              console.error('Failed to upload photo:', uploadResult.error);
               alert(`Failed to upload photo: ${photo.name}`);
             }
-          } catch (error) {
-            console.error('Error uploading photo:', error);
+          } catch {
+            // photo upload failed; user already notified via alert above
           }
         }
       }
@@ -417,11 +405,7 @@ const AdminDashboard: React.FC = () => {
         photos: []
       });
       
-      console.log('Event updated successfully');
-      
-      console.log('Event updated successfully');
     } catch (error) {
-      console.error('Error updating event:', error);
       alert('Failed to update event');
     }
   };
@@ -459,7 +443,6 @@ const AdminDashboard: React.FC = () => {
       setShowCreateTeamModal(false);
       setNewTeamData({ name: '', role: '', school: '', bio: '', instagram: '', image: '', sections: [], group: undefined, concertmasterType: undefined });
     } catch (error) {
-      console.error('Error creating team member:', error);
       alert('Failed to create team member');
     }
   };
@@ -495,7 +478,6 @@ const AdminDashboard: React.FC = () => {
       setEditingTeamMember(null);
       setNewTeamData({ name: '', role: '', school: '', bio: '', instagram: '', image: '', sections: [], group: undefined, concertmasterType: undefined });
     } catch (error) {
-      console.error('Error updating team member:', error);
       alert('Failed to update team member');
     }
   };
@@ -545,7 +527,6 @@ const AdminDashboard: React.FC = () => {
       setEditingUser(null);
       setNewUserData({ username: '', email: '', firstName: '', lastName: '', role: 'user', currentPassword: '', password: '', confirmPassword: '' });
     } catch (error) {
-      console.error('Error updating user:', error);
       alert('Failed to update user');
     }
   };

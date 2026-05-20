@@ -151,7 +151,7 @@ export class FirebaseService {
 
   clearToken() {
     // Sign out from Firebase
-    signOut(auth).catch(error => console.error('Signout error:', error));
+    signOut(auth).catch(() => {});
   }
 
   // User Management
@@ -292,7 +292,7 @@ export class FirebaseService {
   async createEvent(eventData: CreateEventRequest): Promise<ApiResponse<{ id: string; message: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'events'), {
-        ...this.stripUndefined(eventData as any),
+        ...this.stripUndefined(eventData as Record<string, unknown>),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -306,7 +306,7 @@ export class FirebaseService {
   async updateEvent(eventId: string, eventData: CreateEventRequest): Promise<ApiResponse<{ message: string }>> {
     try {
       await updateDoc(doc(db, 'events', eventId), {
-        ...this.stripUndefined(eventData as any),
+        ...this.stripUndefined(eventData as Record<string, unknown>),
         updated_at: new Date().toISOString()
       });
       return { success: true, data: { message: 'Event updated' } };
@@ -358,7 +358,7 @@ export class FirebaseService {
     }
   }
 
-  private stripUndefined(obj: Record<string, any>): Record<string, any> {
+  private stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
     return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
   }
 

@@ -222,6 +222,10 @@ export const allPhotos = [
 ];
 
 export const getRandomPhotos = (count: number) => {
-  const shuffled = [...allPhotos].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+  const arr = [...allPhotos];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, count);
 };

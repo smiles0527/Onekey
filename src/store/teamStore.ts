@@ -215,14 +215,7 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       if (toMigrate.length > 0) {
         await Promise.all(toMigrate.map(m => {
           const sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
-          return apiService.updateTeamMember(m.id, {
-            sections,
-            section: undefined as any,
-            extraSections: undefined as any,
-            extraSectionsGroups: undefined as any,
-            extraSectionsConcertmasterTypes: undefined as any,
-            extraRoles: undefined as any,
-          });
+          return apiService.updateTeamMember(m.id, { sections });
         }));
         toMigrate.forEach(m => {
           m.sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
@@ -244,7 +237,8 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
         return null;
       }
       await get().fetchTeamMembers();
-      return get().teamMembers.find(m => m.id === res.data!.id) ?? null;
+      const newId = res.data?.id;
+      return newId ? get().teamMembers.find(m => m.id === newId) ?? null : null;
     } catch (err: any) {
       set({ isLoading: false, error: err.message });
       return null;
