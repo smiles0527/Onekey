@@ -1,24 +1,48 @@
 import React from 'react';
 import { Instagram } from 'lucide-react';
-import { TeamMember } from '../store/teamStore';
+import { TeamMember, SectionKey } from '../store/teamStore';
 import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
 const CONCERTMASTER_LABELS: Record<NonNullable<TeamMember['concertmasterType']>, string> = {
   concertmaster:    'Concertmaster',
-  associate:        'Associate Concertmaster',
   principal_second: 'Principal Second Violin',
+};
+
+const SECTION_ROLE_LABELS: Record<SectionKey, string> = {
+  leadership:     'Manager',
+  communications: 'Communications',
+  coordinators:   'Homework Help Coordinator',
+  finance:        'Financial Manager',
+  concertmasters: 'Concertmaster',
+  techdesign:     'Tech & Design',
+  alumni:         'Alumni',
+};
+
+const GROUP_SECTION_LABELS: Partial<Record<SectionKey, Record<'onekey' | 'vanstring', string>>> = {
+  leadership:     { onekey: 'Onekey Manager',         vanstring: 'Vanstring Manager' },
+  communications: { onekey: 'Onekey Communications',  vanstring: 'Vanstring Communications' },
 };
 
 interface TeamMemberCardProps {
   member: TeamMember;
   compact?: boolean;
+  hideBio?: boolean;
+  currentSection?: SectionKey;
+  currentGroup?: 'onekey' | 'vanstring';
 }
 
-const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, compact = false }) => {
+const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, compact = false, hideBio = false, currentSection, currentGroup }) => {
   const imageSrc = resolveTeamImageSrc(member.image);
-  const displayedRole = member.concertmasterType
-    ? CONCERTMASTER_LABELS[member.concertmasterType]
-    : member.role;
+  const displayedRole = (() => {
+    if (currentSection === 'concertmasters' && member.concertmasterType) {
+      return CONCERTMASTER_LABELS[member.concertmasterType];
+    }
+    if (currentSection && currentGroup && GROUP_SECTION_LABELS[currentSection]) {
+      return GROUP_SECTION_LABELS[currentSection]![currentGroup];
+    }
+    if (currentSection) return SECTION_ROLE_LABELS[currentSection];
+    return member.role;
+  })();
 
   return (
     <article className={`team-card${compact ? ' team-card--compact' : ''}`}>
@@ -34,7 +58,7 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, compact = false
         <h3 className="team-card__name">{member.name}</h3>
         <p className="team-card__role">{displayedRole}</p>
         {member.school && !compact && <p className="team-card__school">{member.school}</p>}
-        {!compact && member.bio && <p className="team-card__bio">{member.bio}</p>}
+        {!compact && !hideBio && member.bio && <p className="team-card__bio">{member.bio}</p>}
         {member.instagram && (
           <a
             href={member.instagram}

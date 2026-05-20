@@ -1,15 +1,18 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { TeamMember } from '../store/teamStore';
+import { TeamMember, SectionKey } from '../store/teamStore';
 import TeamMemberCard from './TeamMemberCard';
 
 interface Props {
   members: TeamMember[];
   compact?: boolean;
+  hideBio?: boolean;
+  currentSection?: SectionKey;
+  currentGroup?: 'onekey' | 'vanstring';
 }
 
-const TeamCarousel: React.FC<Props> = ({ members, compact }) => {
+const TeamCarousel: React.FC<Props> = ({ members, compact, hideBio, currentSection, currentGroup }) => {
   const trackRef  = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number | null>(null);
@@ -140,7 +143,7 @@ const TeamCarousel: React.FC<Props> = ({ members, compact }) => {
       <div ref={trackRef} className="tc__track">
         {members.map((m) => (
           <div key={m.id} className="tc__item">
-            <TeamMemberCard member={m} compact={compact} />
+            <TeamMemberCard member={m} compact={compact} hideBio={hideBio} currentSection={currentSection} currentGroup={currentGroup} />
           </div>
         ))}
       </div>

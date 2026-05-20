@@ -4,8 +4,6 @@ import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { apiService } from '../services/firebaseService';
-import Slideshow from '../components/Slideshow';
-import { getRandomPhotos } from '../data/photos';
 
 // ─── Category config ──────────────────────────────────────────────────────────
 const CAT = {
@@ -119,8 +117,6 @@ const TSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = ({ chil
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const Timeline: React.FC = () => {
-  const heroImages = useMemo(() => getRandomPhotos(6), []);
-
   const { isAuthenticated, user, hasPermission } = useAuthStore();
   const { events, addEvent, removeEvent, updateEvent, fetchEvents, isLoading } = useTimelineStore();
 
@@ -257,47 +253,6 @@ const Timeline: React.FC = () => {
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-stone-900">
-
-      {/* ── Hero ── */}
-      <section className="hero-section" style={{ minHeight: '52vh' }}>
-        <motion.div className="hero-section__media">
-          <Slideshow images={heroImages} interval={5500} overlay={false} />
-        </motion.div>
-        <div className="hero-section__scrim" aria-hidden />
-        <div className="hero-section__content container">
-          <motion.div
-            className="hero-section__panel"
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15 }}
-          >
-            <p className="hero-section__eyebrow">Our Chronicle</p>
-            <h1 className="hero-section__title">
-              text
-            </h1>
-            <p className="hero-section__subtitle">
-              text
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Scroll hint */}
-        <motion.button
-          aria-label="Scroll to timeline"
-          onClick={() => document.getElementById('timeline-body')?.scrollIntoView({ behavior: 'smooth' })}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-white/60 hover:text-white/90 transition-colors cursor-pointer bg-transparent border-0 p-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-        >
-          <span className="text-xs tracking-widest uppercase font-medium">scroll</span>
-          <motion.i
-            className="fas fa-chevron-down text-lg"
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.button>
-      </section>
 
       {/* ── Stats strip ── */}
       <div id="timeline-body" className="border-b border-stone-700 bg-stone-900">

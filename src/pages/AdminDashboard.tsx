@@ -1746,18 +1746,6 @@ const AdminDashboard: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="teamRole">Role *</label>
-                <input
-                  type="text"
-                  id="teamRole"
-                  name="role"
-                  value={newTeamData.role}
-                  onChange={handleTeamInputChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
                 <label htmlFor="teamSchool">School *</label>
                 <input
                   type="text"
@@ -1803,7 +1791,6 @@ const AdminDashboard: React.FC = () => {
                   <select value={newTeamData.concertmasterType ?? ''} onChange={e => setNewTeamData(prev => ({ ...prev, concertmasterType: (e.target.value as TeamMember['concertmasterType']) || undefined }))}>
                     <option value="">-- Select type --</option>
                     <option value="concertmaster">Concertmaster</option>
-                    <option value="associate">Associate Concertmaster</option>
                     <option value="principal_second">Principal Second Violin</option>
                   </select>
                 </div>
@@ -1880,11 +1867,6 @@ const AdminDashboard: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="editTeamRole">Role *</label>
-                <input type="text" id="editTeamRole" name="role" value={newTeamData.role} onChange={handleTeamInputChange} required />
-              </div>
-
-              <div className="form-group">
                 <label htmlFor="editTeamSchool">School *</label>
                 <input type="text" id="editTeamSchool" name="school" value={newTeamData.school} onChange={handleTeamInputChange} required />
               </div>
@@ -1923,7 +1905,6 @@ const AdminDashboard: React.FC = () => {
                   <select value={newTeamData.concertmasterType ?? ''} onChange={e => setNewTeamData(prev => ({ ...prev, concertmasterType: (e.target.value as TeamMember['concertmasterType']) || undefined }))}>
                     <option value="">-- Select type --</option>
                     <option value="concertmaster">Concertmaster</option>
-                    <option value="associate">Associate Concertmaster</option>
                     <option value="principal_second">Principal Second Violin</option>
                   </select>
                 </div>

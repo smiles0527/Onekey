@@ -13,7 +13,7 @@ export interface TeamMember {
   image: string;
   sections: SectionKey[];
   group?: 'onekey' | 'vanstring';
-  concertmasterType?: 'concertmaster' | 'associate' | 'principal_second';
+  concertmasterType?: 'concertmaster' | 'principal_second';
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -285,7 +285,7 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
 
   getTeamMembersBySection: (section) => {
     const CONCERTMASTER_RANK: Record<string, number> = {
-      concertmaster: 0, associate: 1, principal_second: 2,
+      concertmaster: 0, principal_second: 1,
     };
     return get().teamMembers
       .filter(m => m.isActive !== false && m.sections?.includes(section))
