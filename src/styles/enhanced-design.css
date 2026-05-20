@@ -228,8 +228,8 @@
 .nav-dropdown {
   position: absolute;
   top: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  transform: none;
   min-width: 140px;
   background: rgba(28, 25, 23, 0.96);
   border: 1px solid rgba(255,255,255,0.1);
@@ -244,8 +244,8 @@
   content: '';
   position: absolute;
   top: -5px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
+  left: 18px;
+  transform: rotate(45deg);
   width: 9px;
   height: 9px;
   background: rgba(28,25,23,0.96);
@@ -261,7 +261,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: rgba(250,250,249,0.88);
-  text-align: center;
+  text-align: left;
   transition: background 0.15s, color 0.15s;
 }
 

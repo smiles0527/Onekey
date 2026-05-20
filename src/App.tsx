@@ -13,6 +13,7 @@ import MeetOurTeam from './pages/MeetOurTeam';
 import AdminDashboard from './pages/AdminDashboard';
 import VanstringHome from './pages/VanstringHome';
 import Fundraisers from './pages/Fundraisers';
+import VTC from './pages/VTC';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -31,7 +32,8 @@ function AnimatedRoutes() {
           <Route path="/timeline"  element={<Timeline />} />
           <Route path="/team"      element={<MeetOurTeam />} />
           <Route path="/fundraisers" element={<Fundraisers />} />
-          <Route path="/vanstring" element={<VanstringHome />} />
+          <Route path="/vtc"        element={<VTC />} />
+          <Route path="/vanstring"  element={<VanstringHome />} />
           <Route path="/admin"     element={<AdminDashboard />} />
         </Routes>
       </motion.div>
