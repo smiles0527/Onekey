@@ -13,7 +13,7 @@ const Footer = () => {
       {/* Subtle top border */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-earth-400/30 to-transparent"></div>
       
-      <div className="container relative z-10 grid grid-cols-1 gap-8 mx-auto mb-10 md:grid-cols-4">
+      <div className="container relative z-10 grid grid-cols-1 gap-8 mx-auto mb-10 md:grid-cols-3">
         {/* Brand Column */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -74,29 +74,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Newsletter */}
-        <div>
-          <h4 className="mb-4 text-base font-medium tracking-wide text-white/90 font-display">Stay Updated</h4>
-          <p className="mb-3 text-xs font-light text-stone-300/80">Subscribe to our newsletter for upcoming events.</p>
-          <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
-            <div className="relative">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="w-full px-3 py-2 text-xs font-light text-white transition-all bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm focus:outline-none focus:border-primary-400/50 focus:bg-white/10 placeholder-surface-500"
-              />
-            </div>
-            <motion.button
-              type="submit"
-              className="w-full px-3 py-2 text-xs font-medium tracking-wider uppercase transition-all duration-300 bg-earth-500/20 border border-earth-400/30 rounded-lg text-earth-300 hover:bg-earth-500/30 hover:border-earth-400/50 hover:shadow-lg hover:shadow-earth-500/20 backdrop-blur-sm group"
-              whileHover={{ scale: 1.02, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              Subscribe <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-            </motion.button>
-          </form>
-        </div>
       </div>
 
       {/* Bottom bar with glassmorphic separator */}

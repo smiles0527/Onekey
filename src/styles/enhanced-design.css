@@ -231,6 +231,7 @@
   left: 0;
   transform: none;
   min-width: 140px;
+  white-space: nowrap;
   background: rgba(28, 25, 23, 0.96);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 0.75rem;
