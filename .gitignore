@@ -5,6 +5,7 @@
 .pnp.js
 /.claude
 /.vscode
+/CLAUDE.md
 /.vs
 
 # Testing
@@ -51,7 +52,6 @@ nginx.conf.template
 DEPLOYMENT.md
 
 # IDE and editor files
-.vscode/settings.json
 .idea/
 *.swp
 *.swo
@@ -65,9 +65,11 @@ DEPLOYMENT.md
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
 
-nul
+# TypeScript build info
+*.tsbuildinfo
