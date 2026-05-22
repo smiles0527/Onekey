@@ -36,6 +36,18 @@ export interface ActivityLog { id: string; user_id: string; userId?: string; act
 export const OWNER_EMAIL = 'iscurt.w@gmail.com';
 
 export class FirebaseService {
+  private stringValue(value: unknown, fallback = ''): string {
+    return typeof value === 'string' ? value : fallback;
+  }
+
+  private optionalStringValue(value: unknown): string | undefined {
+    return typeof value === 'string' ? value : undefined;
+  }
+
+  private booleanValue(value: unknown, fallback: boolean): boolean {
+    return typeof value === 'boolean' ? value : fallback;
+  }
+
   private friendlyAuthError(code: string): string {
     switch (code) {
       case 'auth/user-not-found':
@@ -107,11 +119,11 @@ export class FirebaseService {
           token: await firebaseUser.getIdToken(),
           user: {
             id: firebaseUser.uid,
-            username: userData?.username || firebaseUser.email?.split('@')[0] || '',
+            username: this.stringValue(userData?.username, firebaseUser.email?.split('@')[0] || ''),
             email: firebaseUser.email || '',
-            firstName: userData?.firstName,
-            lastName: userData?.lastName,
-            role: userData?.role || 'user'
+            firstName: this.optionalStringValue(userData?.firstName),
+            lastName: this.optionalStringValue(userData?.lastName),
+            role: this.stringValue(userData?.role, 'user')
           }
         }
       };
@@ -133,13 +145,13 @@ export class FirebaseService {
         data: {
           user: {
             id: currentUser.uid,
-            username: userData?.username || currentUser.email?.split('@')[0] || '',
+            username: this.stringValue(userData?.username, currentUser.email?.split('@')[0] || ''),
             email: currentUser.email || '',
-            firstName: userData?.firstName,
-            lastName: userData?.lastName,
-            role: userData?.role || 'user',
-            isActive: userData?.isActive ?? true,
-            createdAt: userData?.createdAt || new Date().toISOString()
+            firstName: this.optionalStringValue(userData?.firstName),
+            lastName: this.optionalStringValue(userData?.lastName),
+            role: this.stringValue(userData?.role, 'user'),
+            isActive: this.booleanValue(userData?.isActive, true),
+            createdAt: this.stringValue(userData?.createdAt, new Date().toISOString())
           }
         }
       };
@@ -291,7 +303,7 @@ export class FirebaseService {
   async createEvent(eventData: CreateEventRequest): Promise<ApiResponse<{ id: string; message: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'events'), {
-        ...this.stripUndefined(eventData as Record<string, unknown>),
+        ...this.stripUndefined(eventData),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -305,7 +317,7 @@ export class FirebaseService {
   async updateEvent(eventId: string, eventData: CreateEventRequest): Promise<ApiResponse<{ message: string }>> {
     try {
       await updateDoc(doc(db, 'events', eventId), {
-        ...this.stripUndefined(eventData as Record<string, unknown>),
+        ...this.stripUndefined(eventData),
         updated_at: new Date().toISOString()
       });
       return { success: true, data: { message: 'Event updated' } };
@@ -357,8 +369,8 @@ export class FirebaseService {
     }
   }
 
-  private stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
-    return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+  private stripUndefined<T extends object>(obj: T): Partial<T> {
+    return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>;
   }
 
   async createTeamMember(data: Record<string, unknown>): Promise<ApiResponse<{ id: string }>> {
