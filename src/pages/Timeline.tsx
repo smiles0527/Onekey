@@ -91,6 +91,20 @@ const PREVIEW_EVENTS: (TimelineEvent & { _left: boolean })[] = [
   },
 ];
 
+const UPCOMING_EVENTS: TimelineEvent[] = [
+  {
+    id: '__upcoming_vanstring_cinema_four_seasons',
+    name: 'Cinema and Four Seasons: Vanstring Concert',
+    date: '2026-05-23',
+    category: 'performances',
+    location: 'Roy Barnett Hall, UBC',
+    time: '18:00',
+    duration: '2.5 hours',
+    createdAt: new Date().toISOString(),
+    createdBy: 'onekey',
+  },
+];
+
 // ─── Blank form ───────────────────────────────────────────────────────────────
 const BLANK = {
   name: '', date: '', category: 'performances' as CatKey,
@@ -102,6 +116,11 @@ const BLANK = {
 function safeFormat(dateStr: string, fmt: string): string {
   try { return format(parseISO(dateStr), fmt); }
   catch { return dateStr; }
+}
+
+function dateValue(dateStr: string): number {
+  const value = parseISO(dateStr).getTime();
+  return Number.isNaN(value) ? 0 : value;
 }
 
 // ─── Input component (dark-themed) ───────────────────────────────────────────
@@ -144,14 +163,32 @@ const Timeline: React.FC = () => {
   const canManage = !!(isAuthenticated && user && hasPermission('manage_timeline'));
 
   // ── Derived data ────────────────────────────────────────────────────────────
+  const today = useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date.getTime();
+  }, []);
+
+  const sourceEvents = useMemo(() => events.length > 0 ? events : PREVIEW_EVENTS, [events]);
+
+  const upcomingEvents = useMemo(() => {
+    const merged = [...UPCOMING_EVENTS, ...sourceEvents];
+    const unique = new Map<string, TimelineEvent>();
+    merged.forEach(event => unique.set(`${event.name}-${event.date}`, event));
+
+    return Array.from(unique.values())
+      .filter(event => dateValue(event.date) >= today)
+      .sort((a, b) => dateValue(a.date) - dateValue(b.date));
+  }, [sourceEvents, today]);
+
   const filtered = useMemo(() => {
-    const source = events.length > 0 ? events : PREVIEW_EVENTS;
-    const base = filter === 'all' ? source : source.filter(e => e.category === filter);
+    const historical = sourceEvents.filter(event => dateValue(event.date) < today);
+    const base = filter === 'all' ? historical : historical.filter(e => e.category === filter);
     return [...base].sort((a, b) => {
-      const d = new Date(a.date).getTime() - new Date(b.date).getTime();
+      const d = dateValue(a.date) - dateValue(b.date);
       return sortDir === 'desc' ? -d : d;
     });
-  }, [events, filter, sortDir]);
+  }, [sourceEvents, today, filter, sortDir]);
 
   // Year groups with global alternating index pre-computed
   const yearGroups = useMemo(() => {
@@ -278,6 +315,83 @@ const Timeline: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Upcoming events ── */}
+      <section className="border-b border-stone-700 bg-stone-950/70">
+        <div className="container max-w-6xl py-10">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-6">
+            <div>
+              <p className="text-[11px] font-semibold tracking-widest uppercase text-earth-400">Next on the calendar</p>
+              <h2 className="mt-1 text-2xl md:text-3xl font-bold font-display text-white">Upcoming Events</h2>
+            </div>
+            {canManage && (
+              <motion.button
+                onClick={openAdd}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-earth-600 hover:bg-earth-500 text-white transition-all"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <i className="fas fa-plus" />
+                Add Upcoming Event
+              </motion.button>
+            )}
+          </div>
+
+          {upcomingEvents.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {upcomingEvents.slice(0, 3).map((event, index) => {
+                const meta = CAT[event.category];
+                return (
+                  <motion.article
+                    key={event.id}
+                    className="bg-stone-900 border border-stone-700 rounded-2xl p-5 hover:border-stone-600 transition-colors"
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.08 }}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div>
+                        <time className="block text-sm font-semibold text-earth-300">
+                          {safeFormat(event.date, 'MMMM d, yyyy')}
+                        </time>
+                        {event.time && <span className="text-xs text-stone-500">{event.time}</span>}
+                      </div>
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${meta.bg} ${meta.color} ${meta.border}`}>
+                        <i className={`${meta.icon} text-[9px]`} />
+                        {meta.label}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-white leading-snug">{event.name}</h3>
+                    {event.location && (
+                      <p className="mt-2 flex items-center gap-2 text-sm text-stone-400">
+                        <i className="fas fa-map-marker-alt text-[11px] text-earth-400" />
+                        {event.location}
+                      </p>
+                    )}
+                    {event.description && (
+                      <p className="mt-3 text-sm text-stone-300 leading-relaxed line-clamp-3">
+                        {event.description}
+                      </p>
+                    )}
+                  </motion.article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-stone-700 bg-stone-900/60 px-6 py-8 text-center">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-earth-500/10 text-earth-300">
+                <i className="fas fa-calendar-plus" />
+              </div>
+              <h3 className="text-base font-semibold text-stone-200">No upcoming events posted yet</h3>
+              <p className="mt-2 text-sm text-stone-500">
+                Future concerts, tutoring sessions, and fundraisers will appear here once they are scheduled.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* ── Sticky filter bar ── */}
       <div className="sticky top-[4.4rem] z-30 bg-stone-900 border-b border-stone-700">

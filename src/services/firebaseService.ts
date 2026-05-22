@@ -33,6 +33,16 @@ export interface TimelineEvent { id: string; name: string; date: string; categor
 export interface CreateEventRequest { name: string; date: string; category: string; location?: string; time?: string; attendees?: string; performers?: string; duration?: string; description?: string; photo_url?: string; }
 export interface ActivityLog { id: string; user_id: string; userId?: string; action: string; details: string; ip_address?: string; ipAddress?: string; timestamp: string; username?: string; first_name?: string; last_name?: string; }
 
+type FirebaseUserData = {
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  isActive?: boolean;
+  createdAt?: string;
+};
+
 export const OWNER_EMAIL = 'iscurt.w@gmail.com';
 
 export class FirebaseService {
@@ -54,7 +64,7 @@ export class FirebaseService {
     }
   }
 
-  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, unknown> | undefined> {
+  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<FirebaseUserData | undefined> {
     const userRef = doc(db, 'users', firebaseUser.uid);
     let userDoc = await getDoc(userRef);
 
@@ -74,7 +84,7 @@ export class FirebaseService {
       userDoc = await getDoc(userRef);
     }
 
-    return userDoc.data();
+    return userDoc.data() as FirebaseUserData | undefined;
   }
 
   // Authentication
@@ -291,7 +301,7 @@ export class FirebaseService {
   async createEvent(eventData: CreateEventRequest): Promise<ApiResponse<{ id: string; message: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'events'), {
-        ...this.stripUndefined(eventData as Record<string, unknown>),
+        ...this.stripUndefined(eventData as unknown as Record<string, unknown>),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -305,7 +315,7 @@ export class FirebaseService {
   async updateEvent(eventId: string, eventData: CreateEventRequest): Promise<ApiResponse<{ message: string }>> {
     try {
       await updateDoc(doc(db, 'events', eventId), {
-        ...this.stripUndefined(eventData as Record<string, unknown>),
+        ...this.stripUndefined(eventData as unknown as Record<string, unknown>),
         updated_at: new Date().toISOString()
       });
       return { success: true, data: { message: 'Event updated' } };

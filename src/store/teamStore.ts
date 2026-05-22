@@ -19,6 +19,12 @@ export interface TeamMember {
   updatedAt: string;
 }
 
+type StoredTeamMember = Partial<TeamMember> & {
+  id: string;
+  section?: SectionKey;
+  extraSections?: SectionKey[];
+};
+
 // Seed data — written to Firestore once if the collection is empty
 const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
   {
@@ -201,28 +207,28 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
         return;
       }
 
-      let members = res.data.members as Record<string, unknown>[];
+      let members = res.data.members as unknown as StoredTeamMember[];
 
       // Seed Firestore only on first run (empty collection)
       if (members.length === 0) {
         await Promise.all(SEED_MEMBERS.map(m => apiService.createTeamMember(m)));
         const refreshed = await apiService.getTeamMembers();
-        members = (refreshed.data?.members ?? []) as Record<string, unknown>[];
+        members = (refreshed.data?.members ?? []) as unknown as StoredTeamMember[];
       }
 
       // Migrate old schema (section + extraSections) → sections[]
       const toMigrate = members.filter(m => !Array.isArray(m.sections) && m.section);
       if (toMigrate.length > 0) {
         await Promise.all(toMigrate.map(m => {
-          const sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
+          const sections = [m.section, ...(m.extraSections ?? [])].filter((section): section is SectionKey => Boolean(section));
           return apiService.updateTeamMember(m.id, { sections });
         }));
         toMigrate.forEach(m => {
-          m.sections = [m.section, ...(m.extraSections ?? [])].filter(Boolean);
+          m.sections = [m.section, ...(m.extraSections ?? [])].filter((section): section is SectionKey => Boolean(section));
         });
       }
 
-      set({ teamMembers: (members as TeamMember[]).filter(m => m.isActive !== false), isLoading: false });
+      set({ teamMembers: (members as unknown as TeamMember[]).filter(m => m.isActive !== false), isLoading: false });
     } catch (err: unknown) {
       set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
     }
