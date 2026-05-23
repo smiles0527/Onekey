@@ -4,6 +4,7 @@ import { Instagram } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BEHOLD_FEED_ID, INSTAGRAM_HANDLE, INSTAGRAM_URL, INSTAGRAM_SINCE } from '../config/instagram';
+import { useVanstringStore } from '../store/vanstringStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,27 +14,12 @@ const MEMBER_PHOTOS = [
   { src: 'vanstring_member_3.jpg', alt: 'Current Vanstring members posing with instruments' },
 ];
 
-const SECTION_GROUPS = [
-  {
-    section: 'Violin 1',
-    members: ['Curtis', 'Gabby', 'Rachel', 'Charles', 'Aliya', 'Eric', 'Anne', 'Emma', 'Ethan', 'Annie', 'Portia', 'Andy', 'Charlotte'],
-  },
-  {
-    section: 'Violin 2',
-    members: ['Alex', 'Victoria', 'Lina', 'Claudia', 'Maggie', 'Ella', 'Didi', 'Dora', 'Jason', 'Maggie', 'Shirley'],
-  },
-  {
-    section: 'Violin 3',
-    members: ['Jessica', 'Veronica', 'Lucas', 'Aiden', 'Ethan', 'Ole', 'Matthew', 'Jeffery', 'Cloe', 'Zachary', 'Ariana', 'Annie', 'Stephen', 'Joy'],
-  },
-  {
-    section: 'Cello',
-    members: ['Dinno', 'Melanie', 'Johnny', 'Sophie', 'Ellen', 'Annabelle', 'Ryan', 'Allen', 'Stacy'],
-  },
-];
-
 const VanstringHome: React.FC = () => {
   const rootRef = useRef<HTMLDivElement>(null);
+  const SECTION_GROUPS = useVanstringStore(s => s.sections);
+  const fetchSections  = useVanstringStore(s => s.fetchSections);
+
+  useEffect(() => { fetchSections(); }, [fetchSections]);
 
   useLayoutEffect(() => {
     if (typeof window !== 'undefined' &&

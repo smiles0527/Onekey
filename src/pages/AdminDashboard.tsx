@@ -6,6 +6,7 @@ import { useTeamStore, TeamMember } from '../store/teamStore';
 import { apiService, OWNER_EMAIL } from '../services/firebaseService';
 import TeamPhotoField from '../components/Admin/TeamPhotoField';
 import AdminTerminal from '../components/Admin/AdminTerminal';
+import VanstringRoster from '../components/Admin/VanstringRoster';
 import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
 const AdminDashboard: React.FC = () => {
@@ -583,6 +584,14 @@ const AdminDashboard: React.FC = () => {
             </button>
 
             <button
+              className={`sidebar-item ${activeTab === 'vanstring' ? 'active' : ''}`}
+              onClick={() => setActiveTab('vanstring')}
+            >
+              <i className="fas fa-music"></i>
+              Vanstring Roster
+            </button>
+
+            <button
               className={`sidebar-item ${activeTab === 'terminal' ? 'active' : ''}`}
               onClick={() => setActiveTab('terminal')}
             >
@@ -1075,6 +1084,11 @@ const AdminDashboard: React.FC = () => {
                 </tbody>
               </table>
             </>
+          )}
+
+          {/* Vanstring Roster Tab */}
+          {activeTab === 'vanstring' && (
+            <VanstringRoster />
           )}
 
           {/* Terminal Tab */}

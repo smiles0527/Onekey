@@ -95,8 +95,8 @@ const About: React.FC = () => {
             <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl border border-earth-300/20 bg-stone-800/60 p-3 shadow-2xl shadow-black/20 transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.02] hover:border-earth-300/60 hover:shadow-earth-900/30 sm:aspect-[4/5] lg:aspect-[3/4]">
               <div className="h-full overflow-hidden rounded-xl border border-white/10 bg-stone-900/45">
                 <img
-                  src={`${process.env.PUBLIC_URL}/pics/onekey.jpg`}
-                  alt="OneKey student volunteers performing at a community event"
+                  src={`${process.env.PUBLIC_URL}/pics/onekey_cavell.jpg`}
+                  alt="OneKey student musicians visiting Cavell Gardens to perform for seniors"
                   className="h-full w-full object-cover object-center"
                 />
               </div>
@@ -156,8 +156,8 @@ const About: React.FC = () => {
             <div className="aspect-[16/9] border-b border-earth-300/20 bg-stone-900/55 p-3 transition-all duration-300 ease-out hover:border-earth-300/45 hover:bg-stone-900/75">
               <div className="h-full overflow-hidden rounded-xl border border-white/10 bg-stone-900/45">
                 <img
-                  src={`${process.env.PUBLIC_URL}/pics/onekey_team.jpg`}
-                  alt="OneKey student musicians performing together outdoors"
+                  src={`${process.env.PUBLIC_URL}/pics/onekey_cellos.jpg`}
+                  alt="OneKey student musicians gathered with their cello cases"
                   className="h-full w-full object-cover object-center"
                 />
               </div>

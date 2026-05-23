@@ -422,6 +422,38 @@ export class FirebaseService {
       data: { status: 'ok', timestamp: new Date().toISOString() }
     };
   }
+
+  // ─── Vanstring sections (orchestra roster) ─────────────────────────────
+  async getVanstringSections(): Promise<ApiResponse<{ groups: VanstringSection[] }>> {
+    try {
+      const snap = await getDoc(doc(db, 'vanstring', 'sections'));
+      if (!snap.exists()) {
+        return { success: true, data: { groups: [] } };
+      }
+      const raw = snap.data();
+      const groups = Array.isArray(raw.groups) ? raw.groups as VanstringSection[] : [];
+      return { success: true, data: { groups } };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to load Vanstring sections' };
+    }
+  }
+
+  async updateVanstringSections(groups: VanstringSection[]): Promise<ApiResponse<null>> {
+    try {
+      await setDoc(doc(db, 'vanstring', 'sections'), {
+        groups,
+        updatedAt: new Date().toISOString(),
+      });
+      return { success: true, data: null };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to save Vanstring sections' };
+    }
+  }
+}
+
+export interface VanstringSection {
+  section: string;
+  members: string[];
 }
 
 export const apiService = new FirebaseService();

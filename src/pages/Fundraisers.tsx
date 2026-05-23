@@ -5,8 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const RICHMOND_PHOTO  = `${process.env.PUBLIC_URL}/pics/richmondhospital.jpg`;
-const CHECK_2023_PHOTO = `${process.env.PUBLIC_URL}/pics/richmond_check_2023.jpg`;
+const RICHMOND_PHOTO    = `${process.env.PUBLIC_URL}/pics/richmondhospital.jpg`;
+const CHECK_2023_PHOTO  = `${process.env.PUBLIC_URL}/pics/richmond_check_2023.jpg`;
+const PERFORM_PHOTOS    = [
+  { src: `${process.env.PUBLIC_URL}/pics/onekey.jpg`,      alt: 'OneKey performing at Richmond Hospital' },
+  { src: `${process.env.PUBLIC_URL}/pics/onekey_team.jpg`, alt: 'OneKey team performing at Richmond Hospital' },
+];
 
 const TOTAL_RAISED  = 52000;  // cumulative across all years — running counter
 const YEARS_ACTIVE  = 10;
@@ -331,6 +335,50 @@ const Fundraisers: React.FC = () => {
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ── Performance Moments at Richmond Hospital ───────────────────── */}
+      <section className="relative" style={{ padding: '0 24px 120px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <p className="reveal-line" style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: '#c8a46e', marginBottom: 16,
+          }}>
+            Performance Moments
+          </p>
+          <h2 className="reveal-line" style={{
+            fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 700, color: '#fafaf9',
+            letterSpacing: '-0.02em', marginBottom: 28,
+          }}>
+            On the ground at Richmond Hospital
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 24 }}>
+            {PERFORM_PHOTOS.map((p) => (
+              <div
+                key={p.src}
+                className="reveal-line"
+                style={{
+                  borderRadius: 14, overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#231f1c',
+                  boxShadow: '0 12px 48px rgba(0,0,0,0.4)',
+                  aspectRatio: '4/3',
+                }}
+              >
+                <img
+                  src={p.src}
+                  alt={p.alt}
+                  style={{
+                    width: '100%', height: '100%',
+                    objectFit: 'cover', objectPosition: 'center',
+                    display: 'block',
+                  }}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
