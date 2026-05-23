@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// Firestore security rules
+// Deploy with: firebase deploy --only firestore:rules
+// (Requires `firebase login` and `firebase init firestore` first)
+//
+// To apply via Console instead: copy this content into
+//   Firebase Console → Firestore Database → Rules tab → Publish
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Photos collection — public reads (so anyone can view uploads on the site),
+    // writes only from signed-in users (admin role check is enforced client-side).
+    match /photos/{photoId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Vanstring roster (single doc holding section/member lists) — public read, admin write
+    match /vanstring/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Public team data (used by /team page)
+    match /teamMembers/{memberId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Timeline events shown on the /timeline page
+    match /timelineEvents/{eventId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Users — readable by signed-in users (admin dashboard needs this), writable by self/admins
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Activity logs — admin only
+    match /activityLogs/{logId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Default deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

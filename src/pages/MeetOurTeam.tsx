@@ -233,7 +233,6 @@ const MeetOurTeam: React.FC = () => {
         description="Building the website, designing logos, and creating the tools that keep OneKey running"
         members={getTeamMembersBySection('techdesign')}
         currentSection="techdesign"
-        hideBio
       />
 
       <TeamSection

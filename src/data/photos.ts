@@ -1,17 +1,17 @@
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 
-// Photos featured on About / Vanstring / Fundraisers pages — used by the home hero slideshow
+// OneKey photos featured on About / Fundraisers pages — used by the home hero slideshow
 export const PAGE_PHOTOS = [
   `${PUBLIC_URL}/pics/richmondhospital.jpg`,
   `${PUBLIC_URL}/pics/onekey.jpg`,
   `${PUBLIC_URL}/pics/onekey_team.jpg`,
   `${PUBLIC_URL}/pics/onekey_history.jpg`,
-  `${PUBLIC_URL}/pics/vanstring.jpg`,
-  `${PUBLIC_URL}/pics/vanstring_team.jpg`,
-  `${PUBLIC_URL}/pics/vanstring_history.jpg`,
-  `${PUBLIC_URL}/pics/vanstring_member_1.jpg`,
-  `${PUBLIC_URL}/pics/vanstring_member_2.jpg`,
-  `${PUBLIC_URL}/pics/vanstring_member_3.jpg`,
+  `${PUBLIC_URL}/pics/onekey_cavell.jpg`,
+  `${PUBLIC_URL}/pics/onekey_cellos.jpg`,
+  `${PUBLIC_URL}/pics/onekey_perform_mic.jpg`,
+  `${PUBLIC_URL}/pics/onekey_perform_seniors.jpg`,
+  `${PUBLIC_URL}/pics/onekey_perform_piano.jpg`,
+  `${PUBLIC_URL}/pics/onekey_homework.jpg`,
 ];
 
 export const allPhotos = [

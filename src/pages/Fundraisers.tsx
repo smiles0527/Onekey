@@ -1,7 +1,8 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePhotoStore } from '../store/photoStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,10 @@ const YEARS_ACTIVE  = 10;
 const Fundraisers: React.FC = () => {
   const rootRef    = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
+  const fetchPhotos = usePhotoStore(s => s.fetchPhotos);
+  const uploadedRH  = usePhotoStore(s => s.photos.filter(p => p.category === 'richmond-hospital'));
+
+  useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
 
   useLayoutEffect(() => {
     if (typeof window !== 'undefined' &&
@@ -371,6 +376,30 @@ const Fundraisers: React.FC = () => {
                 <img
                   src={p.src}
                   alt={p.alt}
+                  style={{
+                    width: '100%', height: '100%',
+                    objectFit: 'cover', objectPosition: 'center',
+                    display: 'block',
+                  }}
+                />
+              </div>
+            ))}
+            {uploadedRH.map((photo) => (
+              <div
+                key={photo.id}
+                className="reveal-line"
+                style={{
+                  borderRadius: 14, overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#231f1c',
+                  boxShadow: '0 12px 48px rgba(0,0,0,0.4)',
+                  aspectRatio: '4/3',
+                }}
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.filename}
+                  loading="lazy"
                   style={{
                     width: '100%', height: '100%',
                     objectFit: 'cover', objectPosition: 'center',

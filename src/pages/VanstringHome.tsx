@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BEHOLD_FEED_ID, INSTAGRAM_HANDLE, INSTAGRAM_URL, INSTAGRAM_SINCE } from '../config/instagram';
 import { useVanstringStore } from '../store/vanstringStore';
+import { usePhotoStore } from '../store/photoStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,8 +19,10 @@ const VanstringHome: React.FC = () => {
   const rootRef = useRef<HTMLDivElement>(null);
   const SECTION_GROUPS = useVanstringStore(s => s.sections);
   const fetchSections  = useVanstringStore(s => s.fetchSections);
+  const fetchPhotos    = usePhotoStore(s => s.fetchPhotos);
+  const uploadedVS     = usePhotoStore(s => s.photos.filter(p => p.category === 'vanstring'));
 
-  useEffect(() => { fetchSections(); }, [fetchSections]);
+  useEffect(() => { fetchSections(); fetchPhotos(); }, [fetchSections, fetchPhotos]);
 
   useLayoutEffect(() => {
     if (typeof window !== 'undefined' &&
@@ -205,6 +208,21 @@ const VanstringHome: React.FC = () => {
                   <img
                     src={`${process.env.PUBLIC_URL}/pics/${memberPhoto.src}`}
                     alt={memberPhoto.alt}
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+              </div>
+            ))}
+            {uploadedVS.map(photo => (
+              <div
+                key={photo.id}
+                className="vs-member-photo aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-stone-800/45 p-3 shadow-xl shadow-black/10"
+              >
+                <div className="h-full overflow-hidden rounded-xl border border-white/10 bg-stone-900/45">
+                  <img
+                    src={photo.url}
+                    alt={photo.filename}
+                    loading="lazy"
                     className="h-full w-full object-cover object-center"
                   />
                 </div>

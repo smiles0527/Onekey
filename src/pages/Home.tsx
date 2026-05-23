@@ -1,16 +1,22 @@
-import React, { useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Slideshow from '../components/Slideshow';
 import PhotoGallery from '../components/PhotoGallery';
 import { LogoMark } from '../components/Layout/Navbar';
 import { getRandomPhotos, PAGE_PHOTOS } from '../data/photos';
+import { usePhotoStore } from '../store/photoStore';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Home: React.FC = () => {
-  const heroImages    = useMemo(() => PAGE_PHOTOS, []);
+  const fetchPhotos    = usePhotoStore(s => s.fetchPhotos);
+  const onekeyUploads  = usePhotoStore(s => s.photos.filter(p => p.category === 'onekey').map(p => p.url));
+
+  useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
+
+  const heroImages    = useMemo(() => [...onekeyUploads, ...PAGE_PHOTOS], [onekeyUploads]);
   const galleryImages = useMemo(() => getRandomPhotos(12), []);
   const rootRef = useRef<HTMLDivElement>(null);
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePhotoStore } from '../store/photoStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,6 +77,10 @@ const VideoEmbed: React.FC<VideoEmbedProps> = ({ id, title, index, total }) => {
 const VancouverAquarium: React.FC = () => {
   const rootRef       = useRef<HTMLDivElement>(null);
   const counterRef    = useRef<HTMLSpanElement>(null);
+  const fetchPhotos   = usePhotoStore(s => s.fetchPhotos);
+  const uploadedVA    = usePhotoStore(s => s.photos.filter(p => p.category === 'vancouver-aquarium'));
+
+  useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -328,6 +333,42 @@ const VancouverAquarium: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ── Uploaded photo gallery (admin-managed) ───────────────────── */}
+      {uploadedVA.length > 0 && (
+        <section className="relative" style={{ padding: '0 32px 120px' }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+            <p className="reveal-line" style={{
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
+              textTransform: 'uppercase', color: '#c8a46e', marginBottom: 24,
+            }}>
+              Photo Gallery
+            </p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 20,
+            }}>
+              {uploadedVA.map(photo => (
+                <div key={photo.id} style={{
+                  borderRadius: 14, overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#231f1c',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                  aspectRatio: '4/3',
+                }}>
+                  <img
+                    src={photo.url}
+                    alt={photo.filename}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );

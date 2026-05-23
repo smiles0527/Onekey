@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Firebase Storage security rules
+// Deploy with: firebase deploy --only storage
+//
+// To apply via Console instead: copy this content into
+//   Firebase Console → Storage → Rules tab → Publish
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Photos uploaded via the admin Photo Manager — public reads, signed-in writes
+    match /photos/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 12 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Team member photos uploaded from admin
+    match /team/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 12 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Any other path: read-only public; no write
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

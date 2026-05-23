@@ -16,10 +16,11 @@ import {
   orderBy,
   setDoc
 } from 'firebase/firestore';
-import { 
-  ref, 
-  uploadBytes, 
-  getDownloadURL 
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
 } from 'firebase/storage';
 import { auth, db, storage, createAuthUserIsolated } from '../lib/firebase';
 
@@ -449,11 +450,104 @@ export class FirebaseService {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to save Vanstring sections' };
     }
   }
+
+  // ─── Photo Manager (Firebase Storage + Firestore index) ─────────────────
+  async listPhotos(): Promise<ApiResponse<{ photos: PhotoRecord[] }>> {
+    try {
+      const snap = await getDocs(query(collection(db, 'photos'), orderBy('uploadedAt', 'desc')));
+      const photos: PhotoRecord[] = snap.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          url:         this.stringValue(data.url),
+          storagePath: this.stringValue(data.storagePath),
+          category:    this.stringValue(data.category, 'onekey') as PhotoCategory,
+          filename:    this.stringValue(data.filename),
+          uploadedAt:  this.stringValue(data.uploadedAt),
+        };
+      });
+      return { success: true, data: { photos } };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to load photos' };
+    }
+  }
+
+  async uploadPhoto(file: File, category: PhotoCategory): Promise<ApiResponse<PhotoRecord>> {
+    try {
+      if (!file.type.startsWith('image/')) {
+        return { success: false, error: 'Only image files are allowed' };
+      }
+      if (file.size > 12 * 1024 * 1024) {
+        return { success: false, error: 'File is over 12 MB' };
+      }
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const storagePath = `photos/${category}/${Date.now()}_${safeName}`;
+      const fileRef = ref(storage, storagePath);
+      await uploadBytes(fileRef, file, { contentType: file.type });
+      const url = await getDownloadURL(fileRef);
+
+      const docRef = await addDoc(collection(db, 'photos'), {
+        url,
+        storagePath,
+        category,
+        filename: file.name,
+        uploadedAt: new Date().toISOString(),
+      });
+
+      return {
+        success: true,
+        data: { id: docRef.id, url, storagePath, category, filename: file.name, uploadedAt: new Date().toISOString() },
+      };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Upload failed' };
+    }
+  }
+
+  async deletePhoto(photo: PhotoRecord): Promise<ApiResponse<null>> {
+    try {
+      if (photo.storagePath) {
+        try { await deleteObject(ref(storage, photo.storagePath)); }
+        catch { /* file may already be gone — proceed with Firestore cleanup */ }
+      }
+      await deleteDoc(doc(db, 'photos', photo.id));
+      return { success: true, data: null };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Delete failed' };
+    }
+  }
+
+  async updatePhotoCategory(id: string, category: PhotoCategory): Promise<ApiResponse<null>> {
+    try {
+      await updateDoc(doc(db, 'photos', id), { category });
+      return { success: true, data: null };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Update failed' };
+    }
+  }
 }
 
 export interface VanstringSection {
   section: string;
   members: string[];
+}
+
+export type PhotoCategory = 'onekey' | 'vanstring' | 'richmond-hospital' | 'vancouver-aquarium' | 'vtc';
+
+export const PHOTO_CATEGORIES: { id: PhotoCategory; label: string; color: string }[] = [
+  { id: 'onekey',             label: 'OneKey',                       color: '#c8a46e' },
+  { id: 'vanstring',          label: 'Vanstring',                    color: '#a5b4fc' },
+  { id: 'richmond-hospital',  label: 'Richmond Hospital',            color: '#fb7185' },
+  { id: 'vancouver-aquarium', label: 'Vancouver Aquarium',           color: '#6baed6' },
+  { id: 'vtc',                label: 'Voluntary Teaching for China', color: '#86bc88' },
+];
+
+export interface PhotoRecord {
+  id: string;
+  url: string;
+  storagePath: string;
+  category: PhotoCategory;
+  filename: string;
+  uploadedAt: string;
 }
 
 export const apiService = new FirebaseService();
