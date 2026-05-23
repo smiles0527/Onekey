@@ -150,7 +150,7 @@ const VanstringHome: React.FC = () => {
         </div>
       </section>
 
-      <section className="container relative z-20 mx-auto -mt-16 px-6 pb-16 pt-0 md:-mt-20 md:pb-20">
+      <section className="container relative z-20 mx-auto mt-8 px-6 pb-16 pt-0 md:-mt-20 md:pb-20">
         <div className="vs-cards mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
           <Link
             to="/team"

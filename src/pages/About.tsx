@@ -41,7 +41,7 @@ const About: React.FC = () => {
       // Initial hidden states (before paint)
       gsap.set('.about-tl-eyebrow', { clipPath: 'inset(0 100% 0 0)', opacity: 0 });
       gsap.set('.about-tl-heading', { y: 30, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
-      gsap.set('.about-tl-spine',   { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set('.about-tl-connector', { scaleX: 0, transformOrigin: 'left center' });
       gsap.set('.about-tl-event',   { y: 32, opacity: 0 });
       gsap.set('.about-tl-dot',     { scale: 0 });
 
@@ -54,8 +54,8 @@ const About: React.FC = () => {
         .to('.about-tl-eyebrow', { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 0.65 })
         .to('.about-tl-heading', { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.8 }, '-=0.35');
 
-      // Spine draws + events stagger
-      gsap.to('.about-tl-spine', {
+      // Connector segments draw + events stagger
+      gsap.to('.about-tl-connector', {
         scaleX: 1, duration: 1.4, ease: 'power2.out',
         scrollTrigger: { trigger: '.about-tl-list', start: 'top 75%', once: true },
       });
@@ -114,23 +114,22 @@ const About: React.FC = () => {
           </h2>
 
           <div className="about-tl-list relative mt-14">
-            {/* Horizontal spine (extends across all dots) */}
-            <span
-              aria-hidden="true"
-              className="about-tl-spine absolute top-[9px] left-[8px] right-[8px] h-px md:top-[11px] md:left-[10px] md:right-[10px]"
-              style={{ background: 'linear-gradient(to right, rgba(200,164,110,0.55), rgba(200,164,110,0.15))' }}
-            />
-
             <ol className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 md:gap-x-8">
               {TIMELINE_EVENTS.map((e, i) => (
                 <li
                   key={`${e.year}-${i}`}
                   className="about-tl-event relative"
                 >
+                  {i < TIMELINE_EVENTS.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className={`about-tl-connector absolute left-2 top-[7px] z-0 h-px w-[calc(100%+1.5rem)] bg-gradient-to-r from-earth-400/55 to-earth-400/15 md:left-2.5 md:top-[9px] md:w-[calc(100%+2rem)] ${i % 2 === 0 ? 'block' : 'hidden md:block'}`}
+                    />
+                  )}
                   {/* Dot sits on the spine */}
                   <span
                     aria-hidden="true"
-                    className="about-tl-dot block h-4 w-4 rounded-full border-2 border-earth-400 bg-stone-900 md:h-5 md:w-5"
+                    className="about-tl-dot relative z-10 block h-4 w-4 rounded-full border-2 border-earth-400 bg-stone-900 md:h-5 md:w-5"
                   />
                   <div className="mt-4 font-display text-sm font-bold tracking-wider text-earth-300 md:text-base">
                     {e.year}
