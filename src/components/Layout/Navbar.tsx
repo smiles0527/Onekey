@@ -138,6 +138,7 @@ const ABOUT_ITEMS = [
 
 const FUNDRAISER_ITEMS = [
   { name: 'Richmond Hospital Foundation', path: '/fundraisers' },
+  { name: 'Vancouver Aquarium Donation Concert', path: '/fundraisers/vancouver-aquarium' },
   { name: 'Voluntary Teaching for China', path: '/vtc' },
 ];
 

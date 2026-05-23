@@ -13,6 +13,7 @@ import MeetOurTeam from './pages/MeetOurTeam';
 import AdminDashboard from './pages/AdminDashboard';
 import VanstringHome from './pages/VanstringHome';
 import Fundraisers from './pages/Fundraisers';
+import VancouverAquarium from './pages/VancouverAquarium';
 import VTC from './pages/VTC';
 
 function AnimatedRoutes() {
@@ -32,6 +33,7 @@ function AnimatedRoutes() {
           <Route path="/timeline"  element={<Timeline />} />
           <Route path="/team"      element={<MeetOurTeam />} />
           <Route path="/fundraisers" element={<Fundraisers />} />
+          <Route path="/fundraisers/vancouver-aquarium" element={<VancouverAquarium />} />
           <Route path="/vtc"        element={<VTC />} />
           <Route path="/vanstring"  element={<VanstringHome />} />
           <Route path="/admin"     element={<AdminDashboard />} />
