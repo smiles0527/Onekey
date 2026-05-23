@@ -24,6 +24,13 @@ const Fundraisers: React.FC = () => {
 
   useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
 
+  // Refresh ScrollTrigger after async photos load
+  useEffect(() => {
+    if (uploadedRH.length === 0) return;
+    const t = setTimeout(() => ScrollTrigger.refresh(), 250);
+    return () => clearTimeout(t);
+  }, [uploadedRH.length]);
+
   useLayoutEffect(() => {
     if (typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

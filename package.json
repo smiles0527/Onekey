@@ -2,7 +2,7 @@
   "name": "onekey-react",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://smiles0527.github.io/Onekey",
+  "homepage": ".",
   "dependencies": {
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^16.3.2",

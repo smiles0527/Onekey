@@ -16,6 +16,13 @@ const Home: React.FC = () => {
 
   useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
 
+  // Refresh ScrollTrigger after async photos arrive (hero slideshow gets longer list)
+  useEffect(() => {
+    if (onekeyUploads.length === 0) return;
+    const t = setTimeout(() => ScrollTrigger.refresh(), 250);
+    return () => clearTimeout(t);
+  }, [onekeyUploads.length]);
+
   const heroImages    = useMemo(() => [...onekeyUploads, ...PAGE_PHOTOS], [onekeyUploads]);
   const galleryImages = useMemo(() => getRandomPhotos(12), []);
   const rootRef = useRef<HTMLDivElement>(null);

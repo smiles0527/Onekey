@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -82,7 +82,14 @@ const VancouverAquarium: React.FC = () => {
 
   useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
 
+  // Refresh ScrollTrigger after async photos load (content height changes)
   useEffect(() => {
+    if (uploadedVA.length === 0) return;
+    const t = setTimeout(() => ScrollTrigger.refresh(), 250);
+    return () => clearTimeout(t);
+  }, [uploadedVA.length]);
+
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
 
       /* ── 1. HERO ENTRANCE (on mount) ───────────────────────────────── */

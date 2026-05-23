@@ -24,6 +24,13 @@ const VanstringHome: React.FC = () => {
 
   useEffect(() => { fetchSections(); fetchPhotos(); }, [fetchSections, fetchPhotos]);
 
+  // Refresh ScrollTrigger when async data lands so trigger positions stay accurate
+  useEffect(() => {
+    if (SECTION_GROUPS.length === 0 && uploadedVS.length === 0) return;
+    const t = setTimeout(() => ScrollTrigger.refresh(), 250);
+    return () => clearTimeout(t);
+  }, [SECTION_GROUPS.length, uploadedVS.length]);
+
   useLayoutEffect(() => {
     if (typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
