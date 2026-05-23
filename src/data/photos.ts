@@ -1,6 +1,21 @@
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 
+// Photos featured on About / Vanstring / Fundraisers pages — used by the home hero slideshow
+export const PAGE_PHOTOS = [
+  `${PUBLIC_URL}/pics/richmondhospital.jpg`,
+  `${PUBLIC_URL}/pics/onekey.jpg`,
+  `${PUBLIC_URL}/pics/onekey_team.jpg`,
+  `${PUBLIC_URL}/pics/onekey_history.jpg`,
+  `${PUBLIC_URL}/pics/vanstring.jpg`,
+  `${PUBLIC_URL}/pics/vanstring_team.jpg`,
+  `${PUBLIC_URL}/pics/vanstring_history.jpg`,
+  `${PUBLIC_URL}/pics/vanstring_member_1.jpg`,
+  `${PUBLIC_URL}/pics/vanstring_member_2.jpg`,
+  `${PUBLIC_URL}/pics/vanstring_member_3.jpg`,
+];
+
 export const allPhotos = [
+  ...PAGE_PHOTOS,
   `${PUBLIC_URL}/slideshow/041A0050.JPG`,
   `${PUBLIC_URL}/slideshow/041A0051.JPG`,
   `${PUBLIC_URL}/slideshow/041A0053.JPG`,

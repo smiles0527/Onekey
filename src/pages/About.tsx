@@ -1,22 +1,81 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram } from 'lucide-react';
-import { BEHOLD_FEED_ID, INSTAGRAM_HANDLE, INSTAGRAM_URL, INSTAGRAM_SINCE } from '../config/instagram';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const TIMELINE_EVENTS = [
+  {
+    year: '2020',
+    title: 'OneKey is founded',
+    description: 'Jack Wang founds OneKey as a student-led initiative to share music with senior communities.',
+  },
+  {
+    year: '2021',
+    title: 'Homework help launches',
+    description: 'We expand beyond music — offering tutoring to younger students alongside our performance work.',
+  },
+  {
+    year: '2022',
+    title: 'Performances expand',
+    description: 'Younger musicians begin joining our trips to senior homes, broadening our reach across generations.',
+  },
+  {
+    year: '2022',
+    title: 'Partnership with Vanstring',
+    description: 'OneKey teams up with the Vanstring student string ensemble — broadening our community impact.',
+  },
+];
 
 const About: React.FC = () => {
-  // Load Behold widget script once, only when a feed ID is configured
-  useEffect(() => {
-    if (!BEHOLD_FEED_ID) return;
-    if (document.querySelector('script[data-behold-widget]')) return;
-    const script = document.createElement('script');
-    script.src = 'https://w.behold.so/widget.js';
-    script.type = 'module';
-    script.setAttribute('data-behold-widget', 'true');
-    document.body.appendChild(script);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // Initial hidden states (before paint)
+      gsap.set('.about-tl-eyebrow', { clipPath: 'inset(0 100% 0 0)', opacity: 0 });
+      gsap.set('.about-tl-heading', { y: 30, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
+      gsap.set('.about-tl-spine',   { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set('.about-tl-event',   { y: 32, opacity: 0 });
+      gsap.set('.about-tl-dot',     { scale: 0 });
+
+      // Heading + intro reveal
+      const introTl = gsap.timeline({
+        scrollTrigger: { trigger: '.about-tl-section', start: 'top 78%', once: true },
+        defaults: { ease: 'power3.out' },
+      });
+      introTl
+        .to('.about-tl-eyebrow', { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 0.65 })
+        .to('.about-tl-heading', { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.8 }, '-=0.35');
+
+      // Spine draws + events stagger
+      gsap.to('.about-tl-spine', {
+        scaleX: 1, duration: 1.4, ease: 'power2.out',
+        scrollTrigger: { trigger: '.about-tl-list', start: 'top 75%', once: true },
+      });
+      gsap.to('.about-tl-dot', {
+        scale: 1, duration: 0.45, stagger: 0.18, ease: 'back.out(2)',
+        scrollTrigger: { trigger: '.about-tl-list', start: 'top 75%', once: true },
+        delay: 0.2,
+      });
+      gsap.to('.about-tl-event', {
+        y: 0, opacity: 1, duration: 0.7, stagger: 0.18, ease: 'power3.out',
+        scrollTrigger: { trigger: '.about-tl-list', start: 'top 75%', once: true },
+        delay: 0.2,
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <div className="min-h-screen bg-stone-900 text-white">
+    <div ref={rootRef} className="min-h-screen bg-stone-900 text-white">
       <section className="container mx-auto px-6 py-20 md:py-28">
         <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_0.9fr] lg:gap-20">
           <div className="max-w-2xl">
@@ -45,6 +104,50 @@ const About: React.FC = () => {
           </div>
         </div>
 
+        {/* ── Timeline ───────────────────────────────────────────────── */}
+        <div className="about-tl-section mx-auto mt-20 max-w-3xl lg:mt-24">
+          <p className="about-tl-eyebrow inline-block text-xs font-bold uppercase tracking-[0.18em] text-earth-300">
+            Our Story
+          </p>
+          <h2 className="about-tl-heading mt-4 font-display text-3xl font-semibold text-white md:text-5xl">
+            How OneKey began
+          </h2>
+
+          <div className="about-tl-list relative mt-14">
+            {/* Horizontal spine (extends across all dots) */}
+            <span
+              aria-hidden="true"
+              className="about-tl-spine absolute top-[9px] left-[8px] right-[8px] h-px md:top-[11px] md:left-[10px] md:right-[10px]"
+              style={{ background: 'linear-gradient(to right, rgba(200,164,110,0.55), rgba(200,164,110,0.15))' }}
+            />
+
+            <ol className="relative grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 md:gap-x-8">
+              {TIMELINE_EVENTS.map((e, i) => (
+                <li
+                  key={`${e.year}-${i}`}
+                  className="about-tl-event relative"
+                >
+                  {/* Dot sits on the spine */}
+                  <span
+                    aria-hidden="true"
+                    className="about-tl-dot block h-4 w-4 rounded-full border-2 border-earth-400 bg-stone-900 md:h-5 md:w-5"
+                  />
+                  <div className="mt-4 font-display text-sm font-bold tracking-wider text-earth-300 md:text-base">
+                    {e.year}
+                  </div>
+                  <h3 className="mt-1 font-display text-base font-semibold text-white md:text-lg">
+                    {e.title}
+                  </h3>
+                  <p className="mt-2 text-sm font-light leading-6 text-stone-300/85">
+                    {e.description}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* ── Team / History cards ───────────────────────────────────── */}
         <div className="mx-auto mt-20 grid max-w-6xl gap-8 md:grid-cols-2 lg:mt-24">
           <Link
             to="/team"
@@ -91,47 +194,6 @@ const About: React.FC = () => {
               </p>
             </div>
           </Link>
-        </div>
-
-        {/* ── Instagram feed ─────────────────────────────────────────── */}
-        <div className="mx-auto mt-20 max-w-6xl lg:mt-24">
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
-            <div>
-              <span className="mb-5 block h-px w-16 bg-earth-400" aria-hidden="true" />
-              <h2 className="font-display text-3xl font-semibold text-white md:text-5xl">
-                Follow Along
-              </h2>
-              <p className="mt-3 text-base font-light leading-7 text-stone-300/90 md:text-lg">
-                See what we've been up to <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-earth-300 hover:text-earth-200 transition-colors">@{INSTAGRAM_HANDLE}</a> · sharing since {INSTAGRAM_SINCE}
-              </p>
-            </div>
-            <a
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-earth-400/30 bg-earth-500/10 text-earth-200 text-sm font-medium hover:bg-earth-500/20 hover:border-earth-400/50 transition-all"
-            >
-              <Instagram size={16} />
-              Open Instagram
-            </a>
-          </div>
-
-          {BEHOLD_FEED_ID ? (
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-stone-800/35 p-4 shadow-xl shadow-black/10">
-              <behold-widget feed-id={BEHOLD_FEED_ID} />
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-earth-400/25 bg-stone-800/30 p-10 text-center">
-              <Instagram size={32} className="mx-auto mb-4 text-earth-300/60" />
-              <p className="text-base font-light text-stone-300/80">
-                Instagram feed coming soon.
-              </p>
-              <p className="mt-2 text-xs text-stone-500">
-                {/* Visible only in dev — guides the maintainer */}
-                Configure <code className="px-1.5 py-0.5 rounded bg-stone-900/60 text-earth-300">BEHOLD_FEED_ID</code> in <code className="px-1.5 py-0.5 rounded bg-stone-900/60 text-earth-300">src/pages/About.tsx</code> to enable.
-              </p>
-            </div>
-          )}
         </div>
       </section>
     </div>
