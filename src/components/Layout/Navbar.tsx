@@ -420,13 +420,13 @@ const Navbar = () => {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.22, ease: 'easeInOut' }}
-                    className="overflow-hidden"
+                    className="site-nav__mobile-submenu overflow-hidden"
                   >
                     {ABOUT_ITEMS.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
-                        className={`site-nav__mobile-link pl-6 ${location.pathname === item.path ? 'site-nav__mobile-link--active' : ''}`}
+                        className={`site-nav__mobile-link site-nav__mobile-submenu-link ${location.pathname === item.path ? 'site-nav__mobile-link--active' : ''}`}
                         onClick={() => setIsOpen(false)}
                       >
                         {item.name}
@@ -458,13 +458,13 @@ const Navbar = () => {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.22, ease: 'easeInOut' }}
-                    className="overflow-hidden"
+                    className="site-nav__mobile-submenu overflow-hidden"
                   >
                     {FUNDRAISER_ITEMS.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
-                        className={`site-nav__mobile-link pl-6 ${location.pathname === item.path ? 'site-nav__mobile-link--active' : ''}`}
+                        className={`site-nav__mobile-link site-nav__mobile-submenu-link ${location.pathname === item.path ? 'site-nav__mobile-link--active' : ''}`}
                         onClick={() => setIsOpen(false)}
                       >
                         {item.name}
