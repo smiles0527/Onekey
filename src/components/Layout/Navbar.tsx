@@ -51,8 +51,7 @@ const WigglyStaff: React.FC = () => (
   </svg>
 );
 
-// ── Full logo mark ────────────────────────────────────────────────────────────
-const LogoMark: React.FC = () => {
+export const LogoMark: React.FC = () => {
   const offsets = useMemo(() => LOGO_CHARS.map((_, i) => ({
     x: (seededRand(i * 3)     - 0.5) * 80,
     y: (seededRand(i * 3 + 1) - 0.5) * 60,
@@ -91,22 +90,44 @@ const LogoMark: React.FC = () => {
         ))}
       </span>
 
-      {/* Floating notes */}
       <motion.span
         aria-hidden
-        style={{ position: 'absolute', top: -9, right: -10, fontSize: 9, color: '#c8a46e', pointerEvents: 'none', userSelect: 'none' }}
+        style={{ position: 'absolute', top: -11, right: -12, fontSize: 13, color: '#d6a94a', pointerEvents: 'none', userSelect: 'none', textShadow: '0 0 8px rgba(214,169,74,0.35)' }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.6, 0.45], y: [0, -3, 0] }}
+        animate={{ opacity: [0, 0.8, 0.62], y: [0, -3, 0] }}
         transition={{ opacity: { delay: 0.55, duration: 0.4 }, y: { delay: 0.55, duration: 2.8, repeat: Infinity, ease: 'easeInOut' } }}
       >♪</motion.span>
       <motion.span
         aria-hidden
-        style={{ position: 'absolute', top: -3, right: -20, fontSize: 7, color: '#c8a46e', pointerEvents: 'none', userSelect: 'none' }}
+        style={{ position: 'absolute', top: -4, right: -25, fontSize: 10, color: '#d6a94a', pointerEvents: 'none', userSelect: 'none', textShadow: '0 0 7px rgba(214,169,74,0.3)' }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.4, 0.3], y: [0, -4, 0] }}
+        animate={{ opacity: [0, 0.65, 0.48], y: [0, -4, 0] }}
         transition={{ opacity: { delay: 0.7, duration: 0.4 }, y: { delay: 0.7, duration: 3.4, repeat: Infinity, ease: 'easeInOut' } }}
       >♫</motion.span>
     </span>
+  );
+};
+
+interface LogoGlowProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const LogoGlow: React.FC<LogoGlowProps> = ({ children, className = '' }) => {
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty('--logo-glow-x', `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty('--logo-glow-y', `${event.clientY - bounds.top}px`);
+  };
+
+  return (
+    <div
+      className={`logo-glow ${className}`.trim()}
+      onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerMove}
+    >
+      {children}
+    </div>
   );
 };
 
@@ -121,14 +142,14 @@ const FUNDRAISER_ITEMS = [
 ];
 
 const dropdownVariants = {
-  hidden: { opacity: 0, y: -6, scale: 0.97 },
+  hidden: { opacity: 0, y: -4, scale: 0.98 },
   visible: {
     opacity: 1, y: 0, scale: 1,
-    transition: { duration: 0.18, ease: 'easeOut' as const },
+    transition: { duration: 0.1, ease: 'easeOut' as const },
   },
   exit: {
-    opacity: 0, y: -4, scale: 0.97,
-    transition: { duration: 0.13, ease: 'easeIn' as const },
+    opacity: 0, y: -3, scale: 0.98,
+    transition: { duration: 0.06, ease: 'easeIn' as const },
   },
 };
 
@@ -171,6 +192,16 @@ const Navbar = () => {
   const isAboutActive      = ABOUT_ITEMS.some(i => i.path === location.pathname);
   const isFundraiserActive = FUNDRAISER_ITEMS.some(i => i.path === location.pathname);
 
+  const openAboutMenu = () => {
+    setFundraiserOpen(false);
+    setAboutOpen(true);
+  };
+
+  const openFundraiserMenu = () => {
+    setAboutOpen(false);
+    setFundraiserOpen(true);
+  };
+
   const navShellClass = [
     'site-nav',
     isScrolled ? 'site-nav--scrolled' : '',
@@ -185,9 +216,17 @@ const Navbar = () => {
         animate={{ paddingTop: isScrolled ? 12 : 16, paddingBottom: isScrolled ? 12 : 16 }}
         transition={{ duration: 0.25 }}
       >
-        <Link to="/" className="site-nav__logo" style={{ position: 'relative' }}>
-          <LogoMark />
-        </Link>
+        <motion.div
+          initial={isHome ? { opacity: 0, y: -4 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
+          <Link to="/" className="site-nav__logo" style={{ position: 'relative' }}>
+            <LogoGlow>
+              <LogoMark />
+            </LogoGlow>
+          </Link>
+        </motion.div>
 
         {/* Desktop links */}
         <motion.div
@@ -205,7 +244,7 @@ const Navbar = () => {
           <div
             ref={aboutRef}
             className="relative w-fit"
-            onMouseEnter={() => setAboutOpen(true)}
+            onMouseEnter={openAboutMenu}
             onMouseLeave={() => setAboutOpen(false)}
           >
             <button
@@ -237,7 +276,7 @@ const Navbar = () => {
                       key={item.path}
                       initial={{ opacity: 0, x: -6 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.06, duration: 0.18, ease: 'easeOut' }}
+                      transition={{ delay: i * 0.025, duration: 0.1, ease: 'easeOut' }}
                     >
                       <Link
                         to={item.path}
@@ -256,7 +295,7 @@ const Navbar = () => {
           <div
             ref={fundraiserRef}
             className="relative w-fit"
-            onMouseEnter={() => setFundraiserOpen(true)}
+            onMouseEnter={openFundraiserMenu}
             onMouseLeave={() => setFundraiserOpen(false)}
           >
             <button
@@ -288,7 +327,7 @@ const Navbar = () => {
                       key={item.path}
                       initial={{ opacity: 0, x: -6 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.06, duration: 0.18, ease: 'easeOut' }}
+                      transition={{ delay: i * 0.025, duration: 0.1, ease: 'easeOut' }}
                     >
                       <Link
                         to={item.path}

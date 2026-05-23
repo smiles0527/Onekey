@@ -174,7 +174,10 @@ const Timeline: React.FC = () => {
   const upcomingEvents = useMemo(() => {
     const merged = [...UPCOMING_EVENTS, ...sourceEvents];
     const unique = new Map<string, TimelineEvent>();
-    merged.forEach(event => unique.set(`${event.name}-${event.date}`, event));
+    merged.forEach(event => {
+      const key = event.id || `synthetic-${event.name}-${event.date}`;
+      unique.set(key, event);
+    });
 
     return Array.from(unique.values())
       .filter(event => dateValue(event.date) >= today)

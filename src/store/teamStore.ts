@@ -19,11 +19,55 @@ export interface TeamMember {
   updatedAt: string;
 }
 
-type StoredTeamMember = Partial<TeamMember> & {
-  id: string;
-  section?: SectionKey;
-  extraSections?: SectionKey[];
+const SECTION_KEYS: SectionKey[] = ['leadership', 'communications', 'coordinators', 'finance', 'concertmasters', 'techdesign', 'alumni'];
+
+type TeamMemberRecord = Record<string, unknown> & {
+  id?: unknown;
+  section?: unknown;
+  extraSections?: unknown;
+  sections?: unknown;
 };
+
+const isSectionKey = (value: unknown): value is SectionKey =>
+  typeof value === 'string' && SECTION_KEYS.includes(value as SectionKey);
+
+const stringValue = (value: unknown, fallback = ''): string =>
+  typeof value === 'string' ? value : fallback;
+
+const optionalGroup = (value: unknown): TeamMember['group'] =>
+  value === 'onekey' || value === 'vanstring' ? value : undefined;
+
+const optionalConcertmasterType = (value: unknown): TeamMember['concertmasterType'] =>
+  value === 'concertmaster' || value === 'principal_second' ? value : undefined;
+
+const normalizeSections = (member: TeamMemberRecord): SectionKey[] => {
+  if (Array.isArray(member.sections)) {
+    return member.sections.filter(isSectionKey);
+  }
+
+  const legacySections = [
+    member.section,
+    ...(Array.isArray(member.extraSections) ? member.extraSections : []),
+  ].filter(isSectionKey);
+
+  return legacySections.length > 0 ? legacySections : ['leadership'];
+};
+
+const normalizeTeamMember = (member: TeamMemberRecord): TeamMember => ({
+  id: stringValue(member.id),
+  name: stringValue(member.name),
+  role: stringValue(member.role),
+  school: stringValue(member.school),
+  bio: stringValue(member.bio),
+  instagram: stringValue(member.instagram),
+  image: stringValue(member.image),
+  sections: normalizeSections(member),
+  group: optionalGroup(member.group),
+  concertmasterType: optionalConcertmasterType(member.concertmasterType),
+  isActive: typeof member.isActive === 'boolean' ? member.isActive : true,
+  createdAt: stringValue(member.createdAt, new Date().toISOString()),
+  updatedAt: stringValue(member.updatedAt, new Date().toISOString()),
+});
 
 // Seed data — written to Firestore once if the collection is empty
 const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
@@ -207,28 +251,28 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
         return;
       }
 
-      let members = res.data.members as unknown as StoredTeamMember[];
+      let members = res.data.members as TeamMemberRecord[];
 
       // Seed Firestore only on first run (empty collection)
       if (members.length === 0) {
         await Promise.all(SEED_MEMBERS.map(m => apiService.createTeamMember(m)));
         const refreshed = await apiService.getTeamMembers();
-        members = (refreshed.data?.members ?? []) as unknown as StoredTeamMember[];
+        members = (refreshed.data?.members ?? []) as TeamMemberRecord[];
       }
 
       // Migrate old schema (section + extraSections) → sections[]
       const toMigrate = members.filter(m => !Array.isArray(m.sections) && m.section);
       if (toMigrate.length > 0) {
         await Promise.all(toMigrate.map(m => {
-          const sections = [m.section, ...(m.extraSections ?? [])].filter((section): section is SectionKey => Boolean(section));
-          return apiService.updateTeamMember(m.id, { sections });
+          const sections = normalizeSections(m);
+          return apiService.updateTeamMember(stringValue(m.id), { sections });
         }));
         toMigrate.forEach(m => {
-          m.sections = [m.section, ...(m.extraSections ?? [])].filter((section): section is SectionKey => Boolean(section));
+          m.sections = normalizeSections(m);
         });
       }
 
-      set({ teamMembers: (members as unknown as TeamMember[]).filter(m => m.isActive !== false), isLoading: false });
+      set({ teamMembers: members.map(normalizeTeamMember).filter(m => m.isActive !== false), isLoading: false });
     } catch (err: unknown) {
       set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
     }
