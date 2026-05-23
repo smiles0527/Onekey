@@ -33,6 +33,16 @@ export interface TimelineEvent { id: string; name: string; date: string; categor
 export interface CreateEventRequest { name: string; date: string; category: string; location?: string; time?: string; attendees?: string; performers?: string; duration?: string; description?: string; photo_url?: string; }
 export interface ActivityLog { id: string; user_id: string; userId?: string; action: string; details: string; ip_address?: string; ipAddress?: string; timestamp: string; username?: string; first_name?: string; last_name?: string; }
 
+type FirebaseUserData = {
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  isActive?: boolean;
+  createdAt?: string;
+};
+
 export const OWNER_EMAIL = 'iscurt.w@gmail.com';
 
 export class FirebaseService {
@@ -66,7 +76,7 @@ export class FirebaseService {
     }
   }
 
-  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, unknown> | undefined> {
+  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<FirebaseUserData | undefined> {
     const userRef = doc(db, 'users', firebaseUser.uid);
     let userDoc = await getDoc(userRef);
 
@@ -86,7 +96,7 @@ export class FirebaseService {
       userDoc = await getDoc(userRef);
     }
 
-    return userDoc.data();
+    return userDoc.data() as FirebaseUserData | undefined;
   }
 
 

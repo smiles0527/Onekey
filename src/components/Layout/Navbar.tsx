@@ -81,8 +81,8 @@ export const LogoMark: React.FC = () => {
           <motion.span
             key={i}
             style={{ color: accent ? '#c8a46e' : '#fafaf9', display: 'inline-block', position: 'relative', zIndex: 1 }}
-            initial={{ x: offsets[i].x, y: offsets[i].y, rotate: offsets[i].r, opacity: 0, filter: 'blur(3px)' }}
-            animate={{ x: 0, y: 0, rotate: 0, opacity: 1, filter: 'blur(0px)' }}
+            initial={{ x: offsets[i].x, y: offsets[i].y, rotate: offsets[i].r, opacity: 0 }}
+            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 22, delay: 0.08 + i * 0.045 }}
           >
             {ch}
