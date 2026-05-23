@@ -21,9 +21,10 @@ const VanstringRoster: React.FC = () => {
     setDraft(d => d.map((s, i) => i === idx ? { ...s, ...patch } : s));
   };
 
+  // Preserves raw newlines / trailing whitespace so the cursor doesn't jump while typing.
+  // Cleanup (trim + drop empty lines) happens on save.
   const setMembersFromText = (idx: number, text: string) => {
-    const members = text.split('\n').map(m => m.trim()).filter(Boolean);
-    updateSection(idx, { members });
+    updateSection(idx, { members: text.split('\n') });
   };
 
   const moveSection = (idx: number, dir: -1 | 1) => {
@@ -47,7 +48,12 @@ const VanstringRoster: React.FC = () => {
 
   const save = async () => {
     setSaveState('saving');
-    const ok = await saveSections(draft);
+    // Clean up empty lines + whitespace just before saving
+    const cleaned = draft.map(s => ({
+      section: s.section.trim() || 'Untitled',
+      members: s.members.map(m => m.trim()).filter(Boolean),
+    }));
+    const ok = await saveSections(cleaned);
     setSaveState(ok ? 'saved' : 'error');
     if (ok) setTimeout(() => setSaveState('idle'), 2200);
   };
@@ -146,13 +152,13 @@ const VanstringRoster: React.FC = () => {
             <textarea
               value={section.members.join('\n')}
               onChange={e => setMembersFromText(idx, e.target.value)}
-              rows={Math.max(6, Math.min(section.members.length + 1, 16))}
               placeholder="Curtis&#10;Gabby&#10;Rachel"
               style={{
                 width: '100%', padding: '10px 12px', borderRadius: 6,
                 background: '#1c1917', border: '1px solid rgba(255,255,255,0.1)',
                 color: '#fafaf9', fontSize: '0.9rem', lineHeight: 1.6,
                 fontFamily: 'inherit', resize: 'vertical',
+                minHeight: 200, maxHeight: 400,
               }}
             />
           </div>
