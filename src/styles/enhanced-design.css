@@ -792,8 +792,9 @@
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-bottom: 4px; /* prevent card shadow clip */
-  width: 100%;
+  padding: 1.25rem 0.5rem; /* Room for pop-out effect and shadow */
+  margin: -1.25rem -0.5rem; /* Offset padding to maintain layout */
+  width: calc(100% + 1rem);
 }
 
 .tc__track--wheel-scrolling {
@@ -851,16 +852,23 @@
 .team-card {
   display: flex;
   flex-direction: column;
-  background: #fafaf9;
-  border: 1px solid #a8a29e;
+  background: #1c1917;
+  border: 1px solid rgba(196, 174, 123, 0.15);
   border-radius: 0.75rem;
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.team-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .team-card__photo-wrap {
   aspect-ratio: 1;
-  background: #e7e5e4;
+  background: #292524;
   overflow: hidden;
 }
 
@@ -873,6 +881,11 @@
   height: 100%;
   object-fit: cover;
   object-position: center top;
+  transition: transform 0.6s ease;
+}
+
+.team-card:hover .team-card__photo {
+  transform: scale(1.05);
 }
 
 .team-card__photo-fallback {
@@ -883,8 +896,8 @@
   height: 100%;
   font-size: 2rem;
   font-weight: 600;
-  color: #78716c;
-  background: #e7e5e4;
+  color: #c4ae7b;
+  background: #292524;
 }
 
 .team-card__info {
@@ -899,7 +912,7 @@
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.3;
-  color: #1c1917;
+  color: #eeb44f;
 }
 
 .team-card__role {
@@ -907,7 +920,7 @@
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
-  color: #292524;
+  color: #c4ae7b;
 }
 
 .team-card__school {
@@ -915,7 +928,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
-  color: #44403c;
+  color: #a8a29e;
 }
 
 .team-card--compact .team-card__school {
@@ -940,22 +953,23 @@
   font-size: 0.975rem;
   font-weight: 500;
   line-height: 1.6;
-  color: #1c1917;
+  color: #e7e5e4;
 }
 
 .team-card__ig-btn {
   align-self: flex-start;
   margin-top: auto;
   padding: 0.15rem 0;
-  color: #0c0a09;
+  color: #f59e0b;
   text-decoration: none;
   opacity: 0.85;
-  transition: opacity 0.2s ease, color 0.2s ease;
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .team-card__ig-btn:hover {
   opacity: 1;
-  color: #57534e;
+  color: #fb923c;
+  transform: scale(1.1);
 }
 
 .team-card--compact .team-card__ig-btn {
